@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # the pybind11 package will provide the pybind11::module imported target
 find_package(pybind11 CONFIG REQUIRED)
 find_package(Eigen3 3.3 CONFIG REQUIRED)
-# find_package(MRCPP CONFIG REQUIRED)
+find_package(MRCPP CONFIG REQUIRED)
 
 # create python module
 add_library(vampyr
@@ -24,15 +24,7 @@ add_library(vampyr
     methods.cpp
     operators.cpp
     project.cpp
-        )
-
-target_include_directories(vampyr PRIVATE   
-    ${CMAKE_CURRENT_BINARY_DIR}/../mrcpp_external-prefix/src/mrcpp_external-build/include/MRCPP/
-    )
-
-#add_dependencies(vampyr
-#  mrcpp_external  
-#)
+  )
 
 if(WIN32 AND (NOT MSVC))
   target_compile_definitions(vampyr
@@ -45,6 +37,7 @@ target_link_libraries(vampyr
   PUBLIC
     pybind11::module
     Eigen3::Eigen
+    MRCPP::mrcpp
   )
 
 set_target_properties(vampyr
@@ -64,5 +57,6 @@ file(
 install(
   TARGETS
     vampyr
-  LIBRARY DESTINATION .
+  LIBRARY
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
   )

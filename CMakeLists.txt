@@ -15,6 +15,8 @@ find_package(PythonInterp REQUIRED)
 # we need ExternalProject functionality
 include(ExternalProject)
 
+set(STAGED_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/stage${CMAKE_INSTALL_PREFIX})
+
 # fetch pybind11 sources
 ExternalProject_Add(pybind11_external
   GIT_REPOSITORY
@@ -23,7 +25,7 @@ ExternalProject_Add(pybind11_external
     v2.2
   CMAKE_ARGS
     -DPYTHON_EXECUTABLE:FILEPATH=${PYTHON_EXECUTABLE}
-    -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/stage
+    -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
     -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}  # unused, but needs working compiler
     -DCMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}
@@ -34,6 +36,7 @@ ExternalProject_Add(pybind11_external
   LOG_BUILD 1
   LOG_INSTALL 1
   )
+set(PYBIND11_DIR ${STAGED_INSTALL_PREFIX}/share/cmake/pybind11 CACHE PATH "Path to internally built pybind11Config.cmake" FORCE)
 
 # fetch mrcpp sources
 ExternalProject_Add(mrcpp_external
@@ -42,18 +45,16 @@ ExternalProject_Add(mrcpp_external
   GIT_TAG
     master
   CMAKE_ARGS
-    -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}
+    -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
     -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
     -DCMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}
     -DENABLE_TESTS=FALSE
     -DENABLE_EXAMPLES=FALSE
-    #-DSTATIC_LIBRARY_ONLY=TRUE
   CMAKE_CACHE_ARGS
     -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
-  INSTALL_COMMAND
-    DESTDIR=${CMAKE_BINARY_DIR}/stage ${CMAKE_MAKE_PROGRAM} install    
-)
+  )
+set(MRCPP_DIR ${STAGED_INSTALL_PREFIX}/share/cmake/MRCPP CACHE PATH "Path to internally built MRCPPConfig.cmake" FORCE)
 
 # process our source code as if it was an external project
 ExternalProject_Add(vampyr
@@ -64,9 +65,10 @@ ExternalProject_Add(vampyr
   BINARY_DIR
     ${CMAKE_CURRENT_BINARY_DIR}/vampyr
   CMAKE_ARGS
-    -Dpybind11_DIR=${CMAKE_CURRENT_BINARY_DIR}/stage/share/cmake/pybind11
+    -Dpybind11_DIR=${PYBIND11_DIR}
+    -DMRCPP_DIR=${MRCPP_DIR}
     -DPYTHON_EXECUTABLE:FILEPATH=${PYTHON_EXECUTABLE}
-    -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/install
+    -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
   )
 
 # turn on testing
