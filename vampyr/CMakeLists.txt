@@ -1,5 +1,5 @@
 # minimum cmake version
-cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.3 FATAL_ERROR)
 
 # project name and supported language
 project(account-project LANGUAGES CXX)
@@ -11,6 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # the pybind11 package will provide the pybind11::module imported target
 find_package(pybind11 CONFIG REQUIRED)
+find_package(Eigen3 3.3 CONFIG REQUIRED)
 # find_package(MRCPP CONFIG REQUIRED)
 
 # create python module
@@ -43,6 +44,7 @@ endif()
 target_link_libraries(vampyr
   PUBLIC
     pybind11::module
+    Eigen3::Eigen
   )
 
 set_target_properties(vampyr

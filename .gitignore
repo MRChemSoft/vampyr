@@ -2,4 +2,5 @@ build
 .idea
 .ipynb_checkpoints
 *.ipynb
+*.swp
 cmake-build-debug
