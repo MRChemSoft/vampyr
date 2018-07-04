@@ -18,10 +18,15 @@ add_library(vampyr
   MODULE
     vampyr.cpp
     PyBoundingBox.cpp
-  )
+    bases.cpp
+    fundamentalTypes.cpp
+    methods.cpp
+    operators.cpp
+    project.cpp
+        )
 
 target_include_directories(vampyr PRIVATE   
-    /home/magnar/src/vampyr/build/mrcpp_external-prefix/src/mrcpp_external-build/include/MRCPP/
+    ${CMAKE_CURRENT_BINARY_DIR}/../mrcpp_external-prefix/src/mrcpp_external-build/include/MRCPP/
     )
 
 #add_dependencies(vampyr
@@ -29,7 +34,7 @@ target_include_directories(vampyr PRIVATE
 #)
 
 if(WIN32 AND (NOT MSVC))
-  target_compile_definitions(account
+  target_compile_definitions(vampyr
     PUBLIC
       "_hypot=hypot"
     )
@@ -46,13 +51,13 @@ set_target_properties(vampyr
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
   )
 
-#file(
-    #  COPY
-    #    __init__.py
-    #    version.py
-    #  DESTINATION
-    #    ${CMAKE_CURRENT_BINARY_DIR}
-    #  )
+file(
+      COPY
+        __init__.py
+        version.py
+      DESTINATION
+        ${CMAKE_CURRENT_BINARY_DIR}
+      )
 
 install(
   TARGETS
