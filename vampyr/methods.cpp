@@ -23,7 +23,7 @@ namespace py = pybind11;
 using namespace mrcpp;
 
 template <int D>
-void pyMethods(py::module &m) {
+void methods(py::module &m) {
 
 
     m.def("add", py::overload_cast<double, FunctionTree<D> &, double , FunctionTree<D> &, double, FunctionTree<D> &, int>(&add<D>),
@@ -50,6 +50,6 @@ void pyMethods(py::module &m) {
     m.def("dot", py::overload_cast<FunctionTree<D> &, FunctionTree<D> &>(&dot<D>));
 }
 
-template void pyMethods<1>(py::module &m);
-template void pyMethods<2>(py::module &m);
-template void pyMethods<3>(py::module &m);
+template void methods<1>(py::module &m);
+template void methods<2>(py::module &m);
+template void methods<3>(py::module &m);

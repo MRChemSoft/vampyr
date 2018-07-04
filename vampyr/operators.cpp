@@ -19,7 +19,7 @@ namespace py = pybind11;
 
 
 template<int D>
-void pyOperators(py::module &m) {
+void operators(py::module &m) {
 
     std::stringstream DerOperatorName;
     DerOperatorName << "DerivativeOperator" << D << "D";
@@ -48,7 +48,7 @@ void pyOperators(py::module &m) {
 
 }
 
-template void pyOperators<1>(py::module &m);
-template void pyOperators<2>(py::module &m);
-template void pyOperators<3>(py::module &m);
+template void operators<1>(py::module &m);
+template void operators<2>(py::module &m);
+template void operators<3>(py::module &m);
 

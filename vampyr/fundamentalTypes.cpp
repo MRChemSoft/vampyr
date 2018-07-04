@@ -22,7 +22,7 @@ namespace py = pybind11;
 
 
 template<int D>
-void pyFundamentalTypes(py::module &m) {
+void fundamentalTypes(py::module &m) {
 
 //MWFunctions
 
@@ -62,13 +62,13 @@ void pyFundamentalTypes(py::module &m) {
         .def(py::init<MultiResolutionAnalysis<D>>())
         .def("integrate", &FunctionTree<D>::integrate)
         .def("clear", &FunctionTree<D>::clear)
-        .def("normalize", &FunctionTree<D>::normalize)
-        .def("evalf", py::overload_cast<double>(&FunctionTree<D>::evalf))
-        .def("evalf", py::overload_cast<double, double>(&FunctionTree<D>::evalf))
-        .def("evalf", py::overload_cast<double, double, double>(&FunctionTree<D>::evalf));
+        .def("normalize", &FunctionTree<D>::normalize);
+      //  .def("evalf", py::overload_cast<double>(&FunctionTree<D>::evalf))
+      //  .def("evalf", py::overload_cast<double, double>(&FunctionTree<D>::evalf))
+      //  .def("evalf", py::overload_cast<double, double, double>(&FunctionTree<D>::evalf));
 
 }
 
-template void pyFundamentalTypes<1>(py::module &m);
-template void pyFundamentalTypes<2>(py::module &m);
-template void pyFundamentalTypes<3>(py::module &m);
+template void fundamentalTypes<1>(py::module &m);
+template void fundamentalTypes<2>(py::module &m);
+template void fundamentalTypes<3>(py::module &m);
