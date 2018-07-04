@@ -77,7 +77,9 @@ add_test(
   NAME
     python_test
   COMMAND
-    ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/account/test.py
+    ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/vampyr/test_vampyr1d.py
+    ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/vampyr/test_vampyr2d.py
+    ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/vampyr/test_vampyr3d.py
   WORKING_DIRECTORY
     ${CMAKE_CURRENT_BINARY_DIR}
   )
