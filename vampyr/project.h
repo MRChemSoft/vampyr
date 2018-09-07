@@ -11,6 +11,7 @@
 
 #include "mrcpp_declarations.h"
 
+namespace vampyr {
 
 void project3D(double prec, mrcpp::FunctionTree<3> &out,
                std::function<double (double x, double y, double z)> func, int maxIter = -1);
@@ -20,3 +21,5 @@ void project2D(double prec, mrcpp::FunctionTree<2> &out,
 
 void project1D(double prec, mrcpp::FunctionTree<1> &out,
                std::function<double (double x)> func, int maxIter = -1);
+
+} // namespace vampyr

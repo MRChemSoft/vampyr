@@ -1,5 +1,5 @@
 import numpy as np
-import vampyr as vp
+import vampyr2d as vp
 
 from math import isclose
 
@@ -11,11 +11,11 @@ prec = 1e-5
 corner = np.array([-1, -1])
 boxes = np.array([2, 2])
 
-world = vp.BoundingBox2D(min_scale, corner, boxes)
+world = vp.BoundingBox(min_scale, corner, boxes)
 
 basis = vp.InterpolatingBasis(order)
 
-MRA = vp.MultiResolutionAnalysis2D(world, basis, max_depth)
+MRA = vp.MultiResolutionAnalysis(world, basis, max_depth)
 
 
 def phi(x, y):
@@ -25,9 +25,9 @@ def phi(x, y):
     return alpha*np.exp(-beta*(x**2 + y**2))
 
 
-phi_tree = vp.FunctionTree2D(MRA)
-add_tree = vp.FunctionTree2D(MRA)
-mult_tree = vp.FunctionTree2D(MRA)
+phi_tree = vp.FunctionTree(MRA)
+add_tree = vp.FunctionTree(MRA)
+mult_tree = vp.FunctionTree(MRA)
 
 
 vp.project(prec, phi_tree, phi)
@@ -49,11 +49,11 @@ def test_MRAGetOrder():
     assert MRA.getOrder() == order
 
 
-#def test_add():
-#    vp.add(prec/10, add_tree, 1.0, phi_tree, -1, phi_tree)
-#    assert isclose(add_tree.evalf(0, 0), 0.0, abs_tol=prec*10)
+def test_add():
+    vp.add(prec/10, add_tree, 1.0, phi_tree, -1, phi_tree)
+    assert isclose(add_tree.evalf(0, 0), 0.0, abs_tol=prec*10)
 
 
-#def test_multiply():
-#    vp.multiply(prec, mult_tree, 1, phi_tree, phi_tree)
-#    assert isclose(mult_tree.evalf(0, 0), phi(0, 0)**2, rel_tol=prec)
+def test_multiply():
+    vp.multiply(prec, mult_tree, 1, phi_tree, phi_tree)
+    assert isclose(mult_tree.evalf(0, 0), phi(0, 0)**2, rel_tol=prec)

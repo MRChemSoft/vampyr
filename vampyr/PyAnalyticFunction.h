@@ -9,6 +9,7 @@
 
 #include "functions/RepresentableFunction.h"
 
+namespace vampyr {
 class PyAnalyticFunction3D : public mrcpp::RepresentableFunction<3> {
 public:
     PyAnalyticFunction3D(std::function<double (double x, double y, double z)> f)
@@ -50,3 +51,4 @@ public:
 protected:
     std::function<double (double x)> func;
 };
+} // namespace vampyr

@@ -11,6 +11,8 @@ using namespace mrcpp;
 
 namespace py = pybind11;
 
+namespace vampyr {
+
 template <int D>
 PyBoundingBox<D>::PyBoundingBox(int n, py::array_t<int> l, py::array_t<int> nb)
     : BoundingBox<D>() {
@@ -29,3 +31,4 @@ PyBoundingBox<D>::PyBoundingBox(int n, py::array_t<int> l, py::array_t<int> nb)
 template class PyBoundingBox<1>;
 template class PyBoundingBox<2>;
 template class PyBoundingBox<3>;
+} //namespace vampyr

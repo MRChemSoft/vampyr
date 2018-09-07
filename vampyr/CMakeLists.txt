@@ -1,62 +1,58 @@
-# minimum cmake version
-cmake_minimum_required(VERSION 3.3 FATAL_ERROR)
+include(FetchContent) 
 
-# project name and supported language
-project(account-project LANGUAGES CXX)
+FetchContent_Declare(
+    pybind11_sources
+    GIT_REPOSITORY https://github.com/pybind/pybind11.git
+    GIT_TAG        v2.2
+)
 
-# require C++14
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+FetchContent_Declare(
+    mrcpp_sources
+    GIT_REPOSITORY https://github.com/bjorgve/mrcpp.git
+    GIT_TAG        mrcpp_evalf 
+)
 
-# the pybind11 package will provide the pybind11::module imported target
-find_package(pybind11 CONFIG REQUIRED)
-find_package(Eigen3 3.3 CONFIG REQUIRED)
-find_package(MRCPP CONFIG REQUIRED)
+FetchContent_GetProperties(pybind11_sources)
 
-# create python module
-add_library(vampyr
+if(NOT pybind11_sources_POPULATED)
+    FetchContent_Populate(pybind11_sources)
+
+    add_subdirectory(
+        ${pybind11_sources_SOURCE_DIR}
+        ${pybind11_sources_BINARY_DIR}
+
+        )
+endif()
+
+FetchContent_GetProperties(mrcpp_sources)
+
+if(NOT mrcpp_sources_POPULATED)
+    FetchContent_Populate(mrcpp_sources)
+
+    add_subdirectory(
+        ${mrcpp_sources_SOURCE_DIR}
+        ${mrcpp_sources_BINARY_DIR}
+
+        )
+endif()
+
+add_library(vampyr3d
   MODULE
-    vampyr.cpp
+    vampyr3d.cpp
     PyBoundingBox.cpp
     bases.cpp
-    fundamentalTypes.cpp
-    methods.cpp
-    operators.cpp
     project.cpp
   )
 
-if(WIN32 AND (NOT MSVC))
-  target_compile_definitions(vampyr
-    PUBLIC
-      "_hypot=hypot"
-    )
-endif()
-
-target_link_libraries(vampyr
+target_link_libraries(vampyr3d
   PUBLIC
     pybind11::module
-    Eigen3::Eigen
     MRCPP::mrcpp
   )
 
-set_target_properties(vampyr
+set_target_properties(vampyr3d
   PROPERTIES
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
   )
 
-file(
-      COPY
-        __init__.py
-        version.py
-      DESTINATION
-        ${CMAKE_CURRENT_BINARY_DIR}
-      )
-
-install(
-  TARGETS
-    vampyr
-  LIBRARY
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
-  )

@@ -17,6 +17,8 @@
 namespace py = pybind11;
 using namespace mrcpp;
 
+namespace vampyr {
+
 void project3D(double prec,
                FunctionTree<3> &out,
                std::function<double (double x, double y, double z)> func,
@@ -40,18 +42,4 @@ void project1D(double prec,
     PyAnalyticFunction1D inp(std::move(func));
     project(prec, out, inp, maxIter);
 }
-
-void pyProject1D(py::module &m) {
-    m.def("project", py::overload_cast<double, FunctionTree<1> &, std::function<double (double)>, int>(&project1D),
-          py::arg("prec"), py::arg("out"), py::arg("func"), py::arg("maxIter")= -1);
-}
-
-void pyProject2D(py::module &m) {
-    m.def("project", py::overload_cast<double, FunctionTree<2> &, std::function<double (double, double)>, int>(&project2D),
-          py::arg("prec"), py::arg("out"), py::arg("func"), py::arg("maxIter")= -1);
-}
-
-void pyProject3D(py::module &m) {
-    m.def("project", py::overload_cast<double, FunctionTree<3> &, std::function<double (double, double, double)>, int>(&project3D),
-          py::arg("prec"), py::arg("out"), py::arg("func"), py::arg("maxIter")= -1);
-}
+} // namespace vampyr

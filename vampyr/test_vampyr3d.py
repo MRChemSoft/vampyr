@@ -1,5 +1,5 @@
 import numpy as np
-import vampyr as vp
+import vampyr3d as vp
 
 from math import isclose
 
@@ -11,11 +11,11 @@ prec = 1e-3
 corner = np.array([-1, -1, -1])
 boxes = np.array([2, 2, 2])
 
-world = vp.BoundingBox3D(min_scale, corner, boxes)
+world = vp.BoundingBox(min_scale, corner, boxes)
 
 basis = vp.InterpolatingBasis(order)
 
-MRA = vp.MultiResolutionAnalysis3D(world, basis, max_depth)
+MRA = vp.MultiResolutionAnalysis(world, basis, max_depth)
 
 
 def phi_exact(x, y, z):
@@ -48,13 +48,14 @@ H = vp.HelmholtzOperator(MRA, 10.0, prec)
 P = vp.PoissonOperator(MRA, prec)
 
 
-phi_tree = vp.FunctionTree3D(MRA)
-phi_tree_pois = vp.FunctionTree3D(MRA)
-v_tree = vp.FunctionTree3D(MRA)
-v_tree_pois = vp.FunctionTree3D(MRA)
+phi_tree = vp.FunctionTree(MRA)
+phi_tree_pois = vp.FunctionTree(MRA)
+v_tree = vp.FunctionTree(MRA)
+v_tree_pois = vp.FunctionTree(MRA)
 
-add_tree = vp.FunctionTree3D(MRA)
-mult_tree = vp.FunctionTree3D(MRA)
+add_tree = vp.FunctionTree(MRA)
+add_vec_tree = vp.FunctionTree(MRA)
+mult_vec_tree = vp.FunctionTree(MRA)
 
 
 vp.project(prec, v_tree, v_helm)
@@ -80,8 +81,8 @@ def test_MRAGetOrder():
     assert MRA.getOrder() == order
 
 
-#def test_evalf_helm():
-#    assert isclose(phi_tree.evalf(0, 0, 0), phi_exact(0, 0, 0), rel_tol=prec)
+def test_evalf_helm():
+    assert isclose(phi_tree.evalf(0, 0, 0), phi_exact(0, 0, 0), rel_tol=prec)
 
 
 def test_evalf_pelm():
@@ -89,12 +90,30 @@ def test_evalf_pelm():
                    phi_exact(0, 0, 0), rel_tol=prec)
 
 
-#def test_add():
-#    vp.add(prec/10, add_tree, 1.0, phi_tree, -1, phi_tree_pois)
-#    assert isclose(add_tree.evalf(0, 0, 0), 0.0, abs_tol=prec*10)
+def test_add():
+    vp.add(prec/10, add_tree, 1.0, phi_tree, -1, phi_tree_pois)
+    assert isclose(add_tree.evalf(0, 0, 0), 0.0, abs_tol=prec*10)
 
 
-#def test_multiply():
-#    vp.multiply(prec, mult_tree, 1, phi_tree, phi_tree_pois)
-#    assert isclose(mult_tree.evalf(0, 0, 0),
-#                   phi_exact(0, 0, 0)**2, rel_tol=prec)
+def test_add_vec():
+    sum_vec = vp.FunctionTreeVector()
+    vp.push_back(sum_vec, 1.0, phi_tree)
+    vp.push_back(sum_vec, -1.0, phi_tree)
+    vp.add(prec/10, add_vec_tree, sum_vec)
+    assert isclose(add_vec_tree.evalf(0.0, 0.0, 0.0), 0.0, abs_tol=prec*10)
+
+
+def test_multiply():
+    mult_tree = vp.FunctionTree(MRA)
+    vp.multiply(prec, mult_tree, 1, phi_tree, phi_tree_pois)
+    assert isclose(mult_tree.evalf(0, 0, 0),
+                   phi_exact(0, 0, 0)**2, rel_tol=prec)
+
+
+def test_multiply_vec():
+    multiply_vec = vp.FunctionTreeVector()
+    vp.push_back(multiply_vec, 1.0, phi_tree)
+    vp.push_back(multiply_vec, 1.0, phi_tree)
+    vp.multiply(prec/10, mult_vec_tree, multiply_vec)
+    assert isclose(mult_vec_tree.evalf(0, 0, 0),
+                   phi_exact(0, 0, 0)**2, rel_tol=prec)
