@@ -1,4 +1,6 @@
-build
+build*
+install*
+debug*
 .idea
 .ipynb_checkpoints
 *.ipynb
