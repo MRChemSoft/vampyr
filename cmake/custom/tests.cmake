@@ -6,7 +6,7 @@ add_test(
   NAME
     python_test
   COMMAND
-    ${CMAKE_COMMAND} -E env VAMPYR_MODULE_PATH=$<TARGET_FILE_DIR:vampyr>
+    ${CMAKE_COMMAND} -E env VAMPYR_MODULE_PATH=$<TARGET_FILE_DIR:vampyr3d>
     ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/vampyr/test_vampyr3d.py
   )
 

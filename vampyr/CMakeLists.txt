@@ -21,14 +21,14 @@ endif()
 link_directories(${STAGED_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
 
 # create python module
-add_library(vampyr
+add_library(vampyr3d
   MODULE
     vampyr3d.cpp
     bases.cpp
     project.cpp
   )
 
-target_include_directories(vampyr
+target_include_directories(vampyr3d
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>
@@ -36,24 +36,24 @@ target_include_directories(vampyr
   )
 
 # This command will become unnecessary, eventually
-target_include_directories(vampyr
+target_include_directories(vampyr3d
   PUBLIC
     $<BUILD_INTERFACE:${STAGED_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}>
     $<BUILD_INTERFACE:${STAGED_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/MRCPP>
   )
 
-add_dependencies(vampyr
+add_dependencies(vampyr3d
   mrcpp_external
   )
 
-target_link_libraries(vampyr
+target_link_libraries(vampyr3d
   PUBLIC
     pybind11::module
     Eigen3::Eigen
     mrcpp
   )
 
-set_target_properties(vampyr
+set_target_properties(vampyr3d
   PROPERTIES
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
@@ -61,7 +61,7 @@ set_target_properties(vampyr
 
 install(
   TARGETS
-    vampyr
+    vampyr3d
   ARCHIVE
     DESTINATION ${CMAKE_INSTALL_LIBDIR}
     COMPONENT lib

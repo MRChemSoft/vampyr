@@ -1,5 +1,5 @@
 import numpy as np
-import vampyr as vp
+import vampyr3d as vp
 
 from math import isclose
 
