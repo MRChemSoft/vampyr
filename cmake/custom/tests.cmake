@@ -11,4 +11,4 @@ add_test(
   )
 
 # This must come last!!
-#add_subdirectory(tests)
+add_subdirectory(tests)
