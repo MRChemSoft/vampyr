@@ -1,3 +1,7 @@
+import os
+import sys
+sys.path.append(os.getenv('VAMPYR_MODULE_PATH'))
+
 import numpy as np
 import vampyr3d as vp
 
