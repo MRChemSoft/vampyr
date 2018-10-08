@@ -8,47 +8,29 @@
 #pragma once
 
 #include "functions/RepresentableFunction.h"
+#include <array>
 
 namespace vampyr {
-class PyAnalyticFunction3D : public mrcpp::RepresentableFunction<3> {
+
+template<int D>
+class PyAnalyticFunction : public mrcpp::RepresentableFunction<D> {
 public:
-    PyAnalyticFunction3D(std::function<double (double x, double y, double z)> f)
+    PyAnalyticFunction(std::function<double (std::array<double, D>)> f)
             : func(f) { }
 
     virtual double evalf(const double *r) const {
-        double val = 0.0;
-        if (not this->outOfBounds(r)) val = this->func(r[0], r[1], r[2]);
+        auto val = 0.0;
+        auto r_tmp = std::array<double, D>();
+        for (auto i = 0; i < D; i++) {
+            r_tmp[i] = r[i];
+        }
+        if (not this->outOfBounds(r)) val = this->func(r_tmp);
         return val;
     }
-protected:
-    std::function<double (double x, double y, double z)> func;
-};
-
-class PyAnalyticFunction2D : public mrcpp::RepresentableFunction<2> {
-public:
-    PyAnalyticFunction2D(std::function<double (double x, double y)> f)
-            : func(f) { }
-
-    virtual double evalf(const double *r) const {
-        double val = 0.0;
-        if (not this->outOfBounds(r)) val = this->func(r[0], r[1]);
-        return val;
+    virtual double evalf(const std::array<double, D> &r) const {
+        return this->evalf(r.data());
     }
 protected:
-    std::function<double (double x, double y)> func;
-};
-
-class PyAnalyticFunction1D : public mrcpp::RepresentableFunction<1> {
-public:
-    PyAnalyticFunction1D(std::function<double (double x)> f)
-            : func(f) { }
-
-    virtual double evalf(const double *r) const {
-        double val = 0.0;
-        if (not this->outOfBounds(r)) val = this->func(r[0]);
-        return val;
-    }
-protected:
-    std::function<double (double x)> func;
+    std::function<double (std::array<double, D>)> func;
 };
 } // namespace vampyr
