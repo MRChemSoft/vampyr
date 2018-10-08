@@ -1,0 +1,3 @@
+[submodule "external/mrcpp"]
+	path = external/mrcpp
+	url = https://github.com/MRChemSoft/mrcpp.git
