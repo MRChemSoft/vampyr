@@ -1,0 +1,39 @@
+name: VAMPyR
+min_cmake_version: 3.11
+setup_script: setup
+default_build_type: release
+language:
+  - CXX
+
+url_root: https://github.com/coderefinery/autocmake/raw/master/
+
+modules:
+- compilers:
+  - source:
+    - '%(url_root)modules/cxx.cmake'
+- flags:
+  - source:
+    - 'compiler_flags/GNU.CXX.cmake'
+    - 'compiler_flags/Intel.CXX.cmake'
+- plugins:
+  - source:
+    - '%(url_root)modules/default_build_paths.cmake'
+    - '%(url_root)modules/safeguards.cmake'
+    - '%(url_root)modules/mpi.cmake'
+    - '%(url_root)modules/omp.cmake'
+    - '%(url_root)modules/version.cmake'
+    - '%(url_root)modules/code_coverage.cmake'
+- libs:
+  - source:
+    - 'custom/eigen.cmake'
+- custom:
+  - source:
+    - 'custom/python.cmake'
+    - 'custom/git.cmake'
+    - 'custom/main.cmake'
+    - 'custom/feature_summary.cmake'
+- tests:
+  - source:
+    - 'custom/tests.cmake'
+- save_flags:
+  - source: '%(url_root)modules/save_flags.cmake'
