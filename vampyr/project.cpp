@@ -24,5 +24,5 @@ void project(double prec,
     project(prec, out, inp, maxIter);
 }
 
-template void project(double prec, FunctionTree<3> &out, std::function<double (std::array<double, 3>)> func, int maxIter);
+template<> void project(double prec, FunctionTree<3> &out, std::function<double (std::array<double, 3>)> func, int maxIter);
 } // namespace vampyr
