@@ -8,15 +8,12 @@
 #pragma once
 
 #include <functional>
+#include <array>
 
 #include "mrcpp_declarations.h"
 
-
-void project3D(double prec, mrcpp::FunctionTree<3> &out,
-               std::function<double (double x, double y, double z)> func, int maxIter = -1);
-
-void project2D(double prec, mrcpp::FunctionTree<2> &out,
-               std::function<double (double x, double y)> func, int maxIter = -1);
-
-void project1D(double prec, mrcpp::FunctionTree<1> &out,
-               std::function<double (double x)> func, int maxIter = -1);
+namespace vampyr {
+template<int D>
+void project(double prec, mrcpp::FunctionTree<D> &out,
+               std::function<double (std::array<double, D>)> func, int maxIter = -1);
+} // namespace vampyr

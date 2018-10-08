@@ -14,8 +14,9 @@
 using namespace mrcpp;
 namespace py = pybind11;
 
+namespace vampyr {
 
-void pyBases(py::module &m) {
+void bases(py::module &m) {
 
 py::class_<ScalingBasis> scalingbasis(m, "ScalingBasis");
     scalingbasis.def(py::init<int, int>());
@@ -28,3 +29,4 @@ py::class_<LegendreBasis> (m, "LegendreBasis", scalingbasis)
     .def(py::init<int>())
     .def("getScalingOrder", &LegendreBasis::getScalingOrder);
 }
+} // namespace vampyr
