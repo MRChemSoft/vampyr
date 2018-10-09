@@ -176,12 +176,10 @@ PYBIND11_MODULE(vampyr3d, m) {
         .def(py::init< MultiResolutionAnalysis<D> &, double, double>(),
             "Derivative Operator: The ABGVOperator for differentiation");
 
-    // This does not work outside of jupyter notebooks
     m.def("divergence", py::overload_cast<FunctionTree<D> &,
           DerivativeOperator<D> &, FunctionTreeVector<D> &>
           (&mrcpp::divergence<D>));
 
-    // This does not work outside of jupyter notebooks
     m.def("gradient", py::overload_cast<DerivativeOperator<D> &,
           FunctionTree<D> &>(&gradient<D>));
 
