@@ -1,0 +1,65 @@
+version: 2
+
+variables:
+  ubuntu-1804: &ubuntu-1804
+    docker:
+      - image: mrchemsoft/circleci_ubuntu-18.04
+        name: tsubame
+        user: merzbow
+    working_directory: ~/vampyr
+  submodules: &submodules
+    run:
+      name: Clone submodules
+      command: |
+        git submodule sync --recursive
+        git submodule update --recursive --init
+  setup: &setup
+    run:
+      name: Set Python dependencies
+      command: |
+        pipenv install --three
+  report: &report
+    run:
+      name: Report
+      command: |
+        pipenv run python --version
+  configure-serial: &configure-serial
+    run:
+      name: Configuring serial
+      shell: /bin/bash
+      command: |
+        pipenv run python setup \
+          --type=release \
+          --cxx=g++ \
+          --prefix=$HOME/Software/VAMPyR
+  build: &build
+    run:
+      name: Building and installing
+      shell: /bin/bash
+      command: |
+        pipenv run cmake --build build --target install -- VERBOSE=1
+  tests: &tests
+    run:
+      name: Testing
+      shell: /bin/bash
+      command: |
+        cd build
+        pipenv run ctest --output-on-failure --verbose
+
+jobs:
+  serial-py3:
+    <<: *ubuntu-1804
+    steps:
+      - checkout
+      - *submodules
+      - *setup
+      - *report
+      - *configure-serial
+      - *build
+      - *tests
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - serial-py3

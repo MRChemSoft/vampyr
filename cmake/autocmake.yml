@@ -13,8 +13,7 @@ modules:
     - '%(url_root)modules/cxx.cmake'
 - flags:
   - source:
-    - 'compiler_flags/GNU.CXX.cmake'
-    - 'compiler_flags/Intel.CXX.cmake'
+    - 'compiler_flags/CXXFlags.cmake'
 - plugins:
   - source:
     - '%(url_root)modules/default_build_paths.cmake'
