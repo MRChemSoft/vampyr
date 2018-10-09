@@ -183,7 +183,7 @@ PYBIND11_MODULE(vampyr3d, m) {
 
     // This does not work outside of jupyter notebooks
     m.def("gradient", py::overload_cast<DerivativeOperator<D> &,
-          FunctionTree<D> &>(&gradient<D>), py::return_value_policy::copy);
+          FunctionTree<D> &>(&gradient<D>));
 
     py::class_<ConvolutionOperator<D>> convop(m, "ConvolutionOperator");
     convop
@@ -209,6 +209,8 @@ PYBIND11_MODULE(vampyr3d, m) {
 
     m.def("copy_grid", py::overload_cast<FunctionTree<D> &, FunctionTree<D> &>
           (&copy_grid<D>));
+    m.def("copy_func", py::overload_cast<FunctionTree<D> &, FunctionTree<D> &>
+          (&copy_func<D>));
 
     m.def("clear_grid", py::overload_cast<FunctionTree<D> &>(&clear_grid<D>));
     m.def("refine_grid", py::overload_cast<FunctionTree<D> &, int>
