@@ -7,7 +7,7 @@ addons:
     sources:
       - ubuntu-toolchain-r-test
     packages:
-      - g++-8
+      - g++-7
       - lcov
       - libpython3.5-dev
       - python3.5-dev
@@ -17,11 +17,11 @@ matrix:
     - os: linux
       env:
         - BUILD_TYPE='release'
-        - CXX_COMPILER='g++-8'
+        - CXX_COMPILER='g++-7'
     - os: linux
       env:
         - BUILD_TYPE='debug'
-        - CXX_COMPILER='g++-8'
+        - CXX_COMPILER='g++-7'
         - COVERAGE='--coverage'
 
 env:
@@ -76,10 +76,8 @@ after_success:
     if [[ "${COVERAGE}" = "--coverage" ]]; then
       cd ${TRAVIS_BUILD_DIR}
       lcov --version
-      lcov --directory . --capture --output-file coverage.info
+      lcov --directory build/vampyr/ --capture --output-file coverage.info
       lcov --remove coverage.info '/usr/*' --output-file coverage.info
-      lcov --remove coverage.info 'external/*' --output-file coverage.info
-      lcov --remove coverage.info 'tests/*' --output-file coverage.info
       lcov --list coverage.info
       bash <(curl -s https://codecov.io/bash) -X gcov || echo "Codecov did not collect coverage reports"
     fi
