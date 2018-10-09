@@ -9,10 +9,3 @@ name = "pypi"
 
 numpy = "*"
 
-
-[dev-packages]
-
-
-[requires]
-
-
