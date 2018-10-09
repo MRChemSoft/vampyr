@@ -8,7 +8,7 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-8
-      - libboost-all-dev
+      - lcov
       - libpython3.5-dev
       - python3.5-dev
 
@@ -22,6 +22,7 @@ matrix:
       env:
         - BUILD_TYPE='debug'
         - CXX_COMPILER='g++-8'
+        - COVERAGE='--coverage'
 
 env:
   global:
@@ -63,8 +64,22 @@ script:
            --type=${BUILD_TYPE} \
            --prefix=$HOME/Software/VAMPyR \
            --cxx=${CXX_COMPILER} \
+           ${COVERAGE} \
            ${OPENMP} \
            --cmake-options="-DEigen3_DIR=${HOME}/Deps/eigen/share/eigen3/cmake"
   - cmake --build build --target install -- VERBOSE=1
   - cd build
   - ctest --output-on-failure --verbose
+
+after_success:
+  - |
+    if [[ "${COVERAGE}" = "--coverage" ]]; then
+      cd ${TRAVIS_BUILD_DIR}
+      lcov --version
+      lcov --directory . --capture --output-file coverage.info
+      lcov --remove coverage.info '/usr/*' --output-file coverage.info
+      lcov --remove coverage.info 'external/*' --output-file coverage.info
+      lcov --remove coverage.info 'tests/*' --output-file coverage.info
+      lcov --list coverage.info
+      bash <(curl -s https://codecov.io/bash) -X gcov || echo "Codecov did not collect coverage reports"
+    fi
