@@ -13,7 +13,7 @@
 #include "mrcpp_declarations.h"
 
 namespace vampyr {
-template<int D>
-void project(double prec, mrcpp::FunctionTree<D> &out,
-               std::function<double (std::array<double, D>)> func, int maxIter = -1);
+
+template<int D> void project(double prec, mrcpp::FunctionTree<D> &out, std::function<double (std::array<double, D>)> func, int maxIter = -1);
+
 } // namespace vampyr
