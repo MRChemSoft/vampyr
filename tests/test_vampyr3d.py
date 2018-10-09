@@ -14,18 +14,24 @@ prec = 1e-3
 
 corner = [-1, -1, -1]
 boxes = [2, 2, 2]
+
 world = vp.BoundingBox(min_scale, corner, boxes)
-
 basis = vp.InterpolatingBasis(order)
-
 MRA = vp.MultiResolutionAnalysis(world, basis, max_depth)
 
 
 def phi_exact(x):
-    beta = 100
+    beta = 100.0
     alpha = (beta/np.pi)**(3/2)
 
     return alpha*np.exp(-beta*(x[0]**2 + x[1]**2 + x[2]**2))
+
+
+def d_phi_exact(x):
+    beta = 100.0
+    alpha = (beta/np.pi)**(3/2)
+
+    return -2.0*beta*alpha*x[0]*np.exp(-beta*(x[0]**2 + x[1]**2 + x[2]**2))
 
 
 def v_helm(x):
@@ -129,8 +135,8 @@ def test_gaussFunc():
     sigma = 0.01
     pos = [0.0, 0.0, 0.0]
     power = [0, 0, 0]
-    alpha = 1/(2.0*np.pi*sigma**2)**(3/2)
-    beta = 1/(2.0*sigma**2)
+    alpha = 1.0/(2.0*np.pi*sigma**2)**(3/2)
+    beta = 1.0/(2.0*sigma**2)
 
     gauss = vp.GaussFunc(beta, alpha, pos, power)
     g_tree = vp.FunctionTree(MRA)
@@ -161,3 +167,27 @@ def test_vec_dot():
     vp.dot(prec, tmp_1_tree, vec, vec)
     assert isclose(tmp_1_tree.integrate(), tmp_2_tree.integrate()*2.0,
                    rel_tol=prec)
+
+
+def test_gradient_and_divergence():
+    grad_tree = vp.FunctionTree(MRA)
+    out_grad_tree = vp.FunctionTree(MRA)
+    vp.project(prec, grad_tree, phi_exact)
+    D = vp.ABGVOperator(MRA, 0.0, 0.0)
+    grad = vp.gradient(D, grad_tree)
+    assert isclose(grad[0][1].evalf([0.1, 0.0, 0.0]),
+                   d_phi_exact([0.1, 0.0, 0.0]), rel_tol=prec)
+    grad_tree_vec = []
+    grad_tree_vec.append(tuple([1.0, grad_tree]))
+    grad_tree_vec.append(tuple([1.0, grad_tree]))
+    grad_tree_vec.append(tuple([1.0, grad_tree]))
+    vp.divergence(out_grad_tree, D, grad_tree_vec)
+    assert isclose(out_grad_tree.evalf([0.1, 0.1, 0.1]),
+                   3.0*grad[0][1].evalf([0.1, 0.1, 0.1]), rel_tol=prec)
+
+
+def test_copy_func():
+    copy_tree = vp.FunctionTree(MRA)
+    vp.copy_grid(copy_tree, phi_tree)
+    vp.copy_func(copy_tree, phi_tree)
+    assert isclose(copy_tree.integrate(), phi_tree.integrate(), rel_tol=prec)
