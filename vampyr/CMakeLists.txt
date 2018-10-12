@@ -25,7 +25,6 @@ add_library(vampyr3d
   MODULE
     vampyr3d.cpp
     bases.cpp
-    project.cpp
   )
 
 target_include_directories(vampyr3d

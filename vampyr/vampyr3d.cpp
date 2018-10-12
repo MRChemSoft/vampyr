@@ -15,9 +15,7 @@
 #include "trees/FunctionTree.h"
 #include "trees/FunctionTreeVector.h"
 
-#include "PyAnalyticFunction.h"
 #include "PyRepresentableFunction.h"
-#include "project.h"
 
 #include "operators/DerivativeOperator.h"
 #include "operators/ABGVOperator.h"
@@ -52,23 +50,26 @@ PYBIND11_MODULE(vampyr3d, m) {
     bases(m);
 
     m.def("project", py::overload_cast<double, FunctionTree<D> &,
-          std::function<double (std::array<double, D>)>, int>
-          (&vampyr::project<D>),
+          std::function<double (const Coord<D> &)>, int>
+          (&mrcpp::project<D>),
           py::arg("precision"), py::arg("output_tree"), py::arg("function"),
           py::arg("maxIter")= -1,
           "Projects an analytic function onto a FunctionTree");
 
-    m.def("project", py::overload_cast<double, FunctionTree<D> &, RepresentableFunction<D> &, int>(&mrcpp::project<D>),
-          py::arg("precision"), py::arg("output_tree"), py::arg("GaussFunc"), py::arg("maxIter") = -1);
+    m.def("project", py::overload_cast<double, FunctionTree<D> &,
+          RepresentableFunction<D> &, int>(&mrcpp::project<D>),
+          py::arg("precision"), py::arg("output_tree"), py::arg("GaussFunc"),
+          py::arg("maxIter") = -1);
 
-    py::class_<RepresentableFunction<D>, PyRepresentableFunction<D>> repfunc(m, "RepresentableFunction");
+    py::class_<RepresentableFunction<D>, PyRepresentableFunction<D>>
+    repfunc(m, "RepresentableFunction");
     repfunc
         .def(py::init<>());
 
     py::class_<Gaussian<D>> gaussian(m, "Gaussian", repfunc);
 
     py::class_<GaussFunc<D>> (m, "GaussFunc", gaussian)
-        .def(py::init<double, double, std::array<double, D> &,
+        .def(py::init<double, double, Coord<D> &,
              std::array<int, D> &>())
         .def("calcSquareNorm", &GaussFunc<D>::calcSquareNorm)
         .def("calcCoulombEnergy", &GaussFunc<D>::calcCoulombEnergy);
@@ -104,7 +105,7 @@ PYBIND11_MODULE(vampyr3d, m) {
              "Rescale the function by its norm, fixed grid")
         .def("rescale", &FunctionTree<D>::rescale,
              "Rescales the function")
-        .def("evalf", py::overload_cast<const std::array<double, D> &>
+        .def("evalf", py::overload_cast<const Coord<D> &>
             (&FunctionTree<D>::evalf),
              "Returns the function value at a given point");
 

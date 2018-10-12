@@ -14,16 +14,7 @@ class PyRepresentableFunction : public mrcpp::RepresentableFunction<D> {
 public:
     using mrcpp::RepresentableFunction<D>::RepresentableFunction;
 
-    double evalf(const double *r) const override {
-        PYBIND11_OVERLOAD_PURE(
-                double,
-                mrcpp::RepresentableFunction<D>,
-                evalf,
-                r
-        );
-    }
-
-    double evalf(const std::array<double, D> &r) const override {
+    double evalf(const mrcpp::Coord<D> &r) const override {
         PYBIND11_OVERLOAD_PURE(
                 double,
                 mrcpp::RepresentableFunction<D>,
