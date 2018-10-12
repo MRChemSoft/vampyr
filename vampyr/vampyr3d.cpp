@@ -69,7 +69,7 @@ PYBIND11_MODULE(vampyr3d, m) {
     py::class_<Gaussian<D>> gaussian(m, "Gaussian", repfunc);
 
     py::class_<GaussFunc<D>> (m, "GaussFunc", gaussian)
-        .def(py::init<double, double, std::array<double, D> &,
+        .def(py::init<double, double, Coord<D> &,
              std::array<int, D> &>())
         .def("calcSquareNorm", &GaussFunc<D>::calcSquareNorm)
         .def("calcCoulombEnergy", &GaussFunc<D>::calcCoulombEnergy);
@@ -105,7 +105,7 @@ PYBIND11_MODULE(vampyr3d, m) {
              "Rescale the function by its norm, fixed grid")
         .def("rescale", &FunctionTree<D>::rescale,
              "Rescales the function")
-        .def("evalf", py::overload_cast<const std::array<double, D> &>
+        .def("evalf", py::overload_cast<const Coord<D> &>
             (&FunctionTree<D>::evalf),
              "Returns the function value at a given point");
 
