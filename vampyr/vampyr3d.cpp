@@ -78,6 +78,7 @@ PYBIND11_MODULE(vampyr3d, m) {
     py::class_<BoundingBox<D>> (m, "BoundingBox")
         .def(py::init<int, std::array<int, D>, std::array <int, D>>(),
              "Initiates the BoundingBox of the area functions can exist")
+        .def("getBoxLength", &BoundingBox<D>::getBoxLength)
         .def("getScale", &BoundingBox<D>::getScale);
 
     py::class_<MultiResolutionAnalysis<D>> (m, "MultiResolutionAnalysis")
@@ -86,7 +87,9 @@ PYBIND11_MODULE(vampyr3d, m) {
              py::arg("Scale"))
         .def("getOrder", &MultiResolutionAnalysis<D>::getOrder,
              "Returns the order of the scaling basis")
+        .def("getWorldBox", &MultiResolutionAnalysis<D>::getWorldBox)        
         .def("getMaxDepth", &MultiResolutionAnalysis<D>::getMaxDepth)
+        .def("print", &MultiResolutionAnalysis<D>::print)
         .def("getMaxScale", &MultiResolutionAnalysis<D>::getMaxScale);
 
     py::class_<MWTree<D>> mwtree(m, "MWTree");
