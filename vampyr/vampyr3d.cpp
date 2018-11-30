@@ -234,6 +234,10 @@ PYBIND11_MODULE(vampyr3d, m) {
            FunctionTree<D> &, int>(&build_grid<D>),
            py::arg("out"), py::arg("inp"), py::arg("maxIter") = -1);
 
+     m.def("build_grid", py::overload_cast<FunctionTree<D> &,
+           FunctionTreeVector<D> &, int>(&build_grid<D>),
+           py::arg("out"), py::arg("inp"), py::arg("maxIter") = -1);
+
     m.def("copy_grid", py::overload_cast<FunctionTree<D> &, FunctionTree<D> &>
           (&copy_grid<D>));
     m.def("copy_func", py::overload_cast<FunctionTree<D> &, FunctionTree<D> &>
