@@ -104,6 +104,14 @@ PYBIND11_MODULE(vampyr3d, m) {
         .def(py::init<int, std::array<int, D>, std::array <int, D>>(),
              "Initiates the BoundingBox of the area functions can exist")
         .def("getBoxLength", &BoundingBox<D>::getBoxLength)
+        .def("getBoxLengths", &BoundingBox<D>::getBoxLengths)
+        .def("getUpperBounds", &BoundingBox<D>::getUpperBounds)
+        .def("getUpperBounds", &BoundingBox<D>::getUpperBound)
+        .def("getLowerBounds", &BoundingBox<D>::getLowerBounds)
+        .def("getLowerBound", &BoundingBox<D>::getLowerBound)
+        .def("getUnitLength", &BoundingBox<D>::getUnitLength)
+        .def("size", py::overload_cast<>(&BoundingBox<D>::size, py::const_))
+        .def("size", py::overload_cast<int>(&BoundingBox<D>::size, py::const_))
         .def("getScale", &BoundingBox<D>::getScale);
 
     py::class_<MultiResolutionAnalysis<D>> (m, "MultiResolutionAnalysis")
@@ -113,9 +121,35 @@ PYBIND11_MODULE(vampyr3d, m) {
         .def("getOrder", &MultiResolutionAnalysis<D>::getOrder,
              "Returns the order of the scaling basis")
         .def("getWorldBox", &MultiResolutionAnalysis<D>::getWorldBox)
+        .def("getScalingBasis", &MultiResolutionAnalysis<D>::getScalingBasis)
         .def("getMaxDepth", &MultiResolutionAnalysis<D>::getMaxDepth)
-        .def("print", &MultiResolutionAnalysis<D>::print)
-        .def("getMaxScale", &MultiResolutionAnalysis<D>::getMaxScale);
+        .def("getMaxScale", &MultiResolutionAnalysis<D>::getMaxScale)
+        .def("print",
+            [](const MultiResolutionAnalysis<D> &a){
+                auto boxes = std::array<int, D>{a.getWorldBox().size(0),
+                                                a.getWorldBox().size(1),
+                                                a.getWorldBox().size(2)};
+                py::print("============================================================");
+                py::print("                  MultiResolution Analysis                  ");
+                py::print("------------------------------------------------------------");
+                py::print(" scaling order     = ", a.getScalingBasis().getScalingOrder());
+                if (a.getScalingBasis().getScalingType() == Legendre) {
+                    py::print(" polynomial type   =  Legendre polynomial");
+                } else if (a.getScalingBasis().getScalingType() == Interpol) {
+                    py::print(" polynomial type   =  Interpolating polynomial");
+                } else {
+                    py::print(" polynomial type   =  Unknown");
+                }
+                py::print("------------------------------------------------------------");
+                py::print(" unit length       = ", a.getWorldBox().getUnitLength());
+                py::print(" total boxes       = ", a.getWorldBox().size());
+                py::print(" boxes             = ", boxes);
+                py::print(" lower bounds      = ", a.getWorldBox().getLowerBounds());
+                py::print(" upper bounds      = ", a.getWorldBox().getUpperBounds());
+                py::print(" total length      = ", a.getWorldBox().getBoxLengths());
+                py::print("============================================================");
+            }
+        );
 
     py::class_<MWTree<D>> mwtree(m, "MWTree");
     mwtree
