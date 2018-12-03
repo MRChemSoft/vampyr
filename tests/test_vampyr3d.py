@@ -2,22 +2,27 @@ import os
 import sys
 sys.path.append(os.getenv('VAMPYR_MODULE_PATH'))
 
+from math import isclose
+
+from pot_gen import v_generator
 import numpy as np
 import vampyr3d as vp
 
-from math import isclose
 
 min_scale = -4
 max_depth = 25
 order = 5
 prec = 1e-3
-
+beta = 100.0
+mu = 10.0
 corner = [-1, -1, -1]
 boxes = [2, 2, 2]
 
 world = vp.BoundingBox(min_scale, corner, boxes)
 basis = vp.InterpolatingBasis(order)
 MRA = vp.MultiResolutionAnalysis(world, basis, max_depth)
+
+mid = 0.0
 
 
 def phi_exact(x):
@@ -34,43 +39,19 @@ def d_phi_exact(x):
     return -2.0*beta*alpha*x[0]*np.exp(-beta*(x[0]**2 + x[1]**2 + x[2]**2))
 
 
-def v_helm(x):
-    mu = 10.0
-    beta = 100.0
-    alpha = (beta/np.pi)**(3/2)
-    coef = -6.0*beta + 4*beta**2*x[0]**2 +\
-        4*beta**2*x[1]**2 + 4*beta**2*x[2]**2 - mu**2
-
-    return (-1/(4.0*np.pi))*alpha*coef*np.exp(-beta*(x[0]**2 +
-                                              x[1]**2 + x[2]**2))
-
-
-def v_pois(x):
-    beta = 100.0
-    alpha = (beta/np.pi)**(3/2)
-    coef = -6.0*beta + 4*beta**2*x[0]**2 +\
-        4*beta**2*x[1]**2 + 4*beta**2*x[2]**2
-
-    return (-1/(4.0*np.pi))*alpha*coef*np.exp(-beta*(x[0]**2 +
-                                              x[1]**2 + x[2]**2))
-
-
-H = vp.HelmholtzOperator(MRA, 10.0, prec)
+H = vp.HelmholtzOperator(MRA, mu, prec)
 P = vp.PoissonOperator(MRA, prec)
-
 
 phi_tree = vp.FunctionTree(MRA)
 phi_tree_pois = vp.FunctionTree(MRA)
 v_tree = vp.FunctionTree(MRA)
+v_generator(v_tree, MRA, prec, beta, mid, mu)
 v_tree_pois = vp.FunctionTree(MRA)
+v_generator(v_tree_pois, MRA, prec, beta, mid)
 
 add_tree = vp.FunctionTree(MRA)
 add_vec_tree = vp.FunctionTree(MRA)
 mult_vec_tree = vp.FunctionTree(MRA)
-
-
-vp.project(prec, v_tree, v_helm)
-vp.project(prec, v_tree_pois, v_pois)
 
 vp.apply(prec, phi_tree, H, v_tree)
 vp.apply(prec, phi_tree_pois, P, v_tree_pois)

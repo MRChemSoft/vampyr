@@ -8,6 +8,7 @@
 #include "pybind11/pybind11.h"
 #include "pybind11/functional.h"
 #include "pybind11/stl.h"
+#include "pybind11/eigen.h"
 
 #include "trees/BoundingBox.h"
 #include "trees/MultiResolutionAnalysis.h"
@@ -32,6 +33,8 @@
 #include "functions/GaussFunc.h"
 #include "functions/RepresentableFunction.h"
 #include "functions/Gaussian.h"
+#include "functions/Polynomial.h"
+#include "functions/GaussPoly.h"
 
 using namespace mrcpp;
 namespace py = pybind11;
@@ -66,14 +69,36 @@ PYBIND11_MODULE(vampyr3d, m) {
     repfunc
         .def(py::init<>());
 
+    py::class_<RepresentableFunction<1>, PyRepresentableFunction<1>>
+    repfunc1d(m, "RepresentableFunction1D");
+    repfunc
+        .def(py::init<>());
+
     py::class_<Gaussian<D>> gaussian(m, "Gaussian", repfunc);
 
     py::class_<GaussFunc<D>> (m, "GaussFunc", gaussian)
         .def(py::init<double, double, Coord<D> &,
              std::array<int, D> &>())
+        .def("evalf", py::overload_cast<const Coord<D> &>(&GaussFunc<D>::evalf, py::const_))
+        .def("evalf", py::overload_cast<double, int>(&GaussFunc<D>::evalf, py::const_))
         .def("calcSquareNorm", &GaussFunc<D>::calcSquareNorm)
         .def("calcCoulombEnergy", &GaussFunc<D>::calcCoulombEnergy);
 
+    py::class_<GaussPoly<D>> (m, "GaussPoly", gaussian)
+        .def(py::init<double, double, const Coord<D> &,
+             const std::array<int, D> &>())
+        .def("setPoly", &GaussPoly<D>::setPoly)
+        .def("differentiate", &GaussPoly<D>::differentiate)
+        .def("evalf", py::overload_cast<const Coord<D> &>(&GaussPoly<D>::evalf, py::const_))
+        .def("evalf", py::overload_cast<const double, int>(&GaussPoly<D>::evalf, py::const_));
+
+    py::class_<Polynomial> (m, "Polynomial", repfunc1d)
+        .def(py::init<int, const double *, const double *>(),
+        py::arg("order"), py::arg("a") = nullptr, py::arg("b") = nullptr)
+        .def("evalf", py::overload_cast<double>(&Polynomial::evalf, py::const_))
+        .def("setCoefs", &Polynomial::setCoefs)
+        .def("getCoefs", py::overload_cast<>(&Polynomial::getCoefs))
+        .def("size", &Polynomial::size);
 
     py::class_<BoundingBox<D>> (m, "BoundingBox")
         .def(py::init<int, std::array<int, D>, std::array <int, D>>(),
@@ -87,7 +112,7 @@ PYBIND11_MODULE(vampyr3d, m) {
              py::arg("Scale"))
         .def("getOrder", &MultiResolutionAnalysis<D>::getOrder,
              "Returns the order of the scaling basis")
-        .def("getWorldBox", &MultiResolutionAnalysis<D>::getWorldBox)        
+        .def("getWorldBox", &MultiResolutionAnalysis<D>::getWorldBox)
         .def("getMaxDepth", &MultiResolutionAnalysis<D>::getMaxDepth)
         .def("print", &MultiResolutionAnalysis<D>::print)
         .def("getMaxScale", &MultiResolutionAnalysis<D>::getMaxScale);
@@ -207,6 +232,10 @@ PYBIND11_MODULE(vampyr3d, m) {
 
      m.def("build_grid", py::overload_cast<FunctionTree<D> &,
            FunctionTree<D> &, int>(&build_grid<D>),
+           py::arg("out"), py::arg("inp"), py::arg("maxIter") = -1);
+
+     m.def("build_grid", py::overload_cast<FunctionTree<D> &,
+           FunctionTreeVector<D> &, int>(&build_grid<D>),
            py::arg("out"), py::arg("inp"), py::arg("maxIter") = -1);
 
     m.def("copy_grid", py::overload_cast<FunctionTree<D> &, FunctionTree<D> &>

@@ -8,3 +8,8 @@ add_test(
     ${CMAKE_COMMAND} -E env VAMPYR_MODULE_PATH=$<TARGET_FILE_DIR:vampyr3d>
     ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/test_vampyr3d.py
   )
+
+file(
+    COPY pot_gen.py
+    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
+)
