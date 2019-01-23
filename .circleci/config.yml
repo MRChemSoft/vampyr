@@ -3,7 +3,7 @@ version: 2
 variables:
   ubuntu-1804: &ubuntu-1804
     docker:
-      - image: mrchemsoft/circleci_ubuntu-18.04
+      - image: mrchemsoft/circleci_ubuntu-18.04:9c78a7c8b9b8
         name: tsubame
         user: merzbow
     working_directory: ~/vampyr
