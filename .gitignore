@@ -6,3 +6,4 @@ debug*
 *.ipynb
 *.swp
 cmake-build-debug
+.direnv

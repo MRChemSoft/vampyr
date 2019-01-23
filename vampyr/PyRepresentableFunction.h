@@ -5,22 +5,16 @@
  *          UiT - The Arctic University of Norway
  */
 #pragma once
+
 #include "pybind11/pybind11.h"
+
 #include "functions/RepresentableFunction.h"
 
-
-template <int D>
-class PyRepresentableFunction : public mrcpp::RepresentableFunction<D> {
+template <int D> class PyRepresentableFunction : public mrcpp::RepresentableFunction<D> {
 public:
     using mrcpp::RepresentableFunction<D>::RepresentableFunction;
 
     double evalf(const mrcpp::Coord<D> &r) const override {
-        PYBIND11_OVERLOAD_PURE(
-                double,
-                mrcpp::RepresentableFunction<D>,
-                evalf,
-                r
-        );
+        PYBIND11_OVERLOAD_PURE(double, mrcpp::RepresentableFunction<D>, evalf, r);
     }
-
 };
