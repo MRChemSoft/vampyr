@@ -38,6 +38,7 @@
 
 using namespace mrcpp;
 namespace py = pybind11;
+using namespace pybind11::literals;
 
 namespace vampyr {
 
@@ -55,18 +56,18 @@ PYBIND11_MODULE(vampyr3d, m) {
     m.def(
         "project",
         py::overload_cast<double, FunctionTree<D> &, std::function<double(const Coord<D> &)>, int>(&mrcpp::project<D>),
-        py::arg("precision"),
-        py::arg("output_tree"),
-        py::arg("function"),
-        py::arg("maxIter") = -1,
+        "precision"_a,
+        "output_tree"_a,
+        "function"_a,
+        "maxIter"_a = -1,
         "Projects an analytic function onto a FunctionTree");
 
     m.def("project",
           py::overload_cast<double, FunctionTree<D> &, RepresentableFunction<D> &, int>(&mrcpp::project<D>),
-          py::arg("precision"),
-          py::arg("output_tree"),
-          py::arg("GaussFunc"),
-          py::arg("maxIter") = -1);
+          "precision"_a,
+          "output_tree"_a,
+          "GaussFunc"_a,
+          "maxIter"_a = -1);
 
     py::class_<RepresentableFunction<D>, PyRepresentableFunction<D>> repfunc(m, "RepresentableFunction");
     repfunc.def(py::init<>());
@@ -91,10 +92,7 @@ PYBIND11_MODULE(vampyr3d, m) {
         .def("evalf", py::overload_cast<const double, int>(&GaussPoly<D>::evalf, py::const_));
 
     py::class_<Polynomial>(m, "Polynomial", repfunc1d)
-        .def(py::init<int, const double *, const double *>(),
-             py::arg("order"),
-             py::arg("a") = nullptr,
-             py::arg("b") = nullptr)
+        .def(py::init<int, const double *, const double *>(), "order"_a, "a"_a = nullptr, "b"_a = nullptr)
         .def("evalf", py::overload_cast<double>(&Polynomial::evalf, py::const_))
         .def("setCoefs", &Polynomial::setCoefs)
         .def("getCoefs", py::overload_cast<>(&Polynomial::getCoefs))
@@ -115,10 +113,7 @@ PYBIND11_MODULE(vampyr3d, m) {
         .def("getScale", &BoundingBox<D>::getScale);
 
     py::class_<MultiResolutionAnalysis<D>>(m, "MultiResolutionAnalysis")
-        .def(py::init<BoundingBox<D>, ScalingBasis, int>(),
-             py::arg("BoundingBox"),
-             py::arg("Basis Function"),
-             py::arg("Scale"))
+        .def(py::init<BoundingBox<D>, ScalingBasis, int>(), "BoundingBox"_a, "Basis Function"_a, "Scale"_a)
         .def("getOrder", &MultiResolutionAnalysis<D>::getOrder, "Returns the order of the scaling basis")
         .def("getWorldBox", &MultiResolutionAnalysis<D>::getWorldBox)
         .def("getScalingBasis", &MultiResolutionAnalysis<D>::getScalingBasis)
@@ -138,7 +133,7 @@ PYBIND11_MODULE(vampyr3d, m) {
                 py::print(" polynomial type   =  Unknown");
             }
             py::print("------------------------------------------------------------");
-            py::print(" unit length       = ", a.getWorldBox().getUnitLength());
+            py::print(" unit length       = ", a.getWorldBox().getUnitLengths());
             py::print(" total boxes       = ", a.getWorldBox().size());
             py::print(" boxes             = ", boxes);
             py::print(" lower bounds      = ", a.getWorldBox().getLowerBounds());
@@ -162,90 +157,90 @@ PYBIND11_MODULE(vampyr3d, m) {
 
     m.def("apply",
           py::overload_cast<double, FunctionTree<D> &, ConvolutionOperator<D> &, FunctionTree<D> &, int>(&apply<D>),
-          py::arg("precision"),
-          py::arg("output_tree"),
-          py::arg("oper"),
-          py::arg("input_tree"),
-          py::arg("maxIter") = -1,
+          "precision"_a,
+          "output_tree"_a,
+          "oper"_a,
+          "input_tree"_a,
+          "maxIter"_a = -1,
           "Applies a given convolution operator onto a FunctionTree");
 
     m.def("apply",
           py::overload_cast<FunctionTree<D> &, DerivativeOperator<D> &, FunctionTree<D> &, int>(&apply<D>),
-          py::arg("out_tree"),
-          py::arg("DerivativeOperator"),
-          py::arg("input_tree"),
-          py::arg("dir") = -1,
+          "out_tree"_a,
+          "DerivativeOperator"_a,
+          "input_tree"_a,
+          "dir"_a = -1,
           "Applies a given derivative operator onto a FunctionTree");
 
     m.def("add",
           py::overload_cast<double, FunctionTree<D> &, double, FunctionTree<D> &, double, FunctionTree<D> &, int>(
               &add<D>),
-          py::arg("precision"),
-          py::arg("output_tree"),
-          py::arg("a"),
-          py::arg("tree_a"),
-          py::arg("b"),
-          py::arg("tree_b"),
-          py::arg("maxIter") = -1,
+          "precision"_a,
+          "output_tree"_a,
+          "a"_a,
+          "tree_a"_a,
+          "b"_a,
+          "tree_b"_a,
+          "maxIter"_a = -1,
           "Addition: output_tree = a*tree_a + b*tree_b");
 
     m.def("add",
           py::overload_cast<double, FunctionTree<D> &, FunctionTreeVector<D> &, int>(&add<D>),
-          py::arg("precision"),
-          py::arg("output_tree"),
-          py::arg("FunctionTreeVector"),
-          py::arg("maxIter") = -1,
+          "precision"_a,
+          "output_tree"_a,
+          "FunctionTreeVector"_a,
+          "maxIter"_a = -1,
           "Addition: output_tree = sum_i c_i f_i(x)");
 
     m.def("multiply",
           py::overload_cast<double, FunctionTree<D> &, double, FunctionTree<D> &, FunctionTree<D> &, int>(&multiply<D>),
-          py::arg("precision"),
-          py::arg("output_tree"),
-          py::arg("c"),
-          py::arg("tree_a"),
-          py::arg("tree_b"),
-          py::arg("maxIter") = -1,
+          "precision"_a,
+          "output_tree"_a,
+          "c"_a,
+          "tree_a"_a,
+          "tree_b"_a,
+          "maxIter"_a = -1,
           "Multiplication: output_tree = c*tree_a*tree_b");
 
     m.def("multiply",
           py::overload_cast<double, FunctionTree<D> &, FunctionTreeVector<D> &, int>(&multiply<D>),
-          py::arg("precision"),
-          py::arg("output_tree"),
-          py::arg("inpit_vector"),
-          py::arg("maxIter") = -1,
+          "precision"_a,
+          "output_tree"_a,
+          "inpit_vector"_a,
+          "maxIter"_a = -1,
           "Multiplication: output_tree = prod_i c_i f_i(x)");
 
-    m.def("dot", py::overload_cast<FunctionTree<D> &, FunctionTree<D> &>(&dot<D>), py::arg("bra"), py::arg("ket"));
+    m.def("dot", py::overload_cast<FunctionTree<D> &, FunctionTree<D> &>(&dot<D>), "bra"_a, "ket"_a);
 
     m.def("dot",
           py::overload_cast<double, FunctionTree<D> &, FunctionTreeVector<D> &, FunctionTreeVector<D> &, int>(&dot<D>),
-          py::arg("prec"),
-          py::arg("out"),
-          py::arg("inp_a"),
-          py::arg("inp_b"),
-          py::arg("maxIter") = -1);
+          "prec"_a,
+          "out"_a,
+          "inp_a"_a,
+          "inp_b"_a,
+          "maxIter"_a = -1);
 
     m.def("power",
           py::overload_cast<double, FunctionTree<D> &, FunctionTree<D> &, double, int>(&power<D>),
-          py::arg("prec"),
-          py::arg("out"),
-          py::arg("inp"),
-          py::arg("power"),
-          py::arg("maxIter") = -1);
+          "prec"_a,
+          "out"_a,
+          "inp"_a,
+          "power"_a,
+          "maxIter"_a = -1);
 
     m.def("square",
           py::overload_cast<double, FunctionTree<D> &, FunctionTree<D> &, int>(&square<D>),
-          py::arg("prec"),
-          py::arg("out"),
-          py::arg("inp"),
-          py::arg("maxIter") = -1);
+          "prec"_a,
+          "out"_a,
+          "inp"_a,
+          "maxIter"_a = -1);
 
     m.def("map",
           py::overload_cast<double, FunctionTree<D> &, FunctionTree<D> &, RepresentableFunction<D> &>(&map<D>),
-          py::arg("prec"),
-          py::arg("out"),
-          py::arg("inp"),
-          py::arg("Func"));
+          "prec"_a,
+          "out"_a,
+          "inp"_a,
+          "Func"_a);
 
     py::class_<DerivativeOperator<D>> deriv(m, "Derivative Operator");
     deriv.def(py::init<MultiResolutionAnalysis<D>>());
@@ -265,46 +260,42 @@ PYBIND11_MODULE(vampyr3d, m) {
 
     py::class_<PoissonOperator>(m, "PoissonOperator", convop)
         .def(py::init<MultiResolutionAnalysis<D> &, double>(),
-             py::arg("MRA"),
-             py::arg("precision"),
+             "MRA"_a,
+             "precision"_a,
              "ConvolutionOperator: PoissonOperator 1/|r-r'|");
 
     py::class_<HelmholtzOperator>(m, "HelmholtzOperator", convop)
         .def(py::init<MultiResolutionAnalysis<D> &, double, double>(),
-             py::arg("MRA"),
-             py::arg("mu"),
-             py::arg("precision"),
+             "MRA"_a,
+             "mu"_a,
+             "precision"_a,
              "ConvolutionOperator: HelmholtzOperator exp(-mu*r)/|r-r'|");
 
     m.def("build_grid",
           py::overload_cast<FunctionTree<D> &, const RepresentableFunction<D> &, int>(&build_grid<D>),
-          py::arg("out"),
-          py::arg("inp"),
-          py::arg("maxIter") = -1);
+          "out"_a,
+          "inp"_a,
+          "maxIter"_a = -1);
 
     m.def("build_grid",
           py::overload_cast<FunctionTree<D> &, FunctionTree<D> &, int>(&build_grid<D>),
-          py::arg("out"),
-          py::arg("inp"),
-          py::arg("maxIter") = -1);
+          "out"_a,
+          "inp"_a,
+          "maxIter"_a = -1);
 
     m.def("build_grid",
           py::overload_cast<FunctionTree<D> &, FunctionTreeVector<D> &, int>(&build_grid<D>),
-          py::arg("out"),
-          py::arg("inp"),
-          py::arg("maxIter") = -1);
+          "out"_a,
+          "inp"_a,
+          "maxIter"_a = -1);
 
     m.def("copy_grid", py::overload_cast<FunctionTree<D> &, FunctionTree<D> &>(&copy_grid<D>));
     m.def("copy_func", py::overload_cast<FunctionTree<D> &, FunctionTree<D> &>(&copy_func<D>));
 
     m.def("clear_grid", py::overload_cast<FunctionTree<D> &>(&clear_grid<D>));
-    m.def("refine_grid", py::overload_cast<FunctionTree<D> &, int>(&refine_grid<D>), py::arg("out"), py::arg("scales"));
+    m.def("refine_grid", py::overload_cast<FunctionTree<D> &, int>(&refine_grid<D>), "out"_a, "scales"_a);
 
-    m.def(
-        "refine_grid", py::overload_cast<FunctionTree<D> &, double>(&refine_grid<D>), py::arg("out"), py::arg("prec"));
-    m.def("refine_grid",
-          py::overload_cast<FunctionTree<D> &, FunctionTree<D> &>(&refine_grid<D>),
-          py::arg("out"),
-          py::arg("inp"));
+    m.def("refine_grid", py::overload_cast<FunctionTree<D> &, double>(&refine_grid<D>), "out"_a, "prec"_a);
+    m.def("refine_grid", py::overload_cast<FunctionTree<D> &, FunctionTree<D> &>(&refine_grid<D>), "out"_a, "inp"_a);
 }
 } // namespace vampyr
