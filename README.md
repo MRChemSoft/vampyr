@@ -13,7 +13,6 @@ level Python interface to the [MRCPP](https://github.com/MRChemSoft/mrcpp) code.
 ```sh
 $ git clone https://github.com/MRChemSoft/vampyr.git
 $ cd vampyr
-$ git submodule update --init --recursive
 $ ./setup
 $ cd build
 $ make
