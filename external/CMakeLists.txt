@@ -57,5 +57,4 @@ else()
       ${mrcpp_sources_BINARY_DIR}
       )
 
-    add_library(MRCPP::mrcpp ALIAS mrcpp-shared)
 endif()
