@@ -126,6 +126,14 @@ def test_gaussFunc():
     assert isclose(g_tree.integrate(), 1.0, rel_tol=prec)
 
 
+def test_gaussExp():
+    gf = vp.GaussFunc(1.0, 1.0)
+    gexp = vp.GaussExp()
+    gexp.append(gf)
+
+    assert isclose(gexp.evalf([0.0, 0.0, 0.0]), 1.0, rel_tol=prec)
+
+
 def test_power_square_and_dot():
     tmp_1_tree = vp.FunctionTree(MRA)
     tmp_2_tree = vp.FunctionTree(MRA)

@@ -24,6 +24,7 @@
 #include "treebuilders/project.h"
 
 #include "functions/GaussFunc.h"
+#include "functions/GaussExp.h"
 #include "functions/GaussPoly.h"
 #include "functions/Gaussian.h"
 #include "functions/Polynomial.h"
@@ -47,8 +48,23 @@ void representable_functions(py::module &m) {
 
     py::class_<Gaussian<D>> gaussian(m, "Gaussian", repfunc);
 
+    py::class_<GaussExp<D>>(m, "GaussExp", repfunc)
+        .def(py::init<int, double>(), "nTerms"_a = 0, "Gauss_exp_prec"_a = 1.0e-10)
+        .def(py::init<const GaussExp<D> &>())
+        .def(py::init<const GaussPoly<D> &>())
+        .def("evalf", &GaussExp<D>::evalf)
+        .def("mult", py::overload_cast<GaussExp<D> &>(&GaussExp<D>::mult))
+        .def("mult", py::overload_cast<GaussFunc<D> &>(&GaussExp<D>::mult))
+        .def("mult", py::overload_cast<GaussPoly<D> &>(&GaussExp<D>::mult))
+        .def("mult", py::overload_cast<double>(&GaussExp<D>::mult))
+        .def("multInPlace", py::overload_cast<double>(&GaussExp<D>::multInPlace))
+        .def("add", py::overload_cast<Gaussian<D> &>(&GaussExp<D>::add))
+        .def("add", py::overload_cast<Gaussian<D> &>(&GaussExp<D>::add))
+        .def("append", py::overload_cast<const Gaussian<D> &>(&GaussExp<D>::append))
+        .def("append", py::overload_cast<const GaussExp<D> &>(&GaussExp<D>::append));
+
     py::class_<GaussFunc<D>>(m, "GaussFunc", gaussian)
-        .def(py::init<double, double, Coord<D> &, std::array<int, D> &>())
+        .def(py::init<double, double, Coord<D> &, std::array<int, D> &>(), "alpha"_a, "beta"_a, "pos"_a = Coord<D>{}, "power"_a = std::array<int, D>{})
         .def("evalf", py::overload_cast<const Coord<D> &>(&GaussFunc<D>::evalf, py::const_))
         .def("evalf", py::overload_cast<double, int>(&GaussFunc<D>::evalf, py::const_))
         .def("calcSquareNorm", &GaussFunc<D>::calcSquareNorm)
