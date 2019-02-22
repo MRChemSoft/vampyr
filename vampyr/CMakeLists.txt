@@ -5,6 +5,13 @@ target_sources(vampyr3d
   PRIVATE
     vampyr3d.cpp
     bases.cpp
+    project.cpp
+    math.cpp
+    world.cpp
+    trees.cpp
+    derivative.cpp
+    applys.cpp
+    representable_functions.cpp
   )
 
 target_link_libraries(vampyr3d
