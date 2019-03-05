@@ -46,6 +46,8 @@ void trees(py::module &m) {
         .def("clear", &FunctionTree<D>::clear, "Clears the FunctionTree")
         .def("normalize", &FunctionTree<D>::normalize, "Rescale the function by its norm, fixed grid")
         .def("rescale", &FunctionTree<D>::rescale, "Rescales the function")
+        .def("saveTree", &FunctionTree<D>::saveTree, "Saves tree to file")
+        .def("loadTree", &FunctionTree<D>::loadTree, "Loads tree to file")
         .def("evalf",
              py::overload_cast<const Coord<D> &>(&FunctionTree<D>::evalf),
              "Returns the function value at a given point");
