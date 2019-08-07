@@ -67,6 +67,9 @@ void representable_functions(py::module &m) {
         .def(py::init<double, double, Coord<D> &, std::array<int, D> &>(), "alpha"_a, "beta"_a, "pos"_a = Coord<D>{}, "power"_a = std::array<int, D>{})
         .def("evalf", py::overload_cast<const Coord<D> &>(&GaussFunc<D>::evalf, py::const_))
         .def("evalf", py::overload_cast<double, int>(&GaussFunc<D>::evalf, py::const_))
+        .def("getPos", &GaussFunc<D>::getPos)
+        .def("getExp", &GaussFunc<D>::getExp)
+        .def("getCoef", &GaussFunc<D>::getCoef)
         .def("calcSquareNorm", &GaussFunc<D>::calcSquareNorm)
         .def("calcCoulombEnergy", &GaussFunc<D>::calcCoulombEnergy);
 

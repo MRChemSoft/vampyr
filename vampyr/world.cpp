@@ -40,6 +40,8 @@ void world(py::module &m) {
     py::class_<BoundingBox<D>>(m, "BoundingBox")
         .def(py::init<int, std::array<int, D>, std::array<int, D>>(),
              "Initiates the BoundingBox of the area functions can exist")
+        .def(py::init<std::array<double, D>, bool>(),
+             "Initiates the BoundingBox of the area functions can exist, for periodic systems")
         .def("getBoxLength", &BoundingBox<D>::getBoxLength)
         .def("getBoxLengths", &BoundingBox<D>::getBoxLengths)
         .def("getUpperBounds", &BoundingBox<D>::getUpperBounds)
