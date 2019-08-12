@@ -71,12 +71,12 @@ PYBIND11_MODULE(vampyr3d, m) {
 
 
 
-    m.def("map",
-          py::overload_cast<double, FunctionTree<D> &, FunctionTree<D> &, RepresentableFunction<D> &>(&map<D>),
-          "prec"_a,
-          "out"_a,
-          "inp"_a,
-          "Func"_a);
+    // m.def("map",
+    //       py::overload_cast<double, FunctionTree<D> &, FunctionTree<D> &, RepresentableFunction<D> &>(&map<D>),
+    //       "prec"_a,
+    //       "out"_a,
+    //       "inp"_a,
+    //       "Func"_a);
 
 
     m.def(

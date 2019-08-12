@@ -49,7 +49,7 @@ void trees(py::module &m) {
         .def("saveTree", &FunctionTree<D>::saveTree, "Saves tree to file")
         .def("loadTree", &FunctionTree<D>::loadTree, "Loads tree to file")
         .def("evalf",
-             py::overload_cast<const Coord<D> &>(&FunctionTree<D>::evalf),
+             py::overload_cast<const Coord<D> &>(&FunctionTree<D>::evalf, py::const_),
              "Returns the function value at a given point");
 
 }
