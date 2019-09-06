@@ -8,6 +8,7 @@
 #include "trees/FunctionTreeVector.h"
 #include "trees/MWTree.h"
 #include "trees/MultiResolutionAnalysis.h"
+#include "trees/OperatorTree.h"
 
 #include "PyRepresentableFunction.h"
 
@@ -16,6 +17,14 @@
 #include "operators/DerivativeOperator.h"
 #include "operators/HelmholtzOperator.h"
 #include "operators/PoissonOperator.h"
+#include "operators/PHOperator.h"
+#include "operators/BSOperator.h"
+#include "operators/GreensKernel.h"
+#include "operators/DerivativeKernel.h"
+#include "operators/IdentityKernel.h"
+#include "operators/MWOperator.h"
+#include "operators/HelmholtzKernel.h"
+#include "operators/OperatorState.h"
 
 #include "treebuilders/add.h"
 #include "treebuilders/apply.h"
@@ -29,6 +38,10 @@
 #include "functions/Gaussian.h"
 #include "functions/Polynomial.h"
 #include "functions/RepresentableFunction.h"
+//#include "functions/AnalyticFunction.h"
+#include "functions/BoysFunction.h"
+#include "functions/LegendrePoly.h"
+
 
 using namespace mrcpp;
 namespace py = pybind11;
@@ -58,6 +71,10 @@ void representable_functions(py::module &m) {
         .def("mult", py::overload_cast<GaussPoly<D> &>(&GaussExp<D>::mult))
         .def("mult", py::overload_cast<double>(&GaussExp<D>::mult))
         .def("multInPlace", py::overload_cast<double>(&GaussExp<D>::multInPlace))
+        .def("differentiate", &GaussExp<D>::differentiate)
+        .def("getSquareNorm", &GaussExp<D>::getSquareNorm)
+        .def("normalize", &GaussExp<D>::normalize)
+        .def("calcCoulombEnergy", &GaussExp<D>::calcCoulombEnergy)
         .def("add", py::overload_cast<Gaussian<D> &>(&GaussExp<D>::add))
         .def("add", py::overload_cast<Gaussian<D> &>(&GaussExp<D>::add))
         .def("append", py::overload_cast<const Gaussian<D> &>(&GaussExp<D>::append))
@@ -67,6 +84,9 @@ void representable_functions(py::module &m) {
         .def(py::init<double, double, Coord<D> &, std::array<int, D> &>(), "alpha"_a, "beta"_a, "pos"_a = Coord<D>{}, "power"_a = std::array<int, D>{})
         .def("evalf", py::overload_cast<const Coord<D> &>(&GaussFunc<D>::evalf, py::const_))
         .def("evalf", py::overload_cast<double, int>(&GaussFunc<D>::evalf, py::const_))
+        .def("calcOverlap", py::overload_cast<GaussFunc<D> &>(&GaussFunc<D>::calcOverlap))
+        .def("differentiate", &GaussFunc<D>::differentiate)
+        .def("calcCoulombEnergy", &GaussFunc<D>::calcCoulombEnergy)
         .def("getPos", &GaussFunc<D>::getPos)
         .def("getExp", &GaussFunc<D>::getExp)
         .def("getCoef", &GaussFunc<D>::getCoef)
@@ -77,6 +97,7 @@ void representable_functions(py::module &m) {
         .def(py::init<double, double, const Coord<D> &, const std::array<int, D> &>())
         .def("setPoly", &GaussPoly<D>::setPoly)
         .def("differentiate", &GaussPoly<D>::differentiate)
+        .def("calcOverlap", py::overload_cast<GaussPoly<D> &>(&GaussPoly<D>::calcOverlap))
         .def("evalf", py::overload_cast<const Coord<D> &>(&GaussPoly<D>::evalf, py::const_))
         .def("evalf", py::overload_cast<const double, int>(&GaussPoly<D>::evalf, py::const_));
 
@@ -84,9 +105,27 @@ void representable_functions(py::module &m) {
         .def(py::init<int, const double *, const double *>(), "order"_a, "a"_a = nullptr, "b"_a = nullptr)
         .def("evalf", py::overload_cast<double>(&Polynomial::evalf, py::const_))
         .def("setCoefs", &Polynomial::setCoefs)
+        .def("normalize", &Polynomial::normalize)
         .def("getCoefs", py::overload_cast<>(&Polynomial::getCoefs))
         .def("size", &Polynomial::size);
 
+
+// Couldn't do it!
+    //py::class_<AnalyticFunction<D>>(m, "AnalyticFunction", repfunc)
+        //.def(py::init<double, const double *, const double *>(), Coord<D> &, "a"_a = nullptr, "b"_a = nullptr)
+        //.def("evalf", py::overload_cast<double>(&AnalyticFunction<D>::evalf);
+     
+ 
+    py::class_<BoysFunction>(m, "BoysFunction", repfunc)
+        .def(py::init<int, double>(), "nTerms"_a = 0, "Boys_func_prec"_a = 1.0e-10)
+        .def("evalf", py::overload_cast<const Coord<1> &>(&BoysFunction::evalf, py::const_));
+
+
+    py::class_<LegendrePoly>(m, "LegendrePoly", repfunc1d)
+        .def(py::init<int, double, double>(), "k"_a, "n"_a = 1.0, "l"_a = 0.0)
+        .def("firstDerivative", &LegendrePoly::firstDerivative)
+        .def("secondDerivative", &LegendrePoly::secondDerivative);
+  
 
 }
 } // namespace vampyr

@@ -180,3 +180,52 @@ def test_copy_func():
     vp.copy_grid(copy_tree, phi_tree)
     vp.copy_func(copy_tree, phi_tree)
     assert isclose(copy_tree.integrate(), phi_tree.integrate(), rel_tol=prec)
+
+
+def test_function_tree_squared():
+    def f(x):
+        return 2.0
+
+    f_tree = vp.FunctionTree(MRA)
+    vp.project(prec, f_tree, f)
+    f_tree.evalf([0.0, 0.0, 0.0])
+    f_tree.square()
+    assert isclose(f_tree.evalf([0.0, 0.0, 0.0]), 4.0, rel_tol=prec)
+
+
+def test_function_tree_power():
+    def f(x):
+        return 2.0
+
+    f_tree = vp.FunctionTree(MRA)
+    vp.project(prec, f_tree, f)
+    f_tree.evalf([0.0, 0.0, 0.0])
+    f_tree.power(2.0)
+    assert isclose(f_tree.evalf([0.0, 0.0, 0.0]), 4.0, rel_tol=prec)
+
+
+def test_function_tree_add():
+    def f(x):
+        return 2.0
+
+    f_tree = vp.FunctionTree(MRA)
+    vp.project(prec, f_tree, f)
+    f_tree.evalf([0.0, 0.0, 0.0])
+    f_tree.add(2.0, f_tree)
+    assert isclose(f_tree.evalf([0.0, 0.0, 0.0]), 6.0, rel_tol=prec)
+
+
+def test_function_tree_multiply():
+    def f(x):
+        return 2.0
+
+    f_tree = vp.FunctionTree(MRA)
+    vp.project(prec, f_tree, f)
+    f_tree.evalf([0.0, 0.0, 0.0])
+    f_tree.multiply(1.0, f_tree)
+    print('am I here')
+    assert isclose(f_tree.evalf([0.0, 0.0, 0.0]), 4.0, abs_tol=prec)
+
+if __name__ == "__main__":
+    
+    test_function_tree_multiply()

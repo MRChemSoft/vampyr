@@ -8,6 +8,7 @@
 #include "trees/FunctionTreeVector.h"
 #include "trees/MWTree.h"
 #include "trees/MultiResolutionAnalysis.h"
+#include "trees/OperatorTree.h"
 
 #include "PyRepresentableFunction.h"
 
@@ -16,6 +17,15 @@
 #include "operators/DerivativeOperator.h"
 #include "operators/HelmholtzOperator.h"
 #include "operators/PoissonOperator.h"
+#include "operators/IdentityConvolution.h"
+#include "operators/PHOperator.h"
+#include "operators/BSOperator.h"
+#include "operators/GreensKernel.h"
+#include "operators/DerivativeKernel.h"
+#include "operators/IdentityKernel.h"
+#include "operators/MWOperator.h"
+#include "operators/HelmholtzKernel.h"
+#include "operators/OperatorState.h"
 
 #include "treebuilders/add.h"
 #include "treebuilders/apply.h"
@@ -28,6 +38,11 @@
 #include "functions/Gaussian.h"
 #include "functions/Polynomial.h"
 #include "functions/RepresentableFunction.h"
+//#include "functions/AnalyticFunction.h"
+#include "functions/BoysFunction.h"
+#include "functions/LegendrePoly.h"
+
+
 
 using namespace mrcpp;
 namespace py = pybind11;

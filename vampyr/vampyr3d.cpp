@@ -15,6 +15,7 @@
 #include "trees/FunctionTreeVector.h"
 #include "trees/MWTree.h"
 #include "trees/MultiResolutionAnalysis.h"
+#include "trees/OperatorTree.h"
 
 #include "PyRepresentableFunction.h"
 
@@ -23,6 +24,15 @@
 #include "operators/DerivativeOperator.h"
 #include "operators/HelmholtzOperator.h"
 #include "operators/PoissonOperator.h"
+#include "operators/IdentityConvolution.h"
+#include "operators/PHOperator.h"
+#include "operators/BSOperator.h"
+#include "operators/GreensKernel.h"
+#include "operators/DerivativeKernel.h"
+#include "operators/IdentityKernel.h"
+#include "operators/MWOperator.h"
+#include "operators/HelmholtzKernel.h"
+#include "operators/OperatorState.h"
 
 #include "treebuilders/add.h"
 #include "treebuilders/apply.h"
@@ -35,6 +45,10 @@
 #include "functions/Gaussian.h"
 #include "functions/Polynomial.h"
 #include "functions/RepresentableFunction.h"
+//#include "functions/AnalyticFunction.h"
+#include "functions/BoysFunction.h"
+#include "functions/LegendrePoly.h"
+
 
 using namespace mrcpp;
 namespace py = pybind11;
@@ -88,8 +102,43 @@ PYBIND11_MODULE(vampyr3d, m) {
     py::class_<ConvolutionOperator<D>> convop(m, "ConvolutionOperator");
     convop.def(py::init<MultiResolutionAnalysis<D> &, double>());
 
+    py::class_<IdentityConvolution<D>> identityconvop(m, "IdentityConvolution");
+    identityconvop.def(py::init<MultiResolutionAnalysis<D> &, double>());
+
+    py::class_<PHOperator<D>> phoperator(m, "PHOperator");
+    phoperator.def(py::init<MultiResolutionAnalysis<D> &, int>());
+
+    py::class_<BSOperator<D>> bsoperator(m, "BSOperator");
+    bsoperator.def(py::init<MultiResolutionAnalysis<D> &, int>());
+
+    py::class_<OperatorState<D>> operatorstate(m, "OperatorState");
+    operatorstate.def(py::init<MWNode<D> &, double*>());
+
+    py::class_<GreensKernel> greensKernel(m, "GreensKernel");
+
+    py::class_<MWOperator> mwoperator(m, "MWOperator");
+    mwoperator.def(py::init<MultiResolutionAnalysis<2>>());
+    
+    py::class_<DerivativeKernel>(m, "DerivativeKernel", greensKernel)
+        .def(py::init<double>(),
+             "eps"_a,
+             "GreensKernel: DerivativeKernel");
+
+    py::class_<HelmholtzKernel>(m, "HelmholtzKernel", greensKernel)
+        .def(py::init<double, double, double, double>(),
+             "m"_a,
+             "eps"_a,
+             "r_min"_a,
+             "r_max"_a,
+             "GreensKernel: HelmholtzKernel");    
+
+    py::class_<IdentityKernel>(m, "IdentityKernel", greensKernel)
+        .def(py::init<double>(),
+             "eps"_a,
+             "GreensKernel: IdentityKernel");
+
     py::class_<PoissonOperator>(m, "PoissonOperator", convop)
-        .def(py::init<MultiResolutionAnalysis<D> &, double>(),
+        .def(py::init<MultiResolutionAnalysis<D> &, int>(),
              "MRA"_a,
              "precision"_a,
              "ConvolutionOperator: PoissonOperator 1/|r-r'|");
