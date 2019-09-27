@@ -210,9 +210,9 @@ void trees(py::module &m) {
         .def("getNOccupied", &NodeBox<D>::getNOccupied);
 
 
-
+    // int * wont work since raw pointers does not exist in python
     py::class_<NodeIndex<D>> nodeindex(m, "NodeIndex");
-    nodeindex.def(py::init<int, int *>())
+    nodeindex.def(py::init<int, int *>())  
         .def("setScale", &NodeIndex<D>::setScale)
         .def("setTranslation", &NodeIndex<D>::setTranslation)
         .def("getScale", &NodeIndex<D>::getScale)
@@ -244,7 +244,7 @@ void trees(py::module &m) {
         .def("S_mwTransformBack", &SerialTree<D>::S_mwTransformBack);
 
 
-
+    // <FunctionTree<D> * and SharedMemory * wont work since raw pointers does not exist in python
     py::class_<SerialFunctionTree<D>> serialfunctree(m, "SerialFunctionTree", serialtree);
     serialfunctree.def(py::init<FunctionTree<D> *, SharedMemory *>())   
         .def("allocRoots", &SerialFunctionTree<D>::allocRoots)
@@ -260,7 +260,7 @@ void trees(py::module &m) {
         .def("clear", &SerialFunctionTree<D>::clear); 
 
 
-
+    // <OperatorTree * wont work since raw pointers does not exist in python
     py::class_<SerialOperatorTree>(m, "SerialOperatorTree", serialtree)
         .def(py::init<OperatorTree *>())  
         .def("allocRoots", &SerialOperatorTree::allocRoots)
