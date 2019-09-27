@@ -9,6 +9,7 @@
 #include "trees/MWTree.h"
 #include "trees/MultiResolutionAnalysis.h"
 #include "trees/OperatorTree.h"
+#include "trees/NodeIndex.h"
 
 #include "PyRepresentableFunction.h"
 
@@ -25,6 +26,7 @@
 #include "operators/MWOperator.h"
 #include "operators/HelmholtzKernel.h"
 #include "operators/OperatorState.h"
+#include "operators/OperatorStatistics.h"
 
 #include "treebuilders/add.h"
 #include "treebuilders/apply.h"
@@ -37,7 +39,7 @@
 #include "functions/Gaussian.h"
 #include "functions/Polynomial.h"
 #include "functions/RepresentableFunction.h"
-//#include "functions/AnalyticFunction.h"
+#include "functions/AnalyticFunction.h"
 #include "functions/BoysFunction.h"
 #include "functions/LegendrePoly.h"
 

@@ -9,6 +9,17 @@
 #include "trees/MWTree.h"
 #include "trees/MultiResolutionAnalysis.h"
 #include "trees/OperatorTree.h"
+#include "trees/NodeIndex.h"
+#include "trees/MWNode.h"
+#include "trees/BandWidth.h"
+#include "trees/FunctionNode.h"
+#include "trees/OperatorNode.h"
+#include "trees/SerialTree.h"
+#include "trees/SerialFunctionTree.h"
+#include "trees/SerialOperatorTree.h"
+#include "trees/TreeIterator.h"
+
+#include "utils/mpi_utils.h"
 
 #include "PyRepresentableFunction.h"
 
@@ -26,6 +37,7 @@
 #include "operators/MWOperator.h"
 #include "operators/HelmholtzKernel.h"
 #include "operators/OperatorState.h"
+#include "operators/OperatorStatistics.h"
 
 #include "treebuilders/add.h"
 #include "treebuilders/apply.h"
@@ -34,11 +46,12 @@
 #include "treebuilders/project.h"
 
 #include "functions/GaussFunc.h"
+#include "functions/GaussExp.h"
 #include "functions/GaussPoly.h"
 #include "functions/Gaussian.h"
 #include "functions/Polynomial.h"
 #include "functions/RepresentableFunction.h"
-//#include "functions/AnalyticFunction.h"
+#include "functions/AnalyticFunction.h"
 #include "functions/BoysFunction.h"
 #include "functions/LegendrePoly.h"
 
@@ -63,6 +76,8 @@ void world(py::module &m) {
         .def("getLowerBounds", &BoundingBox<D>::getLowerBounds)
         .def("getLowerBound", &BoundingBox<D>::getLowerBound)
         .def("getUnitLength", &BoundingBox<D>::getUnitLength)
+        .def("getScalingFactor", py::overload_cast<int>(&BoundingBox<D>::getScalingFactor, py::const_))
+        .def("getCornerIndex", &BoundingBox<D>::getCornerIndex)
         .def("size", py::overload_cast<>(&BoundingBox<D>::size, py::const_))
         .def("size", py::overload_cast<int>(&BoundingBox<D>::size, py::const_))
         .def("getScale", &BoundingBox<D>::getScale);

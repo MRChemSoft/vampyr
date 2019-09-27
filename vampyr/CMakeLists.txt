@@ -9,9 +9,9 @@ target_sources(vampyr3d
     math.cpp
     world.cpp
     trees.cpp
-    derivative.cpp
+    operators.cpp
     applys.cpp
-    representable_functions.cpp
+    functions.cpp
   )
 
 target_link_libraries(vampyr3d

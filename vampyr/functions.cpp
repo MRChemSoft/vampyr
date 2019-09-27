@@ -9,6 +9,7 @@
 #include "trees/MWTree.h"
 #include "trees/MultiResolutionAnalysis.h"
 #include "trees/OperatorTree.h"
+#include "trees/NodeIndex.h"
 
 #include "PyRepresentableFunction.h"
 
@@ -25,6 +26,7 @@
 #include "operators/MWOperator.h"
 #include "operators/HelmholtzKernel.h"
 #include "operators/OperatorState.h"
+#include "operators/OperatorStatistics.h"
 
 #include "treebuilders/add.h"
 #include "treebuilders/apply.h"
@@ -38,7 +40,7 @@
 #include "functions/Gaussian.h"
 #include "functions/Polynomial.h"
 #include "functions/RepresentableFunction.h"
-//#include "functions/AnalyticFunction.h"
+#include "functions/AnalyticFunction.h"
 #include "functions/BoysFunction.h"
 #include "functions/LegendrePoly.h"
 
@@ -49,15 +51,24 @@ using namespace pybind11::literals;
 
 namespace vampyr {
 
-void representable_functions(py::module &m) {
+void functions(py::module &m) {
     const auto D = 3;
+
 
     py::class_<RepresentableFunction<D>, PyRepresentableFunction<D>> repfunc(m, "RepresentableFunction");
     repfunc.def(py::init<>());
-
     // We need this for the polynomial
     py::class_<RepresentableFunction<1>, PyRepresentableFunction<1>> repfunc1d(m, "RepresentableFunction1D");
     repfunc.def(py::init<>());
+
+    py::class_<AnalyticFunction<D>>(m, "AnalyticFunction", repfunc)
+        .def(py::init<std::function<double(const Coord<D>&r)>, double *, double *>(), "r"_a = Coord<D>{}, "a"_a = nullptr, "b"_a = nullptr)
+        .def("evalf", py::overload_cast<const Coord<D> &>(&AnalyticFunction<D>::evalf, py::const_), 
+         "This function does not work properly since the input are raw pointers, for this function to work properly add input arrays in MRCPP");
+
+    py::class_<BoysFunction>(m, "BoysFunction", repfunc)
+        .def(py::init<int, double>(), "nTerms"_a = 0, "Boys_func_prec"_a = 1.0e-10)
+        .def("evalf", py::overload_cast<const Coord<1> &>(&BoysFunction::evalf, py::const_));
 
     py::class_<Gaussian<D>> gaussian(m, "Gaussian", repfunc);
 
@@ -101,6 +112,11 @@ void representable_functions(py::module &m) {
         .def("evalf", py::overload_cast<const Coord<D> &>(&GaussPoly<D>::evalf, py::const_))
         .def("evalf", py::overload_cast<const double, int>(&GaussPoly<D>::evalf, py::const_));
 
+    py::class_<LegendrePoly>(m, "LegendrePoly", repfunc1d)
+        .def(py::init<int, double, double>(), "k"_a, "n"_a = 1.0, "l"_a = 0.0)
+        .def("firstDerivative", &LegendrePoly::firstDerivative)
+        .def("secondDerivative", &LegendrePoly::secondDerivative);
+
     py::class_<Polynomial>(m, "Polynomial", repfunc1d)
         .def(py::init<int, const double *, const double *>(), "order"_a, "a"_a = nullptr, "b"_a = nullptr)
         .def("evalf", py::overload_cast<double>(&Polynomial::evalf, py::const_))
@@ -108,24 +124,6 @@ void representable_functions(py::module &m) {
         .def("normalize", &Polynomial::normalize)
         .def("getCoefs", py::overload_cast<>(&Polynomial::getCoefs))
         .def("size", &Polynomial::size);
-
-
-// Couldn't do it!
-    //py::class_<AnalyticFunction<D>>(m, "AnalyticFunction", repfunc)
-        //.def(py::init<double, const double *, const double *>(), Coord<D> &, "a"_a = nullptr, "b"_a = nullptr)
-        //.def("evalf", py::overload_cast<double>(&AnalyticFunction<D>::evalf);
-     
- 
-    py::class_<BoysFunction>(m, "BoysFunction", repfunc)
-        .def(py::init<int, double>(), "nTerms"_a = 0, "Boys_func_prec"_a = 1.0e-10)
-        .def("evalf", py::overload_cast<const Coord<1> &>(&BoysFunction::evalf, py::const_));
-
-
-    py::class_<LegendrePoly>(m, "LegendrePoly", repfunc1d)
-        .def(py::init<int, double, double>(), "k"_a, "n"_a = 1.0, "l"_a = 0.0)
-        .def("firstDerivative", &LegendrePoly::firstDerivative)
-        .def("secondDerivative", &LegendrePoly::secondDerivative);
-  
 
 }
 } // namespace vampyr
