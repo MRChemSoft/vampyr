@@ -17,6 +17,16 @@
 #include "trees/MultiResolutionAnalysis.h"
 #include "trees/OperatorTree.h"
 #include "trees/NodeIndex.h"
+#include "trees/MWNode.h"
+#include "trees/BandWidth.h"
+#include "trees/FunctionNode.h"
+#include "trees/OperatorNode.h"
+#include "trees/SerialTree.h"
+#include "trees/SerialFunctionTree.h"
+#include "trees/SerialOperatorTree.h"
+#include "trees/TreeIterator.h"
+
+#include "utils/mpi_utils.h"
 
 #include "PyRepresentableFunction.h"
 

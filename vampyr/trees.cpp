@@ -151,7 +151,7 @@ void trees(py::module &m) {
         .def("getScalingNorm", &MWNode<D>::getScalingNorm)
         .def("getWaveletNorm", &MWNode<D>::getWaveletNorm)
         .def("getComponentNorm", &MWNode<D>::getComponentNorm)
-        .def("hasComponentNorms", &MWNode<D>::hasComponentNorms)
+        //.def("hasComponentNorms", &MWNode<D>::hasComponentNorms)
         .def("getNCoefs", &MWNode<D>::getNCoefs)      
        // .def("getCoefs", py::overload_cast<const double *>(&MWNode<D>::getCoefs, py::const_))
         .def("printCoefs", &MWNode<D>::printCoefs)

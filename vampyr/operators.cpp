@@ -107,11 +107,11 @@ void operators(py::module &m) {
              "GreensKernel: HelmholtzKernel");    
 
     //HelmholtzOperator
-    py::class_<HelmholtzOperator, ConvolutionOperator<D>, MWOperator>(m, "HelmholtzOperator", py::multiple_inheritance())
+    py::class_<HelmholtzOperator, ConvolutionOperator<D>>(m, "HelmholtzOperator", py::multiple_inheritance())
         .def(py::init<MultiResolutionAnalysis<D> &, double, double>(),
              "MRA"_a,
              "mu"_a,
-             "precision"_a,
+             "precision"_a = -1.0,
              "ConvolutionOperator: HelmholtzOperator exp(-mu*r)/|r-r'|");
 
     //IdentityConvolution
