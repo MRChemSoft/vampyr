@@ -1,0 +1,44 @@
+#include "pybind11/pybind11.h"
+
+#include "PyRepresentableFunction.h"
+
+#include "functions/Gaussian.h"
+#include "functions/RepresentableFunction.h"
+
+using namespace mrcpp;
+namespace py = pybind11;
+
+namespace vampyr {
+
+    void analytic_function(py::module &, auto &);
+    void boys_function(py::module &, auto &);
+    void gauss_exp(py::module &, auto &);
+    void gauss_func(py::module &, auto &);
+    void gaussian(py::module &, auto &);
+    void gauss_poly(py::module &, auto &);
+    void legendre_poly(py::module &, auto &);
+    void polynomial(py::module &, auto &);
+
+void functions(py::module &m) {
+    const auto D = 3;
+
+
+    py::class_<RepresentableFunction<D>, PyRepresentableFunction<D>> repfunc(m, "RepresentableFunction");
+    repfunc.def(py::init<>());
+    // We need this for the polynomial
+    py::class_<RepresentableFunction<1>, PyRepresentableFunction<1>> repfunc1d(m, "RepresentableFunction1D");
+    repfunc.def(py::init<>());
+
+    py::class_<Gaussian<D>> gaussian(m, "Gaussian", repfunc);
+
+    analytic_function(m, repfunc);
+    boys_function(m, repfunc);
+    gauss_exp(m, repfunc);
+    gauss_func(m, gaussian);
+    gauss_poly(m, gaussian);
+    legendre_poly(m, repfunc1d);
+    polynomial(m, repfunc1d);
+
+
+}
+} // namespace vampyr
