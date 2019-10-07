@@ -3,6 +3,7 @@
 #include "pybind11/pybind11.h"
 #include "pybind11/stl.h"
 
+#include "functions/Gaussian.h"
 #include "functions/GaussPoly.h"
 
 using namespace mrcpp;
@@ -11,7 +12,7 @@ using namespace pybind11::literals;
 
 namespace vampyr {
 
-void gauss_poly(py::module &m, auto &gaussian) {
+void gauss_poly(py::module &m, py::class_<Gaussian<3>> &gaussian) {
     const auto D = 3;
 
 

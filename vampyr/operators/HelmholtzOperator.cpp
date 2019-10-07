@@ -13,7 +13,7 @@ using namespace pybind11::literals;
 
 namespace vampyr {
 
-void helmholtz_kernel(py::module &m) {
+void helmholtz_operator(py::module &m) {
     const auto D = 3;
 
     //HelmholtzOperator

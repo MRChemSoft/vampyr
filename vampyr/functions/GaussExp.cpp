@@ -1,5 +1,8 @@
 #include "pybind11/pybind11.h"
 
+#include "PyRepresentableFunction.h"
+
+#include "functions/GaussPoly.h"
 #include "functions/GaussExp.h"
 
 using namespace mrcpp;
@@ -8,7 +11,7 @@ using namespace pybind11::literals;
 
 namespace vampyr {
 
-void gauss_exp(py::module &m, auto &repfunc) {
+void gauss_exp(py::module &m, py::class_<RepresentableFunction<3>, PyRepresentableFunction<3>> &repfunc) {
     
     const auto D = 3;
 

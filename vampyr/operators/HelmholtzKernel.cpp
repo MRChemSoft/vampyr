@@ -1,5 +1,6 @@
 #include "pybind11/pybind11.h"
 
+#include "operators/GreensKernel.h"
 #include "operators/HelmholtzKernel.h"
 
 
@@ -10,7 +11,7 @@ using namespace pybind11::literals;
 namespace vampyr {
 
 
-void helmholtz_kernel(py::module &m, auto &greenskernel) {
+void helmholtz_kernel(py::module &m, py::class_<GreensKernel> &greenskernel) {
 
     //HelmholtzKernel
     py::class_<HelmholtzKernel>(m, "HelmholtzKernel", greenskernel)
@@ -24,3 +25,4 @@ void helmholtz_kernel(py::module &m, auto &greenskernel) {
 
 }
 } // namespace vampyr
+

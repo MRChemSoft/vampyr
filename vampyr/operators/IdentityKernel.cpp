@@ -1,5 +1,6 @@
 #include "pybind11/pybind11.h"
 
+#include "operators/GreensKernel.h"
 #include "operators/IdentityKernel.h"
 
 using namespace mrcpp;
@@ -8,7 +9,7 @@ using namespace pybind11::literals;
 
 namespace vampyr {
 
-void identity_kernel(py::module &m, auto &greenskernel) {
+void identity_kernel(py::module &m, py::class_<GreensKernel> &greenskernel) {
 
     //IdentityKernel
     py::class_<IdentityKernel>(m, "IdentityKernel", greenskernel)

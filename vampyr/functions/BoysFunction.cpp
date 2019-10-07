@@ -1,5 +1,7 @@
 #include "pybind11/pybind11.h"
 
+#include "PyRepresentableFunction.h"
+
 #include "functions/BoysFunction.h"
 
 using namespace mrcpp;
@@ -8,7 +10,7 @@ using namespace pybind11::literals;
 
 namespace vampyr {
 
-void boys_function(py::module &m, auto &repfunc) {
+void boys_function(py::module &m, py::class_<RepresentableFunction<3>, PyRepresentableFunction<3>> &repfunc) {
     const auto D = 3;
 
 py::class_<BoysFunction>(m, "BoysFunction", repfunc)

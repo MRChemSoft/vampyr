@@ -1,5 +1,7 @@
 #include "pybind11/pybind11.h"
 
+#include "PyRepresentableFunction.h"
+
 #include "functions/LegendrePoly.h"
 
 using namespace mrcpp;
@@ -8,8 +10,7 @@ using namespace pybind11::literals;
 
 namespace vampyr {
 
-void analytic_function(py::module &m, auto &repfunc1d) {
-    const auto D = 3;
+void legendre_poly(py::module &m, py::class_<RepresentableFunction<1>, PyRepresentableFunction<1>> &repfunc1d) {
 
 
 py::class_<LegendrePoly>(m, "LegendrePoly", repfunc1d)

@@ -10,14 +10,14 @@ namespace py = pybind11;
 
 namespace vampyr {
 
-    void analytic_function(py::module &, auto &);
-    void boys_function(py::module &, auto &);
-    void gauss_exp(py::module &, auto &);
-    void gauss_func(py::module &, auto &);
-    void gaussian(py::module &, auto &);
-    void gauss_poly(py::module &, auto &);
-    void legendre_poly(py::module &, auto &);
-    void polynomial(py::module &, auto &);
+    void analytic_function(py::module &, py::class_<RepresentableFunction<3>, PyRepresentableFunction<3>> &);
+    void boys_function(py::module &, py::class_<RepresentableFunction<3>, PyRepresentableFunction<3>> &);
+    void gauss_exp(py::module &, py::class_<RepresentableFunction<3>, PyRepresentableFunction<3>> &);
+    void gauss_func(py::module &, py::class_<Gaussian<3>> &);
+ //   void gaussian(py::module &, auto &);
+    void gauss_poly(py::module &, py::class_<Gaussian<3>> &);
+    void legendre_poly(py::module &, py::class_<RepresentableFunction<1>, PyRepresentableFunction<1>> &);
+    void polynomial(py::module &, py::class_<RepresentableFunction<1>, PyRepresentableFunction<1>> &);
 
 void functions(py::module &m) {
     const auto D = 3;

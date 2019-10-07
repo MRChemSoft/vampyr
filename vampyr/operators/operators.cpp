@@ -34,10 +34,10 @@ namespace vampyr {
     void derivative_kernel(py::module &);
     void derivative_operator(py::module &);
     void greens_kernel(py::module &);
-    void helmholtz_kernel(py::module &, auto &greenskernel);
+    void helmholtz_kernel(py::module &, py::class_<GreensKernel> &greenskernel);
     void helmholtz_operator(py::module &);
     void identityconvolution_operator(py::module &);
-    void identity_kernel(py::module &, auto &greenskernel);
+    void identity_kernel(py::module &, py::class_<GreensKernel> &greenskernel);
     void mw_operator(py::module &);
     void operator_state(py::module &);
     void operator_statistics(py::module &);
