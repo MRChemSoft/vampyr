@@ -6,10 +6,10 @@ target_sources(vampyr3d
 	${CMAKE_CURRENT_LIST_DIR}/ConvolutionOperator.cpp
 	${CMAKE_CURRENT_LIST_DIR}/DerivativeKernel.cpp
 	${CMAKE_CURRENT_LIST_DIR}/DerivativeOperator.cpp
-#	${CMAKE_CURRENT_LIST_DIR}/HelmholtzKernel.cpp
+	${CMAKE_CURRENT_LIST_DIR}/HelmholtzKernel.cpp
 	${CMAKE_CURRENT_LIST_DIR}/HelmholtzOperator.cpp
 	${CMAKE_CURRENT_LIST_DIR}/IdentityConvolution.cpp
-#	${CMAKE_CURRENT_LIST_DIR}/IdentityKernel.cpp
+	${CMAKE_CURRENT_LIST_DIR}/IdentityKernel.cpp
 	${CMAKE_CURRENT_LIST_DIR}/MWOperator.cpp
 	${CMAKE_CURRENT_LIST_DIR}/OperatorState.cpp
 	${CMAKE_CURRENT_LIST_DIR}/OperatorStatistics.cpp

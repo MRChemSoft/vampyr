@@ -33,7 +33,6 @@ namespace vampyr {
     void convolution_operator(py::module &);
     void derivative_kernel(py::module &);
     void derivative_operator(py::module &);
-    void greens_kernel(py::module &);
     void helmholtz_kernel(py::module &, py::class_<GreensKernel> &greenskernel);
     void helmholtz_operator(py::module &);
     void identityconvolution_operator(py::module &);
@@ -64,7 +63,6 @@ void operators(py::module &m) {
     convolution_operator(m);
     derivative_kernel(m);
     derivative_operator(m);
-    greens_kernel(m);
     helmholtz_kernel(m, greenskernel);
     helmholtz_operator(m);
     identityconvolution_operator(m);
