@@ -1,6 +1,7 @@
 target_sources(vampyr3d
   PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/operators.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/operators_grid.cpp
 	${CMAKE_CURRENT_LIST_DIR}/ABGVOperator.cpp
 	${CMAKE_CURRENT_LIST_DIR}/BSOperator.cpp
 	${CMAKE_CURRENT_LIST_DIR}/ConvolutionOperator.cpp

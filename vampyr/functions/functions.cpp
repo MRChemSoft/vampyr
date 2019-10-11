@@ -14,7 +14,6 @@ namespace vampyr {
     void boys_function(py::module &, py::class_<RepresentableFunction<3>, PyRepresentableFunction<3>> &);
     void gauss_exp(py::module &, py::class_<RepresentableFunction<3>, PyRepresentableFunction<3>> &);
     void gauss_func(py::module &, py::class_<Gaussian<3>> &);
- //   void gaussian(py::module &, auto &);
     void gauss_poly(py::module &, py::class_<Gaussian<3>> &);
     void legendre_poly(py::module &, py::class_<RepresentableFunction<1>, PyRepresentableFunction<1>> &);
     void polynomial(py::module &, py::class_<RepresentableFunction<1>, PyRepresentableFunction<1>> &);

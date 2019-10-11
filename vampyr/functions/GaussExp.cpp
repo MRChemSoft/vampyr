@@ -35,5 +35,6 @@ py::class_<GaussExp<D>>(m, "GaussExp", repfunc)
         .def("append", py::overload_cast<const Gaussian<D> &>(&GaussExp<D>::append))
         .def("append", py::overload_cast<const GaussExp<D> &>(&GaussExp<D>::append));
 
+
 }
 } // namespace vampyr

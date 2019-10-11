@@ -3,7 +3,6 @@
 #include "operators/GreensKernel.h"
 #include "operators/HelmholtzKernel.h"
 
-
 using namespace mrcpp;
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -25,4 +24,3 @@ void helmholtz_kernel(py::module &m, py::class_<GreensKernel> &greenskernel) {
 
 }
 } // namespace vampyr
-

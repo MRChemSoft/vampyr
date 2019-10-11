@@ -4,7 +4,6 @@
 
 #include "operators/MWOperator.h"
 
-
 using namespace mrcpp;
 namespace py = pybind11;
 

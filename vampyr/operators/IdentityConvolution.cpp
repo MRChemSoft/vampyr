@@ -4,7 +4,6 @@
 
 #include "operators/IdentityConvolution.h"
 
-
 using namespace mrcpp;
 namespace py = pybind11;
 

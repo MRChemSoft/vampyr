@@ -13,7 +13,6 @@ namespace vampyr {
 void operator_statistics(py::module &m) {
     const auto D = 3;
 
-
     //OperatorStatistics
     py::class_<OperatorStatistics<D>> operatorstatistics(m, "OperatorStatistics");
     operatorstatistics.def(py::init<>())

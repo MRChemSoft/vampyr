@@ -30,5 +30,6 @@ py::class_<GaussFunc<D>>(m, "GaussFunc", gaussian)
         .def("calcSquareNorm", &GaussFunc<D>::calcSquareNorm)
         .def("calcCoulombEnergy", &GaussFunc<D>::calcCoulombEnergy);
 
+
 }
 } // namespace vampyr

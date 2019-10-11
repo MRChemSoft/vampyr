@@ -12,7 +12,8 @@ namespace vampyr {
 void operator_state(py::module &m) {
     const auto D = 3;
 
-
+// The double * wont work properly in vampyr since raw pointers does not exist in python. 
+// This should probably be changed to an std::vector in mrcpp. 
     //OperatorState
     py::class_<OperatorState<D>> operatorstate(m, "OperatorState");
     operatorstate.def(py::init<MWNode<D> &, double*>());

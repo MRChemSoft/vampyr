@@ -2,7 +2,6 @@
 
 #include "operators/DerivativeKernel.h"
 
-
 using namespace mrcpp;
 namespace py = pybind11;
 using namespace pybind11::literals;
