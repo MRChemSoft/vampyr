@@ -7,6 +7,7 @@
 
 #include "trees/MultiResolutionAnalysis.h"
 
+#include "operators/ConvolutionOperator.h"
 #include "operators/IdentityConvolution.h"
 
 using namespace mrcpp;
@@ -14,10 +15,12 @@ namespace py = pybind11;
 
 namespace vampyr {
 
-void identityconvolution_operator(py::module &m) {
+void identityconvolution_operator(py::module &m, py::class_<ConvolutionOperator<3>> &convop) {
     const auto D = 3;
+
+    
     //IdentityConvolution
-	  py::class_<IdentityConvolution<D>> identityconvop(m, "IdentityConvolution");
+	  py::class_<IdentityConvolution<D>>identityconvop(m, "IdentityConvolution", convop);
       identityconvop.def(py::init<MultiResolutionAnalysis<D> &, double>());
 
 

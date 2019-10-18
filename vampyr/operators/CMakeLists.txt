@@ -4,9 +4,9 @@ target_sources(vampyr3d
     ${CMAKE_CURRENT_LIST_DIR}/operators_grid.cpp
 	${CMAKE_CURRENT_LIST_DIR}/ABGVOperator.cpp
 	${CMAKE_CURRENT_LIST_DIR}/BSOperator.cpp
-	${CMAKE_CURRENT_LIST_DIR}/ConvolutionOperator.cpp
+#	${CMAKE_CURRENT_LIST_DIR}/ConvolutionOperator.cpp
 	${CMAKE_CURRENT_LIST_DIR}/DerivativeKernel.cpp
-	${CMAKE_CURRENT_LIST_DIR}/DerivativeOperator.cpp
+#	${CMAKE_CURRENT_LIST_DIR}/DerivativeOperator.cpp
 	${CMAKE_CURRENT_LIST_DIR}/HelmholtzKernel.cpp
 	${CMAKE_CURRENT_LIST_DIR}/HelmholtzOperator.cpp
 	${CMAKE_CURRENT_LIST_DIR}/IdentityConvolution.cpp

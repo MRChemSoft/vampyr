@@ -12,6 +12,7 @@
 
 #include "PyRepresentableFunction.h"
 
+#include "operators/ConvolutionOperator.h"
 #include "operators/DerivativeOperator.h"
 #include "operators/GreensKernel.h"
 
@@ -26,25 +27,34 @@ using namespace pybind11::literals;
 
 namespace vampyr {
 
-    void abgv_operator(py::module &);
-    void bs_operator(py::module &);
-    void convolution_operator(py::module &);
+    void abgv_operator(py::module &, py::class_<DerivativeOperator<3>> &derivativeoperator);
+    void bs_operator(py::module &, py::class_<DerivativeOperator<3>> &derivativeoperator);
+    //void convolution_operator(py::module &);
     void derivative_kernel(py::module &);
-    void derivative_operator(py::module &);
+    //void derivative_operator(py::module &);
     void helmholtz_kernel(py::module &, py::class_<GreensKernel> &greenskernel);
     void helmholtz_operator(py::module &);
-    void identityconvolution_operator(py::module &);
+    void identityconvolution_operator(py::module &, py::class_<ConvolutionOperator<3>> &convop);
     void identity_kernel(py::module &, py::class_<GreensKernel> &greenskernel);
     void mw_operator(py::module &);
     void operator_state(py::module &);
     void operator_statistics(py::module &);
-    void ph_operator(py::module &);
+    void ph_operator(py::module &, py::class_<DerivativeOperator<3>> &derivativeoperator);
     void poisson_operator(py::module &);
 
 void operators(py::module &m) {
 
     const auto D = 3;
     
+
+    //ConvolutionOperator
+    py::class_<ConvolutionOperator<D>> convop(m, "ConvolutionOperator");
+    convop.def(py::init<MultiResolutionAnalysis<D> &, double>());
+
+    //DerivativeOperator
+    py::class_<DerivativeOperator<D>> derivativeoperator(m, "Derivative Operator");
+    derivativeoperator.def(py::init<MultiResolutionAnalysis<D>>());
+
     //GreensKernel
     py::class_<GreensKernel> greenskernel(m, "GreensKernel");
 
@@ -54,19 +64,19 @@ void operators(py::module &m) {
 
     m.def("gradient", py::overload_cast<DerivativeOperator<D> &, FunctionTree<D> &>(&gradient<D>));
  
-    abgv_operator(m);
-    bs_operator(m);
-    convolution_operator(m);
+    abgv_operator(m, derivativeoperator);
+    bs_operator(m, derivativeoperator);
+    //convolution_operator(m);
     derivative_kernel(m);
-    derivative_operator(m);
+    //derivative_operator(m);
     helmholtz_kernel(m, greenskernel);
     helmholtz_operator(m);
-    identityconvolution_operator(m);
+    identityconvolution_operator(m, convop);
     identity_kernel(m, greenskernel);
     mw_operator(m);
     operator_state(m);
     operator_statistics(m);
-    ph_operator(m);
+    ph_operator(m, derivativeoperator);
     poisson_operator(m);
 
 

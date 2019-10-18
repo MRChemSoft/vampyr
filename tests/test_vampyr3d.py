@@ -38,7 +38,6 @@ def d_phi_exact(x):
 
     return -2.0*beta*alpha*x[0]*np.exp(-beta*(x[0]**2 + x[1]**2 + x[2]**2))
 
-
 H = vp.HelmholtzOperator(MRA, mu, prec)
 P = vp.PoissonOperator(MRA, prec)
 
@@ -183,8 +182,7 @@ def test_copy_func():
 
 
 def test_function_tree_squared():
-    def f(x):
-        return 2.0
+    f = vp.GaussFunc(beta, 4.0*beta**2, [mid, mid, mid], power)
 
     f_tree = vp.FunctionTree(MRA)
     vp.project(prec, f_tree, f)
@@ -194,8 +192,7 @@ def test_function_tree_squared():
 
 
 def test_function_tree_power():
-    def f(x):
-        return 2.0
+    f = vp.GaussFunc(beta, 4.0*beta**2, [mid, mid, mid], power)
 
     f_tree = vp.FunctionTree(MRA)
     vp.project(prec, f_tree, f)
@@ -205,8 +202,7 @@ def test_function_tree_power():
 
 
 def test_function_tree_add():
-    def f(x):
-        return 2.0
+    f = vp.GaussFunc(beta, 4.0*beta**2, [mid, mid, mid], power)
 
     f_tree = vp.FunctionTree(MRA)
     vp.project(prec, f_tree, f)
@@ -216,8 +212,7 @@ def test_function_tree_add():
 
 
 def test_function_tree_multiply():
-    def f(x):
-        return 2.0
+    f = vp.GaussFunc(beta, 4.0*beta**2, [mid, mid, mid], power)
 
     f_tree = vp.FunctionTree(MRA)
     vp.project(prec, f_tree, f)

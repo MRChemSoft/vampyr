@@ -234,7 +234,6 @@ void trees(py::module &m) {
         .def("deallocGenNodeChunks", &SerialOperatorTree::deallocGenNodeChunks);
 
 
-
     py::class_<TreeIterator<D>> treeiterator(m, "TreeIterator");
     treeiterator.def("setReturnGenNodes", &TreeIterator<D>::setReturnGenNodes)
         .def("setMaxDepth", &TreeIterator<D>::setMaxDepth)
