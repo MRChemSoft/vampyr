@@ -15,13 +15,13 @@ namespace py = pybind11;
 
 namespace vampyr {
 
-void identityconvolution_operator(py::module &m, py::class_<ConvolutionOperator<3>> &convop) {
+void identityconvolution_operator(py::module &m) {
     const auto D = 3;
 
     
     //IdentityConvolution
-	  py::class_<IdentityConvolution<D>>identityconvop(m, "IdentityConvolution", convop);
-      identityconvop.def(py::init<MultiResolutionAnalysis<D> &, double>());
+	  py::class_<IdentityConvolution<D>, ConvolutionOperator<D>>(m, "IdentityConvolution", py::multiple_inheritance())
+      	  .def(py::init<MultiResolutionAnalysis<D> &, double>());
 
 
 }
