@@ -40,27 +40,33 @@ void world(py::module &m) {
         .def("getScalingBasis", &MultiResolutionAnalysis<D>::getScalingBasis)
         .def("getMaxDepth", &MultiResolutionAnalysis<D>::getMaxDepth)
         .def("getMaxScale", &MultiResolutionAnalysis<D>::getMaxScale)
-        .def("print", [](const MultiResolutionAnalysis<D> &a) {
+        .def("__repr__", [](const MultiResolutionAnalysis<D> &a) {
+            std::ostringstream os;
+                
             auto boxes = std::array<int, D>{a.getWorldBox().size(0), a.getWorldBox().size(1), a.getWorldBox().size(2)};
-            py::print("============================================================");
-            py::print("                  MultiResolution Analysis                  ");
-            py::print("------------------------------------------------------------");
-            py::print(" scaling order     = ", a.getScalingBasis().getScalingOrder());
-            if (a.getScalingBasis().getScalingType() == Legendre) {
-                py::print(" polynomial type   =  Legendre polynomial");
+            os << "============================================================" << std::endl; 
+            os << "                  MultiResolution Analysis                  " << std::endl; 
+            os << "------------------------------------------------------------" << std::endl; 
+            os << " scaling order     = " << a.getScalingBasis().getScalingOrder() << std::endl; 
+            if (a.getScalingBasis().getScalingType() == Legendre) { 
+                os << " polynomial type   =  Legendre polynomial" << std::endl; 
             } else if (a.getScalingBasis().getScalingType() == Interpol) {
-                py::print(" polynomial type   =  Interpolating polynomial");
+                os << " polynomial type   =  Interpolating polynomial" << std::endl; 
             } else {
-                py::print(" polynomial type   =  Unknown");
+                os << " polynomial type   =  Unknown" << std::endl; 
             }
-            py::print("------------------------------------------------------------");
-            py::print(" unit length       = ", a.getWorldBox().getUnitLengths());
-            py::print(" total boxes       = ", a.getWorldBox().size());
-            py::print(" boxes             = ", boxes);
-            py::print(" lower bounds      = ", a.getWorldBox().getLowerBounds());
-            py::print(" upper bounds      = ", a.getWorldBox().getUpperBounds());
-            py::print(" total length      = ", a.getWorldBox().getBoxLengths());
-            py::print("============================================================");
+            os << "------------------------------------------------------------" << std::endl;
+            os << " unit length       = " << a.getWorldBox().getUnitLengths()[0] << ", " << a.getWorldBox().getUnitLengths()[1] << ", " << a.getWorldBox().getUnitLengths()[2] << std::endl;
+            os << " total boxes       = " << a.getWorldBox().size() << std::endl;
+            os << " boxes             = " << boxes [0] << ", " << boxes [1] << ", " << boxes [2] << std::endl;
+            os << " lower bounds      = " << a.getWorldBox().getLowerBounds()[0] << ", " << a.getWorldBox().getLowerBounds()[1] << ", " << a.getWorldBox().getLowerBounds()[2] << std::endl;
+            os << " upper bounds      = " << a.getWorldBox().getUpperBounds()[0] << ", " << a.getWorldBox().getUpperBounds()[1] << ", " << a.getWorldBox().getUpperBounds()[2] << std::endl;
+            os << " total length      = " << a.getWorldBox().getBoxLengths()[0] << ", " << a.getWorldBox().getBoxLengths()[1] << ", " << a.getWorldBox().getBoxLengths()[2] << std::endl;
+            os << "============================================================" << std::endl;
+       
+            return os.str();
+
+
         });
 
 }

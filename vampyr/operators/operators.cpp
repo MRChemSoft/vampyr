@@ -1,9 +1,9 @@
 #include <array>
 
-#include "pybind11/eigen.h"
-#include "pybind11/pybind11.h"
-#include "pybind11/functional.h"
-#include "pybind11/stl.h"
+#include <pybind11/eigen.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
+#include <pybind11/stl.h>
 
 #include "trees/FunctionTree.h"
 #include "trees/FunctionTreeVector.h"
@@ -29,9 +29,7 @@ namespace vampyr {
 
     void abgv_operator(py::module &, py::class_<DerivativeOperator<3>> &derivativeoperator);
     void bs_operator(py::module &, py::class_<DerivativeOperator<3>> &derivativeoperator);
-    //void convolution_operator(py::module &);
     void derivative_kernel(py::module &);
-    //void derivative_operator(py::module &);
     void helmholtz_kernel(py::module &, py::class_<GreensKernel> &greenskernel);
     void helmholtz_operator(py::module &);
     void identityconvolution_operator(py::module &);
@@ -66,9 +64,7 @@ void operators(py::module &m) {
  
     abgv_operator(m, derivativeoperator);
     bs_operator(m, derivativeoperator);
-    //convolution_operator(m);
     derivative_kernel(m);
-    //derivative_operator(m);
     helmholtz_kernel(m, greenskernel);
     helmholtz_operator(m);
     identityconvolution_operator(m);

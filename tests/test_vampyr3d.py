@@ -130,7 +130,7 @@ def test_gaussExp():
     gexp = vp.GaussExp()
     gexp.append(gf)
 
-    assert isclose(gexp.evalf([0.0, 0.0, 0.0]), 1.0, rel_tol=prec)
+    assert result == pytest.approx(expected)
 
 
 def test_power_square_and_dot():
@@ -221,6 +221,3 @@ def test_function_tree_multiply():
     print('am I here')
     assert isclose(f_tree.evalf([0.0, 0.0, 0.0]), 4.0, abs_tol=prec)
 
-if __name__ == "__main__":
-    
-    test_function_tree_multiply()

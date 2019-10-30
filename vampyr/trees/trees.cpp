@@ -1,7 +1,7 @@
-#include "pybind11/eigen.h"
-#include "pybind11/functional.h"
-#include "pybind11/pybind11.h"
-#include "pybind11/stl.h"
+#include <pybind11/eigen.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
+#include <pybind11/stl.h>
 
 #include "trees/BoundingBox.h"
 #include "trees/FunctionTree.h"
@@ -41,6 +41,10 @@ void trees(py::module &m) {
         .def("getMaxWidth", &BandWidth::getMaxWidth)
         .def("setWidth", &BandWidth::setWidth);
 
+
+// The commented lines bellow were resulting in errors on compiling I (Evelin) didn't manage to fix.
+// I'm not completely sure of their importance on overall coding so left them to be "fixed" instead 
+// of just deleting.
 
 
     py::class_<MWTree<D>> mwtree(m, "MWTree");
