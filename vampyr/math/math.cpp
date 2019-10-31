@@ -70,7 +70,7 @@ void math(py::module &m) {
           "out"_a,
           "inp_a"_a,
           "inp_b"_a,
-          "maxIter"_a = -1
+          "maxIter"_a = -1,
           "abs_prec"_a = false);
 
     m.def("power",
