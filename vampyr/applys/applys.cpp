@@ -15,12 +15,13 @@ namespace vampyr {
 
 void applys(py::module &m) {
     m.def("apply",
-          py::overload_cast<double, FunctionTree<3> &, ConvolutionOperator<3> &, FunctionTree<3> &, int>(&apply<3>),
+          py::overload_cast<double, FunctionTree<3> &, ConvolutionOperator<3> &, FunctionTree<3> &, int, bool>(&apply<3>),
           "precision"_a,
           "output_tree"_a,
           "oper"_a,
           "input_tree"_a,
           "maxIter"_a = -1,
+          "abs_prec"_a = false,
           "Applies a given convolution operator onto a FunctionTree");
 
     m.def("apply",
