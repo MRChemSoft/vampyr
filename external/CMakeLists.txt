@@ -1,15 +1,15 @@
 include(FetchContent)
 
-find_package(pybind11 2.2 CONFIG QUIET)
+find_package(pybind11 2.3 CONFIG QUIET)
 if(pybind11_FOUND)
   message(STATUS "Found pybind11: ${pybind11_INCLUDE_DIR} (found version ${pybind11_VERSION})")
 else()
   message(STATUS "Suitable pybind11 could not be located. Fetching and building!")
-  FetchContent_Declare(
-    pybind11_sources
-    GIT_REPOSITORY https://github.com/pybind/pybind11.git
-    GIT_TAG        v2.2.4
-  )
+  FetchContent_Declare(pybind11_sources
+    QUIET
+    URL
+      https://github.com/pybind/pybind11/archive/v2.3.0.tar.gz
+    )
 
   FetchContent_GetProperties(pybind11_sources)
 
@@ -23,7 +23,7 @@ else()
   endif()
 endif()
 
-find_package(MRCPP CONFIG QUIET)
+find_package(MRCPP 1.1 CONFIG QUIET)
 if(TARGET MRCPP::mrcpp)
   get_property(_loc TARGET MRCPP::mrcpp PROPERTY LOCATION)
   message(STATUS "Found MRCPP: ${_loc} (found version ${MRCPP_VERSION})")
@@ -32,10 +32,8 @@ else()
 
     FetchContent_Populate(mrcpp_sources
       QUIET
-      GIT_REPOSITORY
-        https://github.com/MRChemSoft/mrcpp.git
-      GIT_TAG
-        master # Preferable to have a tag for a release
+      URL
+        https://github.com/MRChemSoft/archive/v1.1.0.tar.gz
       CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX=${STAGED_INSTALL_PREFIX}
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
@@ -56,5 +54,4 @@ else()
       ${mrcpp_sources_SOURCE_DIR}
       ${mrcpp_sources_BINARY_DIR}
       )
-
 endif()
