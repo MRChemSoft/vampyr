@@ -33,7 +33,7 @@ else()
     FetchContent_Populate(mrcpp_sources
       QUIET
       URL
-        https://github.com/MRChemSoft/archive/v1.1.0.tar.gz
+        https://github.com/MRChemSoft/mrcpp/archive/v1.1.0.tar.gz
       CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX=${STAGED_INSTALL_PREFIX}
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
