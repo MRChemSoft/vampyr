@@ -1,5 +1,7 @@
+import vampyr as vp
+from numpy import pi
+
 def x_tree_generator(x_tree, dir, prec=10e-3, beta=100.0, mid=0.0):
-    import vampyr3d as vp
     beta = 100.0
     power = [0, 0, 0]
     power[int(dir)] = 2
@@ -9,7 +11,6 @@ def x_tree_generator(x_tree, dir, prec=10e-3, beta=100.0, mid=0.0):
 
 
 def const_tree_generator(const_tree, prec=10e-3, beta=100.0, mu=0.0, mid=0.0):
-    import vampyr3d as vp
     power = [0, 0, 0]
     const = vp.GaussFunc(beta, -6.0*beta - mu**2, [mid, mid, mid], power)
     vp.build_grid(const_tree, const)
@@ -17,8 +18,6 @@ def const_tree_generator(const_tree, prec=10e-3, beta=100.0, mu=0.0, mid=0.0):
 
 
 def v_generator(v_tree, MRA, prec=10e-3, beta=100.0, mid=0.0, mu=0.0):
-    import vampyr3d as vp
-    from numpy import pi
     alpha = (beta/pi)**(3/2)
 
     x_tree = vp.FunctionTree(MRA)

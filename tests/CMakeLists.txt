@@ -1,15 +1,29 @@
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_vampyr3d.py ${CMAKE_CURRENT_BINARY_DIR})
+set(_tests_in_build_tree ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR}/..)
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_vampyr3d.py
+  ${_tests_in_build_tree}/test_vampyr3d.py
+  COPYONLY
+  )
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/pot_gen.py
+  ${_tests_in_build_tree}/pot_gen.py
+  COPYONLY
+  )
 
 # Define test
 add_test(
   NAME
     vampyr3d
   COMMAND
-    ${CMAKE_COMMAND} -E env VAMPYR_MODULE_PATH=$<TARGET_FILE_DIR:vampyr3d>
-    ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/test_vampyr3d.py
+    COMMAND ${PYTHON_EXECUTABLE} -m pytest -x -rws -vv ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR}/../test_vampyr3d.py
   )
 
-file(
-    COPY pot_gen.py
-    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
-)
+install(
+  FILES
+    test_vampyr3d.py
+    pot_gen.py
+  DESTINATION
+    ${PYMOD_INSTALL_FULLDIR}/..
+  )

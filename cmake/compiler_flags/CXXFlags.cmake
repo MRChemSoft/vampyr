@@ -1,7 +1,7 @@
-# Set C++14 compiler flags on all targets
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+set(CMAKE_CXX_EXTENSIONS FALSE)
 
-include(GNU.CXX)
-include(Intel.CXX)
+include(${CMAKE_CURRENT_LIST_DIR}/GNU.CXX.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/Intel.CXX.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/Clang.CXX.cmake)

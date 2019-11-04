@@ -1,12 +1,9 @@
-import os
-import sys
-sys.path.append(os.getenv('VAMPYR_MODULE_PATH'))
-
 from math import isclose
 
 from pot_gen import v_generator
 import numpy as np
-import vampyr3d as vp
+import vampyr as vp
+import pytest
 
 
 min_scale = -4
@@ -57,7 +54,7 @@ vp.apply(prec, phi_tree_pois, P, v_tree_pois)
 
 
 def test_IsIntWorking():
-    assert isclose(1.0, phi_tree.integrate(), rel_tol=prec)
+    assert phi_tree.integrate() == pytest.approx(1.0, rel=prec)
 
 
 def test_BBGetScale():
@@ -73,18 +70,17 @@ def test_MRAGetOrder():
 
 
 def test_evalf_helm():
-    assert isclose(phi_tree.evalf([0, 0, 0]), phi_exact([0, 0, 0]),
-                   rel_tol=prec)
+    assert phi_tree.evalf([0, 0, 0]) == pytest.approx(phi_exact([0, 0, 0]),
+                   rel=prec)
 
 
 def test_evalf_pelm():
-    assert isclose(phi_tree_pois.evalf([0, 0, 0]),
-                   phi_exact([0, 0, 0]), rel_tol=prec)
+    assert phi_tree_pois.evalf([0, 0, 0]) == pytest.approx(phi_exact([0, 0, 0]), rel=prec)
 
 
 def test_add():
     vp.add(prec/10, add_tree, 1.0, phi_tree, -1, phi_tree_pois)
-    assert isclose(add_tree.evalf([0, 0, 0]), 0.0, abs_tol=prec*10)
+    assert add_tree.evalf([0, 0, 0]) == pytest.approx(0.0, abs=prec*10)
 
 
 def test_add_vec():
@@ -92,14 +88,14 @@ def test_add_vec():
     sum_vec.append(tuple([1.0, phi_tree]))
     sum_vec.append(tuple([-1.0, phi_tree]))
     vp.add(prec/10, add_vec_tree, sum_vec)
-    assert isclose(add_vec_tree.evalf([0.0, 0.0, 0.0]), 0.0, abs_tol=prec*10)
+    assert add_vec_tree.evalf([0.0, 0.0, 0.0]) == pytest.approx(0.0, abs=prec*10)
 
 
 def test_multiply():
     mult_tree = vp.FunctionTree(MRA)
     vp.multiply(prec, mult_tree, 1, phi_tree, phi_tree_pois)
-    assert isclose(mult_tree.evalf([0, 0, 0]),
-                   phi_exact([0, 0, 0])**2, rel_tol=prec)
+    assert mult_tree.evalf([0, 0, 0]) == pytest.approx(
+                   phi_exact([0, 0, 0])**2, rel=prec)
 
 
 def test_multiply_vec():
@@ -107,8 +103,8 @@ def test_multiply_vec():
     multiply_vec.append(tuple([1.0, phi_tree]))
     multiply_vec.append(tuple([1.0, phi_tree]))
     vp.multiply(prec/10, mult_vec_tree, multiply_vec)
-    assert isclose(mult_vec_tree.evalf([0, 0, 0]),
-                   phi_exact([0, 0, 0])**2, rel_tol=prec)
+    assert mult_vec_tree.evalf([0, 0, 0]) == pytest.approx(
+                   phi_exact([0, 0, 0])**2, rel=prec)
 
 
 def test_gaussFunc():
@@ -122,7 +118,7 @@ def test_gaussFunc():
     g_tree = vp.FunctionTree(MRA)
     vp.build_grid(g_tree, gauss)
     vp.project(prec, g_tree, gauss)
-    assert isclose(g_tree.integrate(), 1.0, rel_tol=prec)
+    assert g_tree.integrate() == pytest.approx(1.0, rel=prec)
 
 
 def test_gaussExp():
@@ -130,7 +126,7 @@ def test_gaussExp():
     gexp = vp.GaussExp()
     gexp.append(gf)
 
-    assert result == pytest.approx(expected)
+    assert gexp.evalf([0.0, 0.0, 0.0]) == pytest.approx(1.0, rel=prec)
 
 
 def test_power_square_and_dot():
@@ -140,9 +136,9 @@ def test_power_square_and_dot():
 
     vp.power(prec, tmp_1_tree, phi_tree, 2.0)
     vp.square(prec, tmp_2_tree, phi_tree)
-    assert isclose(vp.dot(phi_tree, phi_tree), tmp_2_tree.integrate())
-    assert isclose(tmp_1_tree.integrate(), tmp_2_tree.integrate(),
-                   rel_tol=prec)
+    assert vp.dot(phi_tree, phi_tree) == pytest.approx(tmp_2_tree.integrate())
+    assert tmp_1_tree.integrate() == pytest.approx(tmp_2_tree.integrate(),
+                   rel=prec)
 
 
 def test_vec_dot():
@@ -153,8 +149,8 @@ def test_vec_dot():
     tmp_2_tree = vp.FunctionTree(MRA)
     vp.square(prec, tmp_2_tree, phi_tree)
     vp.dot(prec, tmp_1_tree, vec, vec)
-    assert isclose(tmp_1_tree.integrate(), tmp_2_tree.integrate()*2.0,
-                   rel_tol=prec)
+    assert tmp_1_tree.integrate() == pytest.approx(tmp_2_tree.integrate()*2.0,
+                   rel=prec)
 
 
 def test_gradient_and_divergence():
@@ -163,22 +159,22 @@ def test_gradient_and_divergence():
     vp.project(prec, grad_tree, phi_exact)
     D = vp.ABGVOperator(MRA, 0.0, 0.0)
     grad = vp.gradient(D, grad_tree)
-    assert isclose(grad[0][1].evalf([0.1, 0.0, 0.0]),
-                   d_phi_exact([0.1, 0.0, 0.0]), rel_tol=prec)
+    assert grad[0][1].evalf([0.1, 0.0, 0.0]) == pytest.approx(
+                   d_phi_exact([0.1, 0.0, 0.0]), rel=prec)
     grad_tree_vec = []
     grad_tree_vec.append(tuple([1.0, grad_tree]))
     grad_tree_vec.append(tuple([1.0, grad_tree]))
     grad_tree_vec.append(tuple([1.0, grad_tree]))
     vp.divergence(out_grad_tree, D, grad_tree_vec)
-    assert isclose(out_grad_tree.evalf([0.1, 0.1, 0.1]),
-                   3.0*grad[0][1].evalf([0.1, 0.1, 0.1]), rel_tol=prec)
+    assert out_grad_tree.evalf([0.1, 0.1, 0.1]) == pytest.approx(
+                   3.0*grad[0][1].evalf([0.1, 0.1, 0.1]), rel=prec)
 
 
 def test_copy_func():
     copy_tree = vp.FunctionTree(MRA)
     vp.copy_grid(copy_tree, phi_tree)
     vp.copy_func(copy_tree, phi_tree)
-    assert isclose(copy_tree.integrate(), phi_tree.integrate(), rel_tol=prec)
+    assert copy_tree.integrate() == pytest.approx(phi_tree.integrate(), rel=prec)
 
 
 def test_function_tree_squared():
@@ -188,7 +184,7 @@ def test_function_tree_squared():
     vp.project(prec, f_tree, f)
     f_tree.evalf([0.0, 0.0, 0.0])
     f_tree.square()
-    assert isclose(f_tree.evalf([0.0, 0.0, 0.0]), 4.0, rel_tol=prec)
+    assert f_tree.evalf([0.0, 0.0, 0.0]) == pytest.approx(4.0, rel=prec)
 
 
 def test_function_tree_power():
@@ -198,7 +194,7 @@ def test_function_tree_power():
     vp.project(prec, f_tree, f)
     f_tree.evalf([0.0, 0.0, 0.0])
     f_tree.power(2.0)
-    assert isclose(f_tree.evalf([0.0, 0.0, 0.0]), 4.0, rel_tol=prec)
+    assert f_tree.evalf([0.0, 0.0, 0.0]) == pytest.approx(4.0, rel=prec)
 
 
 def test_function_tree_add():
@@ -208,7 +204,7 @@ def test_function_tree_add():
     vp.project(prec, f_tree, f)
     f_tree.evalf([0.0, 0.0, 0.0])
     f_tree.add(2.0, f_tree)
-    assert isclose(f_tree.evalf([0.0, 0.0, 0.0]), 6.0, rel_tol=prec)
+    assert f_tree.evalf([0.0, 0.0, 0.0]) == pytest.approx(6.0, rel=prec)
 
 
 def test_function_tree_multiply():
@@ -218,6 +214,4 @@ def test_function_tree_multiply():
     vp.project(prec, f_tree, f)
     f_tree.evalf([0.0, 0.0, 0.0])
     f_tree.multiply(1.0, f_tree)
-    print('am I here')
-    assert isclose(f_tree.evalf([0.0, 0.0, 0.0]), 4.0, abs_tol=prec)
-
+    assert f_tree.evalf([0.0, 0.0, 0.0]) == pytest.approx(4.0, abs=prec)
