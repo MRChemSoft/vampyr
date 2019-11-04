@@ -51,7 +51,7 @@ install:
   - export PATH=$HOME/Deps/cmake/$CMAKE_VERSION/bin${PATH:+:$PATH}
   - ./.ci/eigen.sh
   - pip install --user pipenv --upgrade
-  - pipenv install --python="/usr/bin/python3.5"
+  - pipenv install --python="/usr/bin/python3.5" --dev
 
 before_script:
   - test -n $CXX && unset CXX
