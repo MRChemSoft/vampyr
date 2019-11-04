@@ -9,3 +9,8 @@ name = "pypi"
 
 numpy = "*"
 
+[dev-packages]
+
+pytest = "*"
+pyyaml = "*"
+
