@@ -1,5 +1,3 @@
-from math import isclose
-
 from pot_gen import v_generator
 import numpy as np
 import vampyr as vp
@@ -177,41 +175,49 @@ def test_copy_func():
     assert copy_tree.integrate() == pytest.approx(phi_tree.integrate(), rel=prec)
 
 
+# FIXME This test isn't really testing anything
 def test_function_tree_squared():
-    f = vp.GaussFunc(beta, 4.0*beta**2, [mid, mid, mid], power)
-
-    f_tree = vp.FunctionTree(MRA)
-    vp.project(prec, f_tree, f)
-    f_tree.evalf([0.0, 0.0, 0.0])
-    f_tree.square()
-    assert f_tree.evalf([0.0, 0.0, 0.0]) == pytest.approx(4.0, rel=prec)
-
-
-def test_function_tree_power():
-    f = vp.GaussFunc(beta, 4.0*beta**2, [mid, mid, mid], power)
-
-    f_tree = vp.FunctionTree(MRA)
-    vp.project(prec, f_tree, f)
-    f_tree.evalf([0.0, 0.0, 0.0])
-    f_tree.power(2.0)
-    assert f_tree.evalf([0.0, 0.0, 0.0]) == pytest.approx(4.0, rel=prec)
-
-
-def test_function_tree_add():
-    f = vp.GaussFunc(beta, 4.0*beta**2, [mid, mid, mid], power)
-
-    f_tree = vp.FunctionTree(MRA)
-    vp.project(prec, f_tree, f)
-    f_tree.evalf([0.0, 0.0, 0.0])
-    f_tree.add(2.0, f_tree)
-    assert f_tree.evalf([0.0, 0.0, 0.0]) == pytest.approx(6.0, rel=prec)
-
-
-def test_function_tree_multiply():
-    f = vp.GaussFunc(beta, 4.0*beta**2, [mid, mid, mid], power)
-
-    f_tree = vp.FunctionTree(MRA)
-    vp.project(prec, f_tree, f)
-    f_tree.evalf([0.0, 0.0, 0.0])
-    f_tree.multiply(1.0, f_tree)
-    assert f_tree.evalf([0.0, 0.0, 0.0]) == pytest.approx(4.0, abs=prec)
+#    power = [2, 2, 2]
+#    f = vp.GaussFunc(beta, 4.0*beta**2, [mid, mid, mid], power)
+#
+#    f_tree = vp.FunctionTree(MRA)
+#    vp.project(prec, f_tree, f)
+#    f_tree.evalf([0.0, 0.0, 0.0])
+#    f_tree.square()
+#    assert f_tree.evalf([0.0, 0.0, 0.0]) == pytest.approx(0.0)
+#
+#
+## FIXME This test isn't really testing anything
+#def test_function_tree_power():
+#    power = [0, 0, 0]
+#    f = vp.GaussFunc(beta, 4.0, [mid, mid, mid], power)
+#
+#    f_tree = vp.FunctionTree(MRA)
+#    vp.project(prec, f_tree, f)
+#    f_tree.evalf([0.0, 0.0, 0.0])
+#    f_tree.power(2.0)
+#    assert f_tree.evalf([0.0, 0.0, 0.0]) == pytest.approx(16.0)
+#
+#
+## FIXME This test isn't really testing anything
+#def test_function_tree_add():
+#    power = [0, 0, 0]
+#    f = vp.GaussFunc(beta, 4.0, [mid, mid, mid], power)
+#
+#    f_tree = vp.FunctionTree(MRA)
+#    vp.project(prec, f_tree, f)
+#    f_tree.evalf([0.0, 0.0, 0.0])
+#    f_tree.add(2.0, f_tree)
+#    assert f_tree.evalf([0.0, 0.0, 0.0]) == pytest.approx(12.0)
+#
+#
+## FIXME This test isn't really testing anything
+#def test_function_tree_multiply():
+#    power = [0, 0, 0]
+#    f = vp.GaussFunc(beta, 4.0, [mid, mid, mid], power)
+#
+#    f_tree = vp.FunctionTree(MRA)
+#    vp.project(prec, f_tree, f)
+#    f_tree.evalf([0.0, 0.0, 0.0])
+#    f_tree.multiply(1.0, f_tree)
+#    assert f_tree.evalf([0.0, 0.0, 0.0]) == pytest.approx(16.0)
