@@ -175,8 +175,8 @@ def test_copy_func():
     assert copy_tree.integrate() == pytest.approx(phi_tree.integrate(), rel=prec)
 
 
-# FIXME This test isn't really testing anything
-def test_function_tree_squared():
+## FIXME This test isn't really testing anything
+#def test_function_tree_squared():
 #    power = [2, 2, 2]
 #    f = vp.GaussFunc(beta, 4.0*beta**2, [mid, mid, mid], power)
 #
