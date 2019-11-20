@@ -17,7 +17,7 @@ variables:
     run:
       name: Set Python dependencies
       command: |
-        pipenv install --three
+        pipenv install --three --dev
   report: &report
     run:
       name: Report
