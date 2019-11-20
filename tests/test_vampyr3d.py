@@ -38,7 +38,6 @@ def d_phi_exact(x):
 
     return -2.0*beta*alpha*x[0]*np.exp(-beta*(x[0]**2 + x[1]**2 + x[2]**2))
 
-
 H = vp.HelmholtzOperator(MRA, mu, prec)
 P = vp.PoissonOperator(MRA, prec)
 
@@ -126,6 +125,14 @@ def test_gaussFunc():
     assert isclose(g_tree.integrate(), 1.0, rel_tol=prec)
 
 
+def test_gaussExp():
+    gf = vp.GaussFunc(1.0, 1.0)
+    gexp = vp.GaussExp()
+    gexp.append(gf)
+
+    assert result == pytest.approx(expected)
+
+
 def test_power_square_and_dot():
     tmp_1_tree = vp.FunctionTree(MRA)
     tmp_2_tree = vp.FunctionTree(MRA)
@@ -172,3 +179,45 @@ def test_copy_func():
     vp.copy_grid(copy_tree, phi_tree)
     vp.copy_func(copy_tree, phi_tree)
     assert isclose(copy_tree.integrate(), phi_tree.integrate(), rel_tol=prec)
+
+
+def test_function_tree_squared():
+    f = vp.GaussFunc(beta, 4.0*beta**2, [mid, mid, mid], power)
+
+    f_tree = vp.FunctionTree(MRA)
+    vp.project(prec, f_tree, f)
+    f_tree.evalf([0.0, 0.0, 0.0])
+    f_tree.square()
+    assert isclose(f_tree.evalf([0.0, 0.0, 0.0]), 4.0, rel_tol=prec)
+
+
+def test_function_tree_power():
+    f = vp.GaussFunc(beta, 4.0*beta**2, [mid, mid, mid], power)
+
+    f_tree = vp.FunctionTree(MRA)
+    vp.project(prec, f_tree, f)
+    f_tree.evalf([0.0, 0.0, 0.0])
+    f_tree.power(2.0)
+    assert isclose(f_tree.evalf([0.0, 0.0, 0.0]), 4.0, rel_tol=prec)
+
+
+def test_function_tree_add():
+    f = vp.GaussFunc(beta, 4.0*beta**2, [mid, mid, mid], power)
+
+    f_tree = vp.FunctionTree(MRA)
+    vp.project(prec, f_tree, f)
+    f_tree.evalf([0.0, 0.0, 0.0])
+    f_tree.add(2.0, f_tree)
+    assert isclose(f_tree.evalf([0.0, 0.0, 0.0]), 6.0, rel_tol=prec)
+
+
+def test_function_tree_multiply():
+    f = vp.GaussFunc(beta, 4.0*beta**2, [mid, mid, mid], power)
+
+    f_tree = vp.FunctionTree(MRA)
+    vp.project(prec, f_tree, f)
+    f_tree.evalf([0.0, 0.0, 0.0])
+    f_tree.multiply(1.0, f_tree)
+    print('am I here')
+    assert isclose(f_tree.evalf([0.0, 0.0, 0.0]), 4.0, abs_tol=prec)
+

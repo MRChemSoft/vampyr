@@ -7,3 +7,4 @@ debug*
 *.swp
 cmake-build-debug
 .direnv
+.pytest_cache
