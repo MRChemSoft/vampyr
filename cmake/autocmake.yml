@@ -27,7 +27,6 @@ modules:
     - 'custom/eigen.cmake'
 - custom:
   - source:
-    - 'custom/python.cmake'
     - 'custom/main.cmake'
     - 'custom/feature_summary.cmake'
 - tests:

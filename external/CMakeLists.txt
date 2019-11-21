@@ -1,5 +1,12 @@
 include(FetchContent)
 
+set(PYBIND11_PYTHON_VERSION 3.5)
+if(MSVC)
+  set(PYBIND11_CPP_STANDARD "/std:c++${CMAKE_CXX_STANDARD}")
+else()
+  set(PYBIND11_CPP_STANDARD "-std=c++${CMAKE_CXX_STANDARD}")
+endif()
+
 find_package(pybind11 2.3 CONFIG QUIET)
 if(pybind11_FOUND)
   message(STATUS "Found pybind11: ${pybind11_INCLUDE_DIR} (found version ${pybind11_VERSION})")
@@ -12,6 +19,10 @@ else()
     )
 
   FetchContent_GetProperties(pybind11_sources)
+
+  set(PYBIND11_PYTHON_VERSION ${PYBIND11_PYTHON_VERSION})
+  set(PYBIND11_TEST OFF CACHE BOOL "")
+  set(PYMOD_INSTALL_FULLDIR ${PYMOD_INSTALL_FULLDIR})
 
   if(NOT pybind11_sources_POPULATED)
     FetchContent_Populate(pybind11_sources)
@@ -29,29 +40,30 @@ if(TARGET MRCPP::mrcpp)
   message(STATUS "Found MRCPP: ${_loc} (found version ${MRCPP_VERSION})")
 else()
   message(STATUS "Suitable MRCPP could not be located. Fetching and building!")
+  FetchContent_Declare(mrcpp_sources
+    QUIET
+    URL
+      https://github.com/MRChemSoft/mrcpp/archive/v1.1.0.tar.gz
+    )
 
-    FetchContent_Populate(mrcpp_sources
-      QUIET
-      URL
-        https://github.com/MRChemSoft/mrcpp/archive/v1.1.0.tar.gz
-      CMAKE_ARGS
-        -DCMAKE_INSTALL_PREFIX=${STAGED_INSTALL_PREFIX}
-        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-        -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-        -DENABLE_OPENMP=${ENABLE_OPENMP}
-        -DENABLE_MPI=${ENABLE_MPI}
-        -DEigen3_DIR=${Eigen3_DIR}
-        -DENABLE_TESTS=TRUE
-        -DENABLE_EXAMPLES=FALSE
-        -DSHARED_LIBRARY_ONLY=TRUE # Seems to be ignored...
-      CMAKE_CACHE_ARGS
-        -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
-      TEST_BEFORE_INSTALL # Also this one seems to be ignored...
-        1
-      )
+  FetchContent_GetProperties(mrcpp_sources)
+
+  set(CMAKE_INSTALL_PREFIX ${STAGED_INSTALL_PREFIX})
+  set(CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE})
+  set(CMAKE_CXX_COMPILER ${CMAKE_CXX_COMPILER})
+  set(ENABLE_OPENMP ${ENABLE_OPENMP} CACHE BOOL "")
+  set(ENABLE_MPI ${ENABLE_MPI} CACHE BOOL "")
+  set(Eigen3_DIR ${Eigen3_DIR} CACHE BOOL "")
+  set(ENABLE_TESTS FALSE CACHE BOOL "")
+  set(ENABLE_EXAMPLES FALSE CACHE BOOL "")
+  set(SHARED_LIBRARY_ONLY TRUE CACHE BOOL "")
+
+  if(NOT mrcpp_sources_POPULATED)
+    FetchContent_Populate(mrcpp_sources)
 
     add_subdirectory(
       ${mrcpp_sources_SOURCE_DIR}
       ${mrcpp_sources_BINARY_DIR}
       )
+  endif()
 endif()
