@@ -154,7 +154,12 @@ def test_vec_dot():
 def test_gradient_and_divergence():
     grad_tree = vp.FunctionTree(MRA)
     out_grad_tree = vp.FunctionTree(MRA)
-    vp.project(prec, grad_tree, phi_exact)
+    pos = [0.0, 0.0, 0.0]
+    power = [0, 0, 0]
+    beta = 100.0
+    alpha = (beta/np.pi)**(3/2)
+    gauss = vp.GaussFunc(beta, alpha, pos, power)
+    vp.project(prec, grad_tree, gauss)
     D = vp.ABGVOperator(MRA, 0.0, 0.0)
     grad = vp.gradient(D, grad_tree)
     assert grad[0][1].evalf([0.1, 0.0, 0.0]) == pytest.approx(
