@@ -40,15 +40,8 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  - >
-      conda create -n vampyr
-      -c nostress
-      -c conda-forge
-      mrcpp=*=*nompi*
-      cmake
-      ninja
-      pybind11
-      python=3.6
+  - conda create --name vampyr python=3.6
+  - conda env update --name vampyr --file environment.yml
 
 before_script:
   - test -n $CXX && unset CXX
@@ -63,7 +56,6 @@ script:
              --prefix=$HOME/Software/VAMPyR \
              --cxx=${CXX_COMPILER} \
              ${COVERAGE} \
-             ${OPENMP} \
              --cmake-options="-DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DPYTHON_EXECUTABLE=${CONDA_PREFIX}/bin/python -DCMAKE_VERBOSE_MAKEFILE=ON"
   - cd build
   - cmake --build . --target install -- -v -d stats

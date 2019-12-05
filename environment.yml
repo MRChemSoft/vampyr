@@ -1,0 +1,11 @@
+channels:
+  - nostress
+  - conda-forge
+  - defaults
+dependencies:
+  - cmake
+  - mrcpp=*=*noomp_nompi*
+  - ninja
+  - numpy
+  - pybind11
+  - pytest
