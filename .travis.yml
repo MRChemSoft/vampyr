@@ -40,13 +40,13 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  - conda create -n vampyr -c nostress -c conda-forge cmake mrcpp=*=*nompi* python=3.6
-  - conda activate vampyr
+  - conda create -n vampyr -c nostress -c conda-forge cmake mrcpp=*=*nompi* pybind11 python=3.6
 
 before_script:
   - test -n $CXX && unset CXX
 
 script:
+  - conda activate vampyr
   - ./.ci/report_versions.sh
   - |
     python ./setup \
@@ -55,10 +55,11 @@ script:
            --cxx=${CXX_COMPILER} \
            ${COVERAGE} \
            ${OPENMP} \
-           --cmake-options="-DCMAKE_PREFIX_PATH=${CONDA_PREFIX}"
-  - cmake --build build --target install -- VERBOSE=1
+           --cmake-options="-DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DPYTHON_EXECUTABLE=${CONDA_PREFIX}/bin/python"
   - cd build
+  - cmake --build . --target install -- VERBOSE=1
   - ctest --output-on-failure --verbose
+  - conda deactivate
 
 after_success:
   - |
