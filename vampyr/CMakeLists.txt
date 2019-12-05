@@ -10,7 +10,6 @@ target_include_directories(_vampyr
 
 target_link_libraries(_vampyr
   PUBLIC
-    Eigen3::Eigen
     MRCPP::mrcpp
   )
 
@@ -33,14 +32,12 @@ set_target_properties(_vampyr
     MACOSX_RPATH ON
     SKIP_BUILD_RPATH OFF
     BUILD_WITH_INSTALL_RPATH OFF
-    INSTALL_RPATH "${_RPATH}${CMAKE_INSTALL_LIBDIR}"
+    INSTALL_RPATH "${_RPATH}lib"
     INSTALL_RPATH_USE_LINK_PATH ON
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
-    LIBRARY_OUTPUT_DIRECTORY
-      ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR}
-    RESOURCE
-      "${CMAKE_CURRENT_SOURCE_DIR}/__init__.py"
+    LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR}
+    RESOURCE "${CMAKE_CURRENT_SOURCE_DIR}/__init__.py"
   )
 
 foreach(_f __init__.py)
