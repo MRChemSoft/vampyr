@@ -1,5 +1,7 @@
 language: cpp
+
 sudo: false
+
 dist: xenial
 
 addons:
@@ -9,8 +11,6 @@ addons:
     packages:
       - g++-7
       - lcov
-      - libpython3.5-dev
-      - python3.5-dev
 
 matrix:
   include:
@@ -31,31 +31,20 @@ env:
     - LANGUAGE="en_US.UTF-8"
     - PYTHONIOENCODING=UTF-8
     - OMP_NUM_THREADS=1
-    - CMAKE_VERSION="3.12.1"
-    # Invalidate PYENV_ROOT
-    - PYENV_ROOT=$HOME/fuffa
-
-cache:
-  timeout: 1000
-  pip: true
-  directories:
-    - $HOME/Deps/cmake/$CMAKE_VERSION
-    - $HOME/Deps/eigen
-
-before_install:
-  # Dependencies are downloaded in $HOME/Downloads and installed in $HOME/Deps
-  - mkdir -p $HOME/Downloads $HOME/Deps
 
 install:
-  - ./.ci/cmake.sh
-  - export PATH=$HOME/Deps/cmake/$CMAKE_VERSION/bin${PATH:+:$PATH}
-  - ./.ci/eigen.sh
-  - pip install --user pipenv --upgrade
-  - pipenv install --python="/usr/bin/python3.5" --dev
+  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - source "$HOME/miniconda/etc/profile.d/conda.sh"
+  - hash -r
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update -q conda
+  - conda info -a
+  - conda create -n vampyr -c nostress -c conda-forge cmake mrcpp=*=*nompi* python=3.6
+  - conda activate vampyr
 
 before_script:
   - test -n $CXX && unset CXX
-  - source $(pipenv --venv)/bin/activate
 
 script:
   - ./.ci/report_versions.sh
@@ -66,7 +55,7 @@ script:
            --cxx=${CXX_COMPILER} \
            ${COVERAGE} \
            ${OPENMP} \
-           --cmake-options="-DEigen3_DIR=${HOME}/Deps/eigen/share/eigen3/cmake"
+           --cmake-options="-DCMAKE_PREFIX_PATH=${CONDA_PREFIX}"
   - cmake --build build --target install -- VERBOSE=1
   - cd build
   - ctest --output-on-failure --verbose
