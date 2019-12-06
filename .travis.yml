@@ -16,7 +16,7 @@ matrix:
   include:
     - os: linux
       env:
-        - BUILD_TYPE='release'
+        - BUILD_TYPE='debug'
         - CXX_COMPILER='g++-7'
     - os: linux
       env:
@@ -51,7 +51,7 @@ script:
   - ./.ci/report_versions.sh
   - >
       python ./setup \
-             --type=debug \ #${BUILD_TYPE} \
+             --type=${BUILD_TYPE} \
              --generator=Ninja \
              --prefix=$HOME/Software/VAMPyR \
              --cxx=${CXX_COMPILER} \
