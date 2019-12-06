@@ -51,7 +51,7 @@ script:
   - ./.ci/report_versions.sh
   - >
       python ./setup \
-             --type=${BUILD_TYPE} \
+             --type=debug \ #${BUILD_TYPE} \
              --generator=Ninja \
              --prefix=$HOME/Software/VAMPyR \
              --cxx=${CXX_COMPILER} \
