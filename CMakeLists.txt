@@ -2,7 +2,7 @@
 # Copyright (c) 2015-2019 by Radovan Bast, Roberto Di Remigio, Jonas Juselius, and contributors.
 
 # set minimum cmake version
-cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
 # project name
 project(VAMPyR LANGUAGES CXX)

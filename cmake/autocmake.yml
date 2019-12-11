@@ -1,5 +1,5 @@
 name: VAMPyR
-min_cmake_version: 3.11
+min_cmake_version: 3.14
 setup_script: setup
 default_build_type: release
 language:
