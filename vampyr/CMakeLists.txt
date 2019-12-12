@@ -15,11 +15,7 @@ target_link_libraries(_vampyr
 
 add_subdirectory(bases)
 add_subdirectory(functions)
-add_subdirectory(math)
 add_subdirectory(operators)
-add_subdirectory(project)
-add_subdirectory(world)
-add_subdirectory(trees)
 
 file(RELATIVE_PATH _rel ${CMAKE_INSTALL_PREFIX}/${PYMOD_INSTALL_FULLDIR} ${CMAKE_INSTALL_PREFIX})
 if(APPLE)
@@ -40,11 +36,14 @@ set_target_properties(_vampyr
     RESOURCE "${CMAKE_CURRENT_SOURCE_DIR}/__init__.py"
   )
 
+# Create symlinks into build tree
+file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR})
 foreach(_f __init__.py)
-  configure_file(
-    ${_f}
-    ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR}/${_f}
-    COPYONLY
+  file(
+    CREATE_LINK
+      ${CMAKE_CURRENT_SOURCE_DIR}/${_f}
+      ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR}/${_f}
+    SYMBOLIC
     )
 endforeach()
 

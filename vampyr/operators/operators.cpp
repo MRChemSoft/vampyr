@@ -1,8 +1,8 @@
 #include <array>
 
 #include <pybind11/eigen.h>
-#include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
+#include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
 #include "trees/FunctionTree.h"
@@ -27,23 +27,22 @@ using namespace pybind11::literals;
 
 namespace vampyr {
 
-    void abgv_operator(py::module &, py::class_<DerivativeOperator<3>> &derivativeoperator);
-    void bs_operator(py::module &, py::class_<DerivativeOperator<3>> &derivativeoperator);
-    void derivative_kernel(py::module &);
-    void helmholtz_kernel(py::module &, py::class_<GreensKernel> &greenskernel);
-    void helmholtz_operator(py::module &);
-    void identityconvolution_operator(py::module &);
-    void identity_kernel(py::module &, py::class_<GreensKernel> &greenskernel);
-    void mw_operator(py::module &);
-    void operator_state(py::module &);
-    void operator_statistics(py::module &);
-    void ph_operator(py::module &, py::class_<DerivativeOperator<3>> &derivativeoperator);
-    void poisson_operator(py::module &);
+void abgv_operator(py::module &, py::class_<DerivativeOperator<3>> &derivativeoperator);
+void bs_operator(py::module &, py::class_<DerivativeOperator<3>> &derivativeoperator);
+void derivative_kernel(py::module &);
+void helmholtz_kernel(py::module &, py::class_<GreensKernel> &greenskernel);
+void helmholtz_operator(py::module &);
+void identityconvolution_operator(py::module &);
+void identity_kernel(py::module &, py::class_<GreensKernel> &greenskernel);
+void mw_operator(py::module &);
+void operator_state(py::module &);
+void operator_statistics(py::module &);
+void ph_operator(py::module &, py::class_<DerivativeOperator<3>> &derivativeoperator);
+void poisson_operator(py::module &);
 
 void operators(py::module &m) {
 
     const auto D = 3;
-    
 
     //ConvolutionOperator
     py::class_<ConvolutionOperator<D>> convop(m, "ConvolutionOperator");
@@ -56,12 +55,12 @@ void operators(py::module &m) {
     //GreensKernel
     py::class_<GreensKernel> greenskernel(m, "GreensKernel");
 
- 	  m.def(
+    m.def(
         "divergence",
         py::overload_cast<FunctionTree<D> &, DerivativeOperator<D> &, FunctionTreeVector<D> &>(&mrcpp::divergence<D>));
 
     m.def("gradient", py::overload_cast<DerivativeOperator<D> &, FunctionTree<D> &>(&gradient<D>));
- 
+
     abgv_operator(m, derivativeoperator);
     bs_operator(m, derivativeoperator);
     derivative_kernel(m);
@@ -74,7 +73,5 @@ void operators(py::module &m) {
     operator_statistics(m);
     ph_operator(m, derivativeoperator);
     poisson_operator(m);
-
-
 }
 } // namespace vampyr
