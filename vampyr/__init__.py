@@ -1,1 +1,1 @@
-from .vampyr3d import *
+from ._vampyr import _3d as _3d

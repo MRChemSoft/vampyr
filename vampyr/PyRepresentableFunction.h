@@ -8,7 +8,7 @@
 
 #include <pybind11/pybind11.h>
 
-#include "functions/RepresentableFunction.h"
+#include <MRCPP/functions/RepresentableFunction.h>
 
 template <int D> class PyRepresentableFunction : public mrcpp::RepresentableFunction<D> {
 public:

@@ -1,4 +1,4 @@
-target_sources(vampyr3d
+target_sources(_vampyr
   PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/operators.cpp
     ${CMAKE_CURRENT_LIST_DIR}/operators_grid.cpp
@@ -16,7 +16,3 @@ target_sources(vampyr3d
 	${CMAKE_CURRENT_LIST_DIR}/PoissonOperator.cpp
 
   )
-
-
-
-
