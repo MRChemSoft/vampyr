@@ -17,7 +17,6 @@ variables:
   configure-serial: &configure-serial
     run:
       name: Configuring serial
-      shell: /bin/bash
       command: |
         conda activate vampyr
         python ./setup \
@@ -29,13 +28,11 @@ variables:
   build: &build
     run:
       name: Building and installing
-      shell: /bin/bash
       command: |
         cmake --build build --target install -- -v -d stats
   tests: &tests
     run:
       name: Testing
-      shell: /bin/bash
       command: |
         cd build
         ctest --output-on-failure --verbose
