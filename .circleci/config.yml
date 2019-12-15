@@ -3,55 +3,48 @@ version: 2
 variables:
   ubuntu-1804: &ubuntu-1804
     docker:
-      - image: mrchemsoft/circleci_ubuntu-18.04:9c78a7c8b9b8
+      - image: quay.io/dev-cafe/circleci_ubuntu-18.04-conda
         name: tsubame
         user: merzbow
     working_directory: ~/vampyr
-  submodules: &submodules
-    run:
-      name: Clone submodules
-      command: |
-        git submodule sync --recursive
-        git submodule update --recursive --init
   setup: &setup
     run:
-      name: Set Python dependencies
+      name: Create Conda environment
       command: |
-        pipenv install --three --dev
-  report: &report
-    run:
-      name: Report
-      command: |
-        pipenv run python --version
+        conda create --name vampyr python=3.6
+        conda env update --name vampyr --file environment.yml
+        conda activate vampyr
   configure-serial: &configure-serial
     run:
       name: Configuring serial
       shell: /bin/bash
       command: |
-        pipenv run python setup \
+        python ./setup \
           --type=release \
+          --generator=Ninja \
           --cxx=g++ \
-          --prefix=$HOME/Software/VAMPyR
+          --prefix=$HOME/Software/VAMPyR \
+          --cmake-options="-DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_VERBOSE_MAKEFILE=ON"
   build: &build
     run:
       name: Building and installing
       shell: /bin/bash
       command: |
-        pipenv run cmake --build build --target install -- VERBOSE=1
+        cmake --build build --target install -- -v -d stats
   tests: &tests
     run:
       name: Testing
       shell: /bin/bash
       command: |
         cd build
-        pipenv run ctest --output-on-failure --verbose
+        ctest --output-on-failure --verbose
+        conda deactivate
 
 jobs:
   serial-py3:
     <<: *ubuntu-1804
     steps:
       - checkout
-      - *submodules
       - *setup
       - *report
       - *configure-serial
