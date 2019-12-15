@@ -11,14 +11,15 @@ variables:
     run:
       name: Create Conda environment
       command: |
+        conda init bash
         conda create --name vampyr python=3.6
         conda env update --name vampyr --file environment.yml
-        conda activate vampyr
   configure-serial: &configure-serial
     run:
       name: Configuring serial
       shell: /bin/bash
       command: |
+        conda activate vampyr
         python ./setup \
           --type=release \
           --generator=Ninja \
