@@ -46,7 +46,6 @@ jobs:
     steps:
       - checkout
       - *setup
-      - *report
       - *configure-serial
       - *build
       - *tests
