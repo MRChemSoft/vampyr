@@ -1,9 +1,6 @@
-#include <pybind11/eigen.h>
-#include <pybind11/functional.h>
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
+#pragma once
 
-#include <array>
+#include <pybind11/pybind11.h>
 
 #include <MRCPP/functions/GaussExp.h>
 #include <MRCPP/functions/GaussPoly.h>
@@ -13,27 +10,28 @@
 
 namespace vampyr {
 template <int D>
-void gauss_exp(pybind11::module &m, pybind11::class_<mrcpp::RepresentableFunction<D>, PyRepresentableFunction<D>> &repfunc) {
+inline void gauss_exp(pybind11::module &m, pybind11::class_<mrcpp::RepresentableFunction<D>, PyRepresentableFunction<D>> &repfunc) {
     using namespace mrcpp;
+    namespace py = pybind11;
     using namespace pybind11::literals;
 
-    pybind11::class_<GaussExp<D>>(m, "GaussExp", repfunc)
-        .def(pybind11::init<int, double>(), "nTerms"_a = 0, "Gauss_exp_prec"_a = 1.0e-10)
-        .def(pybind11::init<const GaussExp<D> &>())
-        .def(pybind11::init<const GaussPoly<D> &>())
+    py::class_<GaussExp<D>>(m, "GaussExp", repfunc)
+        .def(py::init<int, double>(), "nTerms"_a = 0, "Gauss_exp_prec"_a = 1.0e-10)
+        .def(py::init<const GaussExp<D> &>())
+        .def(py::init<const GaussPoly<D> &>())
         .def("evalf", &GaussExp<D>::evalf)
-        .def("mult", pybind11::overload_cast<GaussExp<D> &>(&GaussExp<D>::mult))
-        .def("mult", pybind11::overload_cast<GaussFunc<D> &>(&GaussExp<D>::mult))
-        .def("mult", pybind11::overload_cast<GaussPoly<D> &>(&GaussExp<D>::mult))
-        .def("mult", pybind11::overload_cast<double>(&GaussExp<D>::mult))
-        .def("multInPlace", pybind11::overload_cast<double>(&GaussExp<D>::multInPlace))
+        .def("mult", py::overload_cast<GaussExp<D> &>(&GaussExp<D>::mult))
+        .def("mult", py::overload_cast<GaussFunc<D> &>(&GaussExp<D>::mult))
+        .def("mult", py::overload_cast<GaussPoly<D> &>(&GaussExp<D>::mult))
+        .def("mult", py::overload_cast<double>(&GaussExp<D>::mult))
+        .def("multInPlace", py::overload_cast<double>(&GaussExp<D>::multInPlace))
         .def("differentiate", &GaussExp<D>::differentiate)
         .def("getSquareNorm", &GaussExp<D>::getSquareNorm)
         .def("normalize", &GaussExp<D>::normalize)
         .def("calcCoulombEnergy", &GaussExp<D>::calcCoulombEnergy)
-        .def("add", pybind11::overload_cast<Gaussian<D> &>(&GaussExp<D>::add))
-        .def("add", pybind11::overload_cast<Gaussian<D> &>(&GaussExp<D>::add))
-        .def("append", pybind11::overload_cast<const Gaussian<D> &>(&GaussExp<D>::append))
-        .def("append", pybind11::overload_cast<const GaussExp<D> &>(&GaussExp<D>::append));
+        .def("add", py::overload_cast<Gaussian<D> &>(&GaussExp<D>::add))
+        .def("add", py::overload_cast<Gaussian<D> &>(&GaussExp<D>::add))
+        .def("append", py::overload_cast<const Gaussian<D> &>(&GaussExp<D>::append))
+        .def("append", py::overload_cast<const GaussExp<D> &>(&GaussExp<D>::append));
 }
 } // namespace vampyr

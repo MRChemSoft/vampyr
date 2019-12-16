@@ -1,3 +1,5 @@
+#pragma once
+
 #include <pybind11/eigen.h>
 #include <pybind11/functional.h>
 #include <pybind11/pybind11.h>
@@ -19,14 +21,16 @@ void boys_function(pybind11::module &, pybind11::class_<mrcpp::RepresentableFunc
 
 template <int D> void functions(pybind11::module &m) {
     using namespace mrcpp;
+    namespace py = pybind11;
 
-    pybind11::class_<RepresentableFunction<D>, PyRepresentableFunction<D>> repfunc(m, "RepresentableFunction");
-    repfunc.def(pybind11::init<>());
-    analytic_function(m, repfunc);
-    gauss_exp(m, repfunc);
+    py::class_<RepresentableFunction<D>, PyRepresentableFunction<D>> repfunc(m, "RepresentableFunction");
+    repfunc.def(py::init<>());
 
-    pybind11::class_<Gaussian<D>> gaussian(m, "Gaussian", repfunc);
-    gauss_func(m, gaussian);
-    gauss_poly(m, gaussian);
+    analytic_function<D>(m, repfunc);
+    gauss_exp<D>(m, repfunc);
+
+    py::class_<Gaussian<D>> gaussian(m, "Gaussian", repfunc);
+    gauss_func<D>(m, gaussian);
+    gauss_poly<D>(m, gaussian);
 }
 } // namespace vampyr

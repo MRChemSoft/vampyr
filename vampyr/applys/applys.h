@@ -1,3 +1,5 @@
+#pragma once
+
 #include <pybind11/pybind11.h>
 
 #include <MRCPP/operators/ConvolutionOperator.h>
@@ -8,10 +10,11 @@
 namespace vampyr {
 template <int D> void applys(pybind11::module &m) {
     using namespace mrcpp;
+    namespace py = pybind11;
     using namespace pybind11::literals;
 
     m.def("apply",
-          pybind11::overload_cast<double, FunctionTree<D> &, ConvolutionOperator<D> &, FunctionTree<D> &, int, bool>(
+          py::overload_cast<double, FunctionTree<D> &, ConvolutionOperator<D> &, FunctionTree<D> &, int, bool>(
               &apply<D>),
           "precision"_a,
           "output_tree"_a,
@@ -22,7 +25,7 @@ template <int D> void applys(pybind11::module &m) {
           "Applies a given convolution operator onto a FunctionTree");
 
     m.def("apply",
-          pybind11::overload_cast<FunctionTree<D> &, DerivativeOperator<D> &, FunctionTree<D> &, int>(&apply<D>),
+          py::overload_cast<FunctionTree<D> &, DerivativeOperator<D> &, FunctionTree<D> &, int>(&apply<D>),
           "out_tree"_a,
           "DerivativeOperator"_a,
           "input_tree"_a,

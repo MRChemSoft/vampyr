@@ -6,14 +6,14 @@ def x_tree_generator(x_tree, dir, prec=10e-3, beta=100.0, mid=0.0):
     power = [0, 0, 0]
     power[int(dir)] = 2
     x = vp.vampyr3d.GaussFunc(beta, 4.0*beta**2, [mid, mid, mid], power)
-    vp.vampyr3d.build_grid(x_tree, x)
+    vp.build_grid(x_tree, x)
     vp.project(prec, x_tree, x)
 
 
 def const_tree_generator(const_tree, prec=10e-3, beta=100.0, mu=0.0, mid=0.0):
     power = [0, 0, 0]
     const = vp.vampyr3d.GaussFunc(beta, -6.0*beta - mu**2, [mid, mid, mid], power)
-    vp.vampyr3d.build_grid(const_tree, const)
+    vp.build_grid(const_tree, const)
     vp.project(prec, const_tree, const)
 
 
@@ -34,7 +34,7 @@ def v_generator(v_tree, MRA, prec=10e-3, beta=100.0, mid=0.0, mu=0.0):
     vec.append(tuple([1.0, y_tree]))
     vec.append(tuple([1.0, z_tree]))
     vec.append(tuple([1.0, const_tree]))
-    vp.vampyr3d.build_grid(v_tree, vec)
+    vp.build_grid(v_tree, vec)
     vp.add(prec, v_tree, vec)
 
     alpha = -alpha/(4.0*pi)

@@ -114,7 +114,7 @@ def test_gaussFunc():
 
     gauss = vp.vampyr3d.GaussFunc(beta, alpha, pos, power)
     g_tree = vp.vampyr3d.FunctionTree(MRA)
-    vp.vampyr3d.build_grid(g_tree, gauss)
+    vp.build_grid(g_tree, gauss)
     vp.project(prec, g_tree, gauss)
     assert g_tree.integrate() == pytest.approx(1.0, rel=prec)
 
@@ -161,22 +161,22 @@ def test_gradient_and_divergence():
     gauss = vp.vampyr3d.GaussFunc(beta, alpha, pos, power)
     vp.project(prec, grad_tree, gauss)
     D = vp.vampyr3d.ABGVOperator(MRA, 0.0, 0.0)
-    grad = vp.vampyr3d.gradient(D, grad_tree)
+    grad = vp.gradient(D, grad_tree)
     assert grad[0][1].evalf([0.1, 0.0, 0.0]) == pytest.approx(
                    d_phi_exact([0.1, 0.0, 0.0]), rel=prec)
     grad_tree_vec = []
     grad_tree_vec.append(tuple([1.0, grad_tree]))
     grad_tree_vec.append(tuple([1.0, grad_tree]))
     grad_tree_vec.append(tuple([1.0, grad_tree]))
-    vp.vampyr3d.divergence(out_grad_tree, D, grad_tree_vec)
+    vp.divergence(out_grad_tree, D, grad_tree_vec)
     assert out_grad_tree.evalf([0.1, 0.1, 0.1]) == pytest.approx(
                    3.0*grad[0][1].evalf([0.1, 0.1, 0.1]), rel=prec)
 
 
 def test_copy_func():
     copy_tree = vp.vampyr3d.FunctionTree(MRA)
-    vp.vampyr3d.copy_grid(copy_tree, phi_tree)
-    vp.vampyr3d.copy_func(copy_tree, phi_tree)
+    vp.copy_grid(copy_tree, phi_tree)
+    vp.copy_func(copy_tree, phi_tree)
     assert copy_tree.integrate() == pytest.approx(phi_tree.integrate(), rel=prec)
 
 

@@ -1,7 +1,6 @@
-#include <pybind11/eigen.h>
-#include <pybind11/functional.h>
+#pragma once
+
 #include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
 
 #include <MRCPP/treebuilders/add.h>
 #include <MRCPP/treebuilders/multiply.h>

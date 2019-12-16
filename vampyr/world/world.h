@@ -1,3 +1,5 @@
+#pragma once
+
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
@@ -61,7 +63,8 @@ template <int D> void world(pybind11::module &m) {
         .def("__repr__", [](const MultiResolutionAnalysis<D> &a) {
             std::ostringstream os;
 
-            auto boxes = std::array<int, D>{a.getWorldBox().size(0), a.getWorldBox().size(1), a.getWorldBox().size(2)};
+            auto boxes = std::array<int, D>{};
+            for (int i = 0; i < D; ++i) { boxes[i] = a.getWorldBox().size(i); }
             os << "============================================================" << std::endl;
             os << "                  MultiResolution Analysis                  " << std::endl;
             os << "------------------------------------------------------------" << std::endl;
