@@ -4,7 +4,7 @@ channels:
   - defaults
 dependencies:
   - cmake
-  - mrcpp=*=*nompi*
+  - mrcpp=*=*serial*
   - ninja
   - numpy
   - pybind11
