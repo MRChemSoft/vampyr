@@ -7,7 +7,7 @@ variables:
         user: merzbow
     working_directory: ~/vampyr
   environment:
-    BASH_ENV: "~/.bashrc"
+    BASH_ENV: "/home/merzbow/.bashrc"
   setup: &setup
     run:
       name: Create Conda environment
