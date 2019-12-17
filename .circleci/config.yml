@@ -6,6 +6,7 @@ variables:
       - image: quay.io/dev-cafe/circleci_ubuntu-18.04-conda
         name: tsubame
         user: merzbow
+        command: [". /opt/conda/etc/profile.d/conda.sh"]
     working_directory: ~/vampyr
   setup: &setup
     run:
@@ -17,7 +18,6 @@ variables:
     run:
       name: Configuring serial
       command: |
-        conda activate vampyr
         python ./setup \
           --type=release \
           --generator=Ninja \
@@ -28,13 +28,11 @@ variables:
     run:
       name: Building and installing
       command: |
-        conda activate vampyr
         cmake --build build --target install -- -v -d stats
   tests: &tests
     run:
       name: Testing
       command: |
-        conda activate vampyr
         cd build
         ctest --output-on-failure --verbose
 
@@ -44,9 +42,7 @@ jobs:
     steps:
       - checkout
       - *setup
-      - run: |
-          . /opt/conda/etc/profile.d/conda.sh
-          conda activate vampyr
+      - run: conda activate vampyr
       - *configure-serial
       - *build
       - *tests
