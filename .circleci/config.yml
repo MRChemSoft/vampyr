@@ -1,6 +1,4 @@
 version: 2
-environment:
-  BASH_ENV: "~/.bashrc"
 variables:
   ubuntu-1804: &ubuntu-1804
     docker:
@@ -8,6 +6,8 @@ variables:
         name: tsubame
         user: merzbow
     working_directory: ~/vampyr
+  environment:
+    BASH_ENV: "~/.bashrc"
   setup: &setup
     run:
       name: Create Conda environment
