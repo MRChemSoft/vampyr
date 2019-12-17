@@ -45,10 +45,11 @@ jobs:
     steps:
       - checkout
       - *setup
-      - conda activate vampyr
+      - run: conda activate vampyr
       - *configure-serial
       - *build
       - *tests
+      - run: conda deactivate
 
 workflows:
   version: 2
