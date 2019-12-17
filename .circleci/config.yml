@@ -39,6 +39,7 @@ jobs:
   serial-py3:
     <<: *ubuntu-1804
     steps:
+      - run: conda init bash
       - run: . /opt/conda/etc/profile.d/conda.sh
       - checkout
       - *setup
