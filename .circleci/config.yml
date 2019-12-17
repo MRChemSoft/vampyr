@@ -38,7 +38,7 @@ jobs:
   serial-py3:
     <<: *ubuntu-1804
     environment:
-      BASH_ENV: "$HOME/.bashrc"
+      BASH_ENV: "/home/merzbow/.bashrc"
     steps:
       - run: conda init bash
       - run: source $BASH_ENV
