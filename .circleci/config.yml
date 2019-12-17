@@ -41,7 +41,7 @@ jobs:
       - run: conda init bash
       - checkout
       - *setup
-      - run: sourcet activate vampyr
+      - run: source activate vampyr
       - *configure-serial
       - *build
       - *tests
