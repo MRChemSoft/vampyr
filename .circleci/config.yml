@@ -12,6 +12,7 @@ variables:
     run:
       name: Create Conda environment
       command: |
+        cat $BASH_ENV
         conda create --name vampyr python=3.6
         conda env update --name vampyr --file environment.yml
   configure-serial: &configure-serial
