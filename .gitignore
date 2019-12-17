@@ -8,6 +8,7 @@ debug*
 cmake-build-debug
 .direnv
 .pytest_cache
+.ccls-cache
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
