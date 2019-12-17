@@ -17,7 +17,6 @@ variables:
     run:
       name: Configuring serial
       command: |
-        . /opt/conda/etc/profile.d/conda.sh
         conda activate vampyr
         python ./setup \
           --type=release \
@@ -45,7 +44,9 @@ jobs:
     steps:
       - checkout
       - *setup
-      - run: conda activate vampyr
+      - run: |
+          . /opt/conda/etc/profile.d/conda.sh
+          conda activate vampyr
       - *configure-serial
       - *build
       - *tests
