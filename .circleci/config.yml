@@ -40,7 +40,7 @@ jobs:
     <<: *ubuntu-1804
     steps:
       - run: conda init bash
-      - run: . /opt/conda/etc/profile.d/conda.sh
+      - run: source ~/.bashrc
       - checkout
       - *setup
       - run: conda activate vampyr
