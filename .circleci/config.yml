@@ -27,7 +27,7 @@ variables:
       name: Building and installing
       command: |
         source activate vampyr
-        cmake --build build --target install #-- -d stats
+        cmake --build build --target install
   tests: &tests
     run:
       name: Testing
