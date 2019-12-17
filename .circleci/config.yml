@@ -16,6 +16,7 @@ variables:
     run:
       name: Configuring serial
       command: |
+        source activate vampyr
         python ./setup \
           --type=release \
           --generator=Ninja \
@@ -26,11 +27,13 @@ variables:
     run:
       name: Building and installing
       command: |
+        source activate vampyr
         cmake --build build --target install -- -v -d stats
   tests: &tests
     run:
       name: Testing
       command: |
+        source activate vampyr
         cd build
         ctest --output-on-failure --verbose
 
@@ -38,10 +41,8 @@ jobs:
   serial-py3:
     <<: *ubuntu-1804
     steps:
-      - run: conda init bash
       - checkout
       - *setup
-      - run: source activate vampyr
       - *configure-serial
       - *build
       - *tests
