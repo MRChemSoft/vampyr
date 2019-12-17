@@ -37,18 +37,14 @@ variables:
 jobs:
   serial-py3:
     <<: *ubuntu-1804
-    environment:
-      BASH_ENV: "/home/merzbow/.bashrc"
     steps:
       - run: conda init bash
-      - run: source $BASH_ENV
       - checkout
       - *setup
-      - run: conda activate vampyr
+      - run: sourcet activate vampyr
       - *configure-serial
       - *build
       - *tests
-      - run: conda deactivate
 
 workflows:
   version: 2
