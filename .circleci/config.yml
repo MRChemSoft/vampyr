@@ -29,14 +29,15 @@ variables:
     run:
       name: Building and installing
       command: |
+        conda activate vampyr
         cmake --build build --target install -- -v -d stats
   tests: &tests
     run:
       name: Testing
       command: |
+        conda activate vampyr
         cd build
         ctest --output-on-failure --verbose
-        conda deactivate
 
 jobs:
   serial-py3:
@@ -44,6 +45,7 @@ jobs:
     steps:
       - checkout
       - *setup
+      - conda activate vampyr
       - *configure-serial
       - *build
       - *tests
