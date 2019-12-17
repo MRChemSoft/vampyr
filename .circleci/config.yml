@@ -13,6 +13,7 @@ variables:
         cat $BASH_ENV
         conda create --name vampyr python=3.6
         conda env update --name vampyr --file environment.yml
+        conda activate vampyr
   configure-serial: &configure-serial
     run:
       name: Configuring serial
@@ -44,7 +45,6 @@ jobs:
       - run: conda init bash
       - checkout
       - *setup
-      - run: conda activate vampyr
       - *configure-serial
       - *build
       - *tests
