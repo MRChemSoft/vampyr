@@ -6,8 +6,6 @@ variables:
         name: tsubame
         user: merzbow
     working_directory: ~/vampyr
-  environment:
-    BASH_ENV: "/home/merzbow/.bashrc"
   setup: &setup
     run:
       name: Create Conda environment
@@ -40,6 +38,8 @@ variables:
 jobs:
   serial-py3:
     <<: *ubuntu-1804
+    environment:
+      BASH_ENV: "/home/merzbow/.bashrc"
     steps:
       - run: conda init bash
       - checkout
