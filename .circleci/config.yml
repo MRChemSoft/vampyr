@@ -1,5 +1,6 @@
 version: 2
-
+environment:
+  BASH_ENV: "~/.bashrc"
 variables:
   ubuntu-1804: &ubuntu-1804
     docker:
@@ -40,7 +41,6 @@ jobs:
     <<: *ubuntu-1804
     steps:
       - run: conda init bash
-      - run: source ~/.bashrc
       - checkout
       - *setup
       - run: conda activate vampyr
