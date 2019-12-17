@@ -9,14 +9,12 @@ variables:
   setup: &setup
     run:
       name: Create Conda environment
-      shell: /bin/bash
       command: |
         conda create --name vampyr python=3.6
         conda env update --name vampyr --file environment.yml
   configure-serial: &configure-serial
     run:
       name: Configuring serial
-      shell: /bin/bash
       command: |
         python ./setup \
           --type=release \
@@ -27,13 +25,11 @@ variables:
   build: &build
     run:
       name: Building and installing
-      shell: /bin/bash
       command: |
         cmake --build build --target install -- -v -d stats
   tests: &tests
     run:
       name: Testing
-      shell: /bin/bash
       command: |
         cd build
         ctest --output-on-failure --verbose
@@ -42,9 +38,10 @@ jobs:
   serial-py3:
     <<: *ubuntu-1804
     environment:
-      BASH_ENV: "/home/merzbow/.bashrc"
+      BASH_ENV: "~/.bashrc"
     steps:
       - run: conda init bash
+      - run: source $BASH_ENV
       - checkout
       - *setup
       - run: conda activate vampyr
