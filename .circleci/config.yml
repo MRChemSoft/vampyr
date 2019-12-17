@@ -9,7 +9,7 @@ variables:
   setup: &setup
     run:
       name: Create Conda environment
-      shell: /bin/shell
+      shell: /bin/bash
       command: |
         conda create --name vampyr python=3.6
         conda env update --name vampyr --file environment.yml
@@ -17,7 +17,7 @@ variables:
   configure-serial: &configure-serial
     run:
       name: Configuring serial
-      shell: /bin/shell
+      shell: /bin/bash
       command: |
         python ./setup \
           --type=release \
@@ -28,13 +28,13 @@ variables:
   build: &build
     run:
       name: Building and installing
-      shell: /bin/shell
+      shell: /bin/bash
       command: |
         cmake --build build --target install -- -v -d stats
   tests: &tests
     run:
       name: Testing
-      shell: /bin/shell
+      shell: /bin/bash
       command: |
         cd build
         ctest --output-on-failure --verbose
