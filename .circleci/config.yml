@@ -20,6 +20,7 @@ variables:
         python ./setup \
           --type=release \
           --cxx=g++ \
+          --generator=Ninja \
           --prefix=$HOME/Software/VAMPyR \
           --cmake-options="-DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_VERBOSE_MAKEFILE=ON"
   build: &build
@@ -27,7 +28,7 @@ variables:
       name: Building and installing
       command: |
         source activate vampyr
-        cmake --build build --target install
+        cmake --build build --target install -- -j 1 -d stats
   tests: &tests
     run:
       name: Testing
