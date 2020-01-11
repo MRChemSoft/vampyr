@@ -14,9 +14,8 @@ namespace py = pybind11;
 using namespace pybind11::literals;
 
 namespace vampyr {
-void boys_function(py::module &m, py::class_<RepresentableFunction<1>, PyRepresentableFunction<1>> &repfunc) {
-    py::class_<BoysFunction>(m, "BoysFunction", repfunc)
-        .def(py::init<int, double>(), "nTerms"_a = 0, "Boys_func_prec"_a = 1.0e-10)
-        .def("evalf", py::overload_cast<const Coord<1> &>(&BoysFunction::evalf, py::const_));
+void boys_function(py::module &m) {
+    py::class_<BoysFunction, RepresentableFunction<1>>(m, "BoysFunction")
+        .def(py::init<int, double>(), "nTerms"_a = 0, "Boys_func_prec"_a = 1.0e-10);
 }
 } // namespace vampyr

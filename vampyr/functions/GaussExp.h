@@ -9,17 +9,15 @@
 #include "PyRepresentableFunction.h"
 
 namespace vampyr {
-template <int D>
-inline void gauss_exp(pybind11::module &m, pybind11::class_<mrcpp::RepresentableFunction<D>, PyRepresentableFunction<D>> &repfunc) {
+template <int D> void gauss_exp(pybind11::module &m) {
     using namespace mrcpp;
     namespace py = pybind11;
     using namespace pybind11::literals;
 
-    py::class_<GaussExp<D>>(m, "GaussExp", repfunc)
+    py::class_<GaussExp<D>, RepresentableFunction<D>>(m, "GaussExp")
         .def(py::init<int, double>(), "nTerms"_a = 0, "Gauss_exp_prec"_a = 1.0e-10)
         .def(py::init<const GaussExp<D> &>())
         .def(py::init<const GaussPoly<D> &>())
-        .def("evalf", &GaussExp<D>::evalf)
         .def("mult", py::overload_cast<GaussExp<D> &>(&GaussExp<D>::mult))
         .def("mult", py::overload_cast<GaussFunc<D> &>(&GaussExp<D>::mult))
         .def("mult", py::overload_cast<GaussPoly<D> &>(&GaussExp<D>::mult))

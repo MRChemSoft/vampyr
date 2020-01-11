@@ -11,16 +11,16 @@
 #include <MRCPP/functions/Gaussian.h>
 
 namespace vampyr {
-template <int D> void gauss_poly(pybind11::module &m, pybind11::class_<mrcpp::Gaussian<D>> &gaussian) {
+template <int D> void gauss_poly(pybind11::module &m) {
     using namespace mrcpp;
+    namespace py = pybind11;
     using namespace pybind11::literals;
 
-    pybind11::class_<GaussPoly<D>>(m, "GaussPoly", gaussian)
+    py::class_<GaussPoly<D>, Gaussian<D>>(m, "GaussPoly")
         .def(pybind11::init<double, double, const Coord<D> &, const std::array<int, D> &>())
         .def("setPoly", &GaussPoly<D>::setPoly)
         .def("differentiate", &GaussPoly<D>::differentiate)
         .def("calcOverlap", pybind11::overload_cast<GaussPoly<D> &>(&GaussPoly<D>::calcOverlap))
-        .def("evalf", pybind11::overload_cast<const Coord<D> &>(&GaussPoly<D>::evalf, pybind11::const_))
         .def("evalf", pybind11::overload_cast<const double, int>(&GaussPoly<D>::evalf, pybind11::const_));
 }
 } // namespace vampyr

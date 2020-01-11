@@ -64,46 +64,40 @@ PYBIND11_MODULE(_vampyr, m) {
         .def("getMaxWidth", &BandWidth::getMaxWidth)
         .def("setWidth", &BandWidth::setWidth);
 
-    // NOTE What is the phantom_of_the_MWTree<2>? It's a dummy binding for
-    // MWTree<2> to use exclusively to generate the bindings for its subclasses.
-    //py::class_<MWTree<2>> _mwtree(m, "phantom_of_the_MWTree2D");
-    //py::class_<OperatorTree>(m, "OperatorTree", _mwtree)
-    //    .def(py::init<MultiResolutionAnalysis<2> &, double>())
-    //    .def("getNormPrecision", &OperatorTree::getNormPrecision)
-    //    .def("calcBandWidth", py::overload_cast<double>(&OperatorTree::calcBandWidth))
-    //    .def("clearBandWidth", &OperatorTree::clearBandWidth)
-    //    .def("setupOperNodeCache", &OperatorTree::setupOperNodeCache)
-    //    .def("clearOperNodeCache", &OperatorTree::clearOperNodeCache)
-    //    .def("mwTransformDown", &OperatorTree::mwTransformDown)
-    //    .def("mwTransformUp", &OperatorTree::mwTransformUp);
-
-    // pybind11::class_<SerialTree<2>> _serialtree(m, "phantom_of_the_SerialTree2D");
-    // // <OperatorTree * wont work since raw pointers does not exist in python
-    // pybind11::class_<SerialOperatorTree>(m, "SerialOperatorTree", _serialtree)
-    //     .def(py::init<OperatorTree *>())
-    //     .def("allocRoots", &SerialOperatorTree::allocRoots)
-    //     .def("allocChildren", &SerialOperatorTree::allocChildren)
-    //     .def("allocGenChildren", &SerialOperatorTree::allocGenChildren)
-    //     .def("deallocNodes", &SerialOperatorTree::deallocNodes)
-    //     .def("deallocGenNodes", &SerialOperatorTree::deallocGenNodes)
-    //     .def("deallocGenNodeChunks", &SerialOperatorTree::deallocGenNodeChunks);
-
-    //py::class_<RepresentableFunction<1>, PyRepresentableFunction<1>> _repfunc1d(
-    //    m, "phantom_of_the_RepresentableFunction1D");
-    //legendre_poly(m, _repfunc1d);
-    //polynomial(m, _repfunc1d);
-    //boys_function(m, _repfunc1d);
-
     mw_operator(m);
-    // GreensKernel
-    py::class_<GreensKernel> greenskernel(m, "GreensKernel");
-    derivative_kernel(m, greenskernel);
-    helmholtz_kernel(m, greenskernel);
-    identity_kernel(m, greenskernel);
+    // NOTE We bind GreensKernel first, since it's the base class for the 3 following
+    py::class_<GreensKernel>(m, "GreensKernel");
+    derivative_kernel(m);
+    helmholtz_kernel(m);
+    identity_kernel(m);
 
     // Dimension-dependent bindings go into submodules
     bind_mr<1>(m);
+    // NOTE We bind these 1D functions here as we need RepresentableFunction<1> bound first
+    polynomial(m);
+    legendre_poly(m);
+    boys_function(m);
+
     bind_mr<2>(m);
+    // NOTE We bind these down here as we need MWTree<2> and SerialTree<2> as base classes
+    py::class_<OperatorTree, MWTree<2>>(m, "OperatorTree")
+        .def(py::init<MultiResolutionAnalysis<2> &, double>())
+        .def("getNormPrecision", &OperatorTree::getNormPrecision)
+        .def("calcBandWidth", py::overload_cast<double>(&OperatorTree::calcBandWidth))
+        .def("clearBandWidth", &OperatorTree::clearBandWidth)
+        .def("setupOperNodeCache", &OperatorTree::setupOperNodeCache)
+        .def("clearOperNodeCache", &OperatorTree::clearOperNodeCache)
+        .def("mwTransformDown", &OperatorTree::mwTransformDown)
+        .def("mwTransformUp", &OperatorTree::mwTransformUp);
+    pybind11::class_<SerialOperatorTree, SerialTree<2>>(m, "SerialOperatorTree")
+        .def(py::init<OperatorTree *>())
+        .def("allocRoots", &SerialOperatorTree::allocRoots)
+        .def("allocChildren", &SerialOperatorTree::allocChildren)
+        .def("allocGenChildren", &SerialOperatorTree::allocGenChildren)
+        .def("deallocNodes", &SerialOperatorTree::deallocNodes)
+        .def("deallocGenNodes", &SerialOperatorTree::deallocGenNodes)
+        .def("deallocGenNodeChunks", &SerialOperatorTree::deallocGenNodeChunks);
+
     bind_mr<3>(m);
 }
 } // namespace vampyr

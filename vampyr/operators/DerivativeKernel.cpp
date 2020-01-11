@@ -8,9 +8,9 @@ using namespace mrcpp;
 namespace py = pybind11;
 using namespace pybind11::literals;
 
-void derivative_kernel(py::module &m, py::class_<GreensKernel> &greenskernel) {
+void derivative_kernel(py::module &m) {
     //DerivativeKernel
-    py::class_<DerivativeKernel>(m, "DerivativeKernel", greenskernel)
+    py::class_<DerivativeKernel, GreensKernel>(m, "DerivativeKernel")
         .def(py::init<double>(), "eps"_a, "GreensKernel: DerivativeKernel");
 }
 } // namespace vampyr

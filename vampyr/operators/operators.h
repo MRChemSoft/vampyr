@@ -21,9 +21,9 @@
 #include "PoissonOperator.h"
 
 namespace vampyr {
-void helmholtz_kernel(pybind11::module &, pybind11::class_<mrcpp::GreensKernel> &greenskernel);
-void derivative_kernel(pybind11::module &, pybind11::class_<mrcpp::GreensKernel> &greenskernel);
-void identity_kernel(pybind11::module &, pybind11::class_<mrcpp::GreensKernel> &greenskernel);
+void helmholtz_kernel(pybind11::module &);
+void derivative_kernel(pybind11::module &);
+void identity_kernel(pybind11::module &);
 
 template <int D> void operators(pybind11::module &m) {
     using namespace mrcpp;
