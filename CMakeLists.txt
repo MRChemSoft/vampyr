@@ -2,7 +2,7 @@
 # Copyright (c) 2015-2019 by Radovan Bast, Roberto Di Remigio, Jonas Juselius, and contributors.
 
 # set minimum cmake version
-cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
 # project name
 project(VAMPyR LANGUAGES CXX)
@@ -58,8 +58,7 @@ include(${PROJECT_SOURCE_DIR}/cmake/downloaded/autocmake_mpi.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/downloaded/autocmake_omp.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/downloaded/autocmake_version.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/downloaded/autocmake_code_coverage.cmake)
-include(${PROJECT_SOURCE_DIR}/cmake/custom/eigen.cmake)
+include(${PROJECT_SOURCE_DIR}/cmake/custom/external.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/custom/main.cmake)
-include(${PROJECT_SOURCE_DIR}/cmake/custom/feature_summary.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/custom/tests.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/downloaded/autocmake_save_flags.cmake)

@@ -5,14 +5,14 @@ def x_tree_generator(x_tree, dir, prec=10e-3, beta=100.0, mid=0.0):
     beta = 100.0
     power = [0, 0, 0]
     power[int(dir)] = 2
-    x = vp.GaussFunc(beta, 4.0*beta**2, [mid, mid, mid], power)
+    x = vp.vampyr3d.GaussFunc(beta, 4.0*beta**2, [mid, mid, mid], power)
     vp.build_grid(x_tree, x)
     vp.project(prec, x_tree, x)
 
 
 def const_tree_generator(const_tree, prec=10e-3, beta=100.0, mu=0.0, mid=0.0):
     power = [0, 0, 0]
-    const = vp.GaussFunc(beta, -6.0*beta - mu**2, [mid, mid, mid], power)
+    const = vp.vampyr3d.GaussFunc(beta, -6.0*beta - mu**2, [mid, mid, mid], power)
     vp.build_grid(const_tree, const)
     vp.project(prec, const_tree, const)
 
@@ -20,10 +20,10 @@ def const_tree_generator(const_tree, prec=10e-3, beta=100.0, mu=0.0, mid=0.0):
 def v_generator(v_tree, MRA, prec=10e-3, beta=100.0, mid=0.0, mu=0.0):
     alpha = (beta/pi)**(3/2)
 
-    x_tree = vp.FunctionTree(MRA)
-    y_tree = vp.FunctionTree(MRA)
-    z_tree = vp.FunctionTree(MRA)
-    const_tree = vp.FunctionTree(MRA)
+    x_tree = vp.vampyr3d.FunctionTree(MRA)
+    y_tree = vp.vampyr3d.FunctionTree(MRA)
+    z_tree = vp.vampyr3d.FunctionTree(MRA)
+    const_tree = vp.vampyr3d.FunctionTree(MRA)
 
     x_tree_generator(x_tree, 0, prec, beta, mid)
     x_tree_generator(y_tree, 1, prec, beta, mid)

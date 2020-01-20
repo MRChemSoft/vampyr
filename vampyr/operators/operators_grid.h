@@ -1,35 +1,22 @@
-#include <array>
+#pragma once
 
-#include <pybind11/eigen.h>
 #include <pybind11/pybind11.h>
-#include <pybind11/functional.h>
-#include <pybind11/stl.h>
 
-#include "trees/FunctionTree.h"
-#include "trees/FunctionTreeVector.h"
-
-#include "trees/MultiResolutionAnalysis.h"
-
-#include "PyRepresentableFunction.h"
-
-#include "operators/DerivativeOperator.h"
-
-#include "treebuilders/apply.h"
-#include "treebuilders/grid.h"
-
-#include "functions/RepresentableFunction.h"
-
-using namespace mrcpp;
-namespace py = pybind11;
-using namespace pybind11::literals;
+#include <MRCPP/functions/RepresentableFunction.h>
+#include <MRCPP/operators/DerivativeOperator.h>
+#include <MRCPP/treebuilders/apply.h>
+#include <MRCPP/treebuilders/grid.h>
+#include <MRCPP/trees/FunctionTree.h>
+#include <MRCPP/trees/FunctionTreeVector.h>
+#include <MRCPP/trees/MultiResolutionAnalysis.h>
 
 namespace vampyr {
+template <int D> void operators_grid(pybind11::module &m) {
+    using namespace mrcpp;
+    namespace py = pybind11;
+    using namespace pybind11::literals;
 
-void operators_grid(py::module &m) {
-
-    const auto D = 3;
-    
-     m.def("build_grid",
+    m.def("build_grid",
           py::overload_cast<FunctionTree<D> &, const RepresentableFunction<D> &, int>(&build_grid<D>),
           "out"_a,
           "inp"_a,
@@ -52,7 +39,17 @@ void operators_grid(py::module &m) {
 
     m.def("clear_grid", py::overload_cast<FunctionTree<D> &>(&clear_grid<D>));
     m.def("refine_grid", py::overload_cast<FunctionTree<D> &, int>(&refine_grid<D>), "out"_a, "scales"_a);
-    m.def("refine_grid", py::overload_cast<FunctionTree<D> &, double, bool>(&refine_grid<D>), "out"_a, "prec"_a, "abs_prec"_a = false);
+    m.def("refine_grid",
+          py::overload_cast<FunctionTree<D> &, double, bool>(&refine_grid<D>),
+          "out"_a,
+          "prec"_a,
+          "abs_prec"_a = false);
     m.def("refine_grid", py::overload_cast<FunctionTree<D> &, FunctionTree<D> &>(&refine_grid<D>), "out"_a, "inp"_a);
+
+    m.def(
+        "divergence",
+        py::overload_cast<FunctionTree<D> &, DerivativeOperator<D> &, FunctionTreeVector<D> &>(&mrcpp::divergence<D>));
+
+    m.def("gradient", py::overload_cast<DerivativeOperator<D> &, FunctionTree<D> &>(&gradient<D>));
 }
 } // namespace vampyr

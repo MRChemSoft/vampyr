@@ -34,7 +34,10 @@ else()
   endif()
 endif()
 
-find_package(MRCPP 1.1 CONFIG QUIET)
+set(STAGED_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/stage)
+message(STATUS "${PROJECT_NAME} staged install: ${STAGED_INSTALL_PREFIX}")
+
+find_package(MRCPP 1.0 CONFIG QUIET)
 if(TARGET MRCPP::mrcpp)
   get_property(_loc TARGET MRCPP::mrcpp PROPERTY LOCATION)
   message(STATUS "Found MRCPP: ${_loc} (found version ${MRCPP_VERSION})")
@@ -43,7 +46,7 @@ else()
   FetchContent_Declare(mrcpp_sources
     QUIET
     URL
-      https://github.com/MRChemSoft/mrcpp/archive/v1.1.0.tar.gz
+      https://github.com/MRChemSoft/mrcpp/archive/master.tar.gz
     )
 
   FetchContent_GetProperties(mrcpp_sources)
@@ -53,7 +56,6 @@ else()
   set(CMAKE_CXX_COMPILER ${CMAKE_CXX_COMPILER})
   set(ENABLE_OPENMP ${ENABLE_OPENMP} CACHE BOOL "")
   set(ENABLE_MPI ${ENABLE_MPI} CACHE BOOL "")
-  set(Eigen3_DIR ${Eigen3_DIR} CACHE BOOL "")
   set(ENABLE_TESTS FALSE CACHE BOOL "")
   set(ENABLE_EXAMPLES FALSE CACHE BOOL "")
   set(SHARED_LIBRARY_ONLY TRUE CACHE BOOL "")

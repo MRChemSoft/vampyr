@@ -1,5 +1,5 @@
 name: VAMPyR
-min_cmake_version: 3.11
+min_cmake_version: 3.14
 setup_script: setup
 default_build_type: release
 language:
@@ -22,13 +22,10 @@ modules:
     - '%(url_root)modules/omp.cmake'
     - '%(url_root)modules/version.cmake'
     - '%(url_root)modules/code_coverage.cmake'
-- libs:
-  - source:
-    - 'custom/eigen.cmake'
 - custom:
   - source:
+    - 'custom/external.cmake'
     - 'custom/main.cmake'
-    - 'custom/feature_summary.cmake'
 - tests:
   - source:
     - 'custom/tests.cmake'

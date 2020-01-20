@@ -7,9 +7,9 @@
 
 #include <pybind11/pybind11.h>
 
-#include "core/ScalingBasis.h"
-#include "core/InterpolatingBasis.h"
-#include "core/LegendreBasis.h"
+#include <MRCPP/core/InterpolatingBasis.h>
+#include <MRCPP/core/LegendreBasis.h>
+#include <MRCPP/core/ScalingBasis.h>
 
 using namespace mrcpp;
 namespace py = pybind11;
@@ -18,15 +18,15 @@ namespace vampyr {
 
 void bases(py::module &m) {
 
-py::class_<ScalingBasis> scalingbasis(m, "ScalingBasis");
+    py::class_<ScalingBasis> scalingbasis(m, "ScalingBasis");
     scalingbasis.def(py::init<int, int>());
 
-py::class_<InterpolatingBasis> (m, "InterpolatingBasis", scalingbasis)
-    .def(py::init<int>())
-    .def("getScalingOrder", &InterpolatingBasis::getScalingOrder);
+    py::class_<InterpolatingBasis>(m, "InterpolatingBasis", scalingbasis)
+        .def(py::init<int>())
+        .def("getScalingOrder", &InterpolatingBasis::getScalingOrder);
 
-py::class_<LegendreBasis> (m, "LegendreBasis", scalingbasis)
-    .def(py::init<int>())
-    .def("getScalingOrder", &LegendreBasis::getScalingOrder);
+    py::class_<LegendreBasis>(m, "LegendreBasis", scalingbasis)
+        .def(py::init<int>())
+        .def("getScalingOrder", &LegendreBasis::getScalingOrder);
 }
 } // namespace vampyr

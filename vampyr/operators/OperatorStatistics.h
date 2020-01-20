@@ -1,22 +1,15 @@
-#include <array>
+#pragma once
 
-#include <pybind11/eigen.h>
 #include <pybind11/pybind11.h>
-#include <pybind11/functional.h>
-#include <pybind11/stl.h>
 
-#include "trees/MultiResolutionAnalysis.h"
-#include "trees/MWNode.h"
-
-#include "operators/OperatorStatistics.h"
-
-using namespace mrcpp;
-namespace py = pybind11;
+#include <MRCPP/operators/OperatorStatistics.h>
+#include <MRCPP/trees/MWNode.h>
+#include <MRCPP/trees/MultiResolutionAnalysis.h>
 
 namespace vampyr {
-
-void operator_statistics(py::module &m) {
-    const auto D = 3;
+template <int D> void operator_statistics(pybind11::module &m) {
+    using namespace mrcpp;
+    namespace py = pybind11;
 
     //OperatorStatistics
     py::class_<OperatorStatistics<D>> operatorstatistics(m, "OperatorStatistics");
@@ -24,7 +17,5 @@ void operator_statistics(py::module &m) {
         .def("flushNodeCounters", &OperatorStatistics<D>::flushNodeCounters, "flushNodeCounters")
         .def("incrementFNodeCounters", &OperatorStatistics<D>::incrementFNodeCounters, "incrementFNodeCounters")
         .def("incrementGNodeCounters", &OperatorStatistics<D>::incrementGNodeCounters, "incrementGNodeCounters");
-
-
 }
 } // namespace vampyr
