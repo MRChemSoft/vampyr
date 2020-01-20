@@ -1,25 +1,21 @@
 language: cpp
 dist: bionic
 
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - g++-7
-      - lcov
-
 matrix:
   fast_finish: true
   include:
     - os: linux
       env:
         - BUILD_TYPE='release'
-        - CXX_COMPILER='g++-7'
+        - CXX_COMPILER='g++'
     - os: linux
+      addons:
+        apt:
+          packages:
+            - lcov
       env:
         - BUILD_TYPE='debug'
-        - CXX_COMPILER='g++-7'
+        - CXX_COMPILER='g++'
         - COVERAGE='--coverage'
 
 env:
