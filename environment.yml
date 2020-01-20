@@ -1,8 +1,10 @@
 channels:
+  - nostress
   - conda-forge
   - defaults
 dependencies:
   - cmake
+  - mrcpp=*=*serial*
   - ninja
   - numpy
   - pybind11
