@@ -34,8 +34,8 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  - conda create --name vampyr python=3.6
-  - conda env update --name vampyr --file environment.yml -c conda-forge -c nostress
+  - conda create --name vampyr python=3.6 -c conda-forge -c nostress
+  - conda env update --name vampyr --file environment.yml
 
 before_script:
   - test -n $CXX && unset CXX
