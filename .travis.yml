@@ -35,7 +35,7 @@ install:
   - conda update -q conda
   - conda info -a
   - conda create --name vampyr python=3.6
-  - conda env update --name vampyr --file environment.yml
+  - conda env update --name vampyr --file environment.yml -c conda-forge -c nostress
 
 before_script:
   - test -n $CXX && unset CXX
