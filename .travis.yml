@@ -1,31 +1,38 @@
 language: cpp
-
-sudo: false
-
-dist: xenial
-
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - g++-7
-      - lcov
-      - libpython3.5-dev
-      - python3.5-dev
+dist: bionic
 
 matrix:
+  fast_finish: true
   include:
     - os: linux
+      addons: &1
+        apt:
+          packages:
+            - g++
+            - gcc
+            - lcov
+            - libeigen3-dev
       env:
         - BUILD_TYPE='release'
-        - CXX_COMPILER='g++-7'
+        - CXX_COMPILER='g++'
+        - C_COMPILER='gcc'
+        - RUN_DANGER=false
     - os: linux
+      addons: *1
+      env:
+        - BUILD_TYPE='release'
+        - CXX_COMPILER='g++'
+        - C_COMPILER='gcc'
+        - OPENMP='--omp'
+        - RUN_DANGER=false
+    - os: linux
+      addons: *1
       env:
         - BUILD_TYPE='debug'
-        - CXX_COMPILER='g++-7'
+        - CXX_COMPILER='g++'
+        - C_COMPILER='gcc'
         - COVERAGE='--coverage'
-
+        - RUN_DANGER=false
 env:
   global:
     - LC_ALL="en_US.UTF-8"
@@ -51,13 +58,21 @@ before_install:
 install:
   - ./.ci/cmake.sh
   - export PATH=$HOME/Deps/cmake/$CMAKE_VERSION/bin${PATH:+:$PATH}
-  - ./.ci/eigen.sh
   - pip install --user pipenv --upgrade
-  - pipenv install --python="/usr/bin/python3.5" --dev
+  - pip install -U pytest
+  - pipenv install --three
+  - pipenv run python --version
 
 before_script:
+  - test -n $CC && unset CC
   - test -n $CXX && unset CXX
+  - test -n $FC && unset FC
   - source $(pipenv --venv)/bin/activate
+  - |
+    if [[ "${RUN_DANGER}" = true ]]; then
+      bundle install --gemfile=.ci/Gemfile
+      BUNDLE_GEMFILE=.ci/Gemfile bundle exec danger --dangerfile=.ci/Dangerfile
+    fi
 
 script:
   - ./.ci/report_versions.sh
