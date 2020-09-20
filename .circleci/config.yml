@@ -10,7 +10,7 @@ variables:
     run:
       name: Create Conda environment
       command: |
-        conda create --name vampyr python=3.6
+        conda create --name vampyr python=3.6 -c conda-forge
         conda env update --name vampyr --file environment.yml
   configure-serial: &configure-serial
     run:
@@ -22,6 +22,7 @@ variables:
           --cxx=g++ \
           --generator=Ninja \
           --prefix=$HOME/Software/VAMPyR \
+          --omp \
           --cmake-options="-DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_VERBOSE_MAKEFILE=ON"
   build: &build
     run:
