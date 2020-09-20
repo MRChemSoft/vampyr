@@ -47,7 +47,7 @@ script:
   - >
       python ./setup \
              --type=${BUILD_TYPE} \
-             --cxx=${CXX \
+             --cxx=${CXX} \
              --generator=Ninja \
              --prefix=$HOME/Software/VAMPyR \
              ${OPENMP} \
