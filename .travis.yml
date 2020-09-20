@@ -38,7 +38,8 @@ install:
   - conda env update --name vampyr --file environment.yml
 
 before_script:
-  - test -n $CXX && unset CXX
+  - echo $CXX
+  #- test -n $CXX && unset CXX
 
 script:
   - conda activate vampyr
@@ -46,6 +47,7 @@ script:
   - >
       python ./setup \
              --type=${BUILD_TYPE} \
+             --cxx=${CXX \
              --generator=Ninja \
              --prefix=$HOME/Software/VAMPyR \
              ${OPENMP} \
