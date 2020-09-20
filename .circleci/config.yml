@@ -2,7 +2,7 @@ version: 2
 variables:
   ubuntu-1804: &ubuntu-1804
     docker:
-      - image: quay.io/metamr/circleci_ubuntu-18.04-conda:41efbc8
+      - image: quay.io/metamr/circleci_ubuntu-18.04-conda:c014aaf
         name: tsubame
         user: merzbow
     working_directory: ~/vampyr
@@ -19,6 +19,7 @@ variables:
         source activate vampyr
         python ./setup \
           --type=release \
+          --cxx=${CONDA_PREFIX}/bin/x86_64-conda_cos6-linux-gnu-g++ \
           --generator=Ninja \
           --prefix=$HOME/Software/VAMPyR \
           --omp \
