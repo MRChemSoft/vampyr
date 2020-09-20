@@ -2,7 +2,7 @@ version: 2
 variables:
   ubuntu-1804: &ubuntu-1804
     docker:
-      - image: quay.io/metamr/circleci_ubuntu-18.04-conda:c014aaf
+      - image: quay.io/metamr/circleci_ubuntu-18.04-conda:b31cfce
         name: tsubame
         user: merzbow
     working_directory: ~/vampyr
