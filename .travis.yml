@@ -38,16 +38,16 @@ install:
   - conda env update --name vampyr --file environment.yml
 
 before_script:
-  - echo $CXX
-  #- test -n $CXX && unset CXX
+  - test -n $CXX && unset CXX
 
 script:
   - conda activate vampyr
+  - echo ${CXX}
   - ./.ci/report_versions.sh
   - >
       python ./setup \
              --type=${BUILD_TYPE} \
-             --cxx=${CXX} \
+             --cxx=${CONDA_PREFIX}/bin/x86_64-conda_cos6-linux-gnu-g++ \
              --generator=Ninja \
              --prefix=$HOME/Software/VAMPyR \
              ${OPENMP} \
