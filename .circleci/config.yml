@@ -10,7 +10,7 @@ variables:
     run:
       name: Create Conda environment
       command: |
-        conda create --name vampyr python=3.6 gxx_impl_linux64 -c conda-forge
+        conda create --name vampyr python=3.6 gxx_impl_linux-64 -c conda-forge
         conda env update --name vampyr --file environment.yml
   configure-serial: &configure-serial
     run:
