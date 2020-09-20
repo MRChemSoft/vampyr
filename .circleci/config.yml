@@ -2,7 +2,7 @@ version: 2
 variables:
   ubuntu-1804: &ubuntu-1804
     docker:
-      - image: quay.io/metamr/circleci_ubuntu-18.04-conda
+      - image: quay.io/metamr/circleci_ubuntu-18.04-conda:41efbc8
         name: tsubame
         user: merzbow
     working_directory: ~/vampyr
@@ -10,7 +10,7 @@ variables:
     run:
       name: Create Conda environment
       command: |
-        conda create --name vampyr python=3.6 -c conda-forge
+        conda create --name vampyr python=3.6 gxx_impl_linux64 -c conda-forge
         conda env update --name vampyr --file environment.yml
   configure-serial: &configure-serial
     run:
@@ -19,7 +19,6 @@ variables:
         source activate vampyr
         python ./setup \
           --type=release \
-          --cxx=g++ \
           --generator=Ninja \
           --prefix=$HOME/Software/VAMPyR \
           --omp \
