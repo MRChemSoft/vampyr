@@ -1,4 +1,5 @@
 language: cpp
+
 dist: bionic
 
 matrix:
@@ -7,7 +8,7 @@ matrix:
     - os: linux
       env:
         - BUILD_TYPE='release'
-        - CXX_COMPILER='g++'
+        - OPENMP='--omp'
     - os: linux
       addons:
         apt:
@@ -15,7 +16,6 @@ matrix:
             - lcov
       env:
         - BUILD_TYPE='debug'
-        - CXX_COMPILER='g++'
         - COVERAGE='--coverage'
 
 env:
@@ -34,7 +34,7 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  - conda create --name vampyr python=3.6 -c conda-forge -c nostress
+  - conda create --name vampyr python=3.6 -c conda-forge
   - conda env update --name vampyr --file environment.yml
 
 before_script:
@@ -48,7 +48,7 @@ script:
              --type=${BUILD_TYPE} \
              --generator=Ninja \
              --prefix=$HOME/Software/VAMPyR \
-             --cxx=${CXX_COMPILER} \
+             ${OPENMP} \
              ${COVERAGE} \
              --cmake-options="-DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DPYTHON_EXECUTABLE=${CONDA_PREFIX}/bin/python -DCMAKE_VERBOSE_MAKEFILE=ON"
   - cd build
