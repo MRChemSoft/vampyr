@@ -16,7 +16,6 @@ matrix:
         - BUILD_TYPE='release'
         - CXX_COMPILER='g++'
         - C_COMPILER='gcc'
-        - RUN_DANGER=false
     - os: linux
       addons: *1
       env:
@@ -24,7 +23,6 @@ matrix:
         - CXX_COMPILER='g++'
         - C_COMPILER='gcc'
         - OPENMP='--omp'
-        - RUN_DANGER=false
     - os: linux
       addons: *1
       env:
@@ -32,7 +30,6 @@ matrix:
         - CXX_COMPILER='g++'
         - C_COMPILER='gcc'
         - COVERAGE='--coverage'
-        - RUN_DANGER=false
 env:
   global:
     - LC_ALL="en_US.UTF-8"
@@ -40,7 +37,7 @@ env:
     - LANGUAGE="en_US.UTF-8"
     - PYTHONIOENCODING=UTF-8
     - OMP_NUM_THREADS=1
-    - CMAKE_VERSION="3.14.7"
+    - CMAKE_VERSION="3.18.2"
     # Invalidate PYENV_ROOT
     - PYENV_ROOT=$HOME/fuffa
 
@@ -49,7 +46,6 @@ cache:
   pip: true
   directories:
     - $HOME/Deps/cmake/$CMAKE_VERSION
-    - $HOME/Deps/eigen
 
 before_install:
   # Dependencies are downloaded in $HOME/Downloads and installed in $HOME/Deps
@@ -59,8 +55,7 @@ install:
   - ./.ci/cmake.sh
   - export PATH=$HOME/Deps/cmake/$CMAKE_VERSION/bin${PATH:+:$PATH}
   - pip install --user pipenv --upgrade
-  - pip install -U pytest
-  - pipenv install --three
+  - pipenv install --three --dev
   - pipenv run python --version
 
 before_script:
@@ -68,11 +63,6 @@ before_script:
   - test -n $CXX && unset CXX
   - test -n $FC && unset FC
   - source $(pipenv --venv)/bin/activate
-  - |
-    if [[ "${RUN_DANGER}" = true ]]; then
-      bundle install --gemfile=.ci/Gemfile
-      BUNDLE_GEMFILE=.ci/Gemfile bundle exec danger --dangerfile=.ci/Dangerfile
-    fi
 
 script:
   - ./.ci/report_versions.sh
@@ -82,8 +72,7 @@ script:
            --prefix=$HOME/Software/VAMPyR \
            --cxx=${CXX_COMPILER} \
            ${COVERAGE} \
-           ${OPENMP} \
-           --cmake-options="-DEigen3_DIR=${HOME}/Deps/eigen/share/eigen3/cmake"
+           ${OPENMP}
   - cd build
   - cmake --build . --target install -- VERBOSE=1
   - ctest --output-on-failure --verbose
