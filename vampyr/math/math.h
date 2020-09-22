@@ -36,7 +36,7 @@ template <int D> void math(pybind11::module &m) {
           "Addition: output_tree = sum_i c_i f_i(x)");
 
     m.def("multiply",
-          pybind11::overload_cast<double, FunctionTree<D> &, double, FunctionTree<D> &, FunctionTree<D> &, int, bool>(
+          pybind11::overload_cast<double, FunctionTree<D> &, double, FunctionTree<D> &, FunctionTree<D> &, int, bool, bool>(
               &multiply<D>),
           "precision"_a,
           "output_tree"_a,
@@ -45,15 +45,17 @@ template <int D> void math(pybind11::module &m) {
           "tree_b"_a,
           "maxIter"_a = -1,
           "abs_prec"_a = false,
+          "useMaxNorms"_a = false,
           "Multiplication: output_tree = c*tree_a*tree_b");
 
     m.def("multiply",
-          pybind11::overload_cast<double, FunctionTree<D> &, FunctionTreeVector<D> &, int, bool>(&multiply<D>),
+          pybind11::overload_cast<double, FunctionTree<D> &, FunctionTreeVector<D> &, int, bool, bool>(&multiply<D>),
           "precision"_a,
           "output_tree"_a,
           "inpit_vector"_a,
           "maxIter"_a = -1,
           "abs_prec"_a = false,
+          "useMaxNorms"_a = false,
           "Multiplication: output_tree = prod_i c_i f_i(x)");
 
     m.def("dot", pybind11::overload_cast<FunctionTree<D> &, FunctionTree<D> &>(&dot<D>), "bra"_a, "ket"_a);

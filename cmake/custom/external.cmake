@@ -1,13 +1,9 @@
 include(FetchContent)
 
-set(PYBIND11_PYTHON_VERSION 3.5)
-if(MSVC)
-  set(PYBIND11_CPP_STANDARD "/std:c++${CMAKE_CXX_STANDARD}")
-else()
-  set(PYBIND11_CPP_STANDARD "-std=c++${CMAKE_CXX_STANDARD}")
-endif()
+set(PYBIND11_PYTHON_VERSION 3.6)
+set(PYBIND11_CPP_STANDARD "-std=c++${CMAKE_CXX_STANDARD}")
 
-find_package(pybind11 2.3 CONFIG QUIET)
+find_package(pybind11 2.5 CONFIG QUIET)
 if(pybind11_FOUND)
   message(STATUS "Found pybind11: ${pybind11_INCLUDE_DIR} (found version ${pybind11_VERSION})")
 else()
@@ -15,7 +11,7 @@ else()
   FetchContent_Declare(pybind11_sources
     QUIET
     URL
-      https://github.com/pybind/pybind11/archive/v2.3.0.tar.gz
+      https://github.com/pybind/pybind11/archive/v2.5.0.tar.gz
     )
 
   FetchContent_GetProperties(pybind11_sources)
@@ -37,7 +33,7 @@ endif()
 set(STAGED_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/stage)
 message(STATUS "${PROJECT_NAME} staged install: ${STAGED_INSTALL_PREFIX}")
 
-find_package(MRCPP 1.0 CONFIG QUIET)
+find_package(MRCPP 1.3 CONFIG QUIET)
 if(TARGET MRCPP::mrcpp)
   get_property(_loc TARGET MRCPP::mrcpp PROPERTY LOCATION)
   message(STATUS "Found MRCPP: ${_loc} (found version ${MRCPP_VERSION})")
@@ -58,7 +54,6 @@ else()
   set(ENABLE_MPI ${ENABLE_MPI} CACHE BOOL "")
   set(ENABLE_TESTS FALSE CACHE BOOL "")
   set(ENABLE_EXAMPLES FALSE CACHE BOOL "")
-  set(SHARED_LIBRARY_ONLY TRUE CACHE BOOL "")
 
   if(NOT mrcpp_sources_POPULATED)
     FetchContent_Populate(mrcpp_sources)
