@@ -52,29 +52,7 @@ def setup_build_path(build_path):
         os.makedirs(build_path, 0o755)
 
 
-def add_quotes_to_argv(argv, arguments):
-    """
-    This function tries to solve this problem:
-    https://stackoverflow.com/questions/19120247/python-sys-argv-to-preserve-or
-
-    The problem is that sys.argv has been stripped of quotes by the shell but
-    docopt's arguments contains quotes.
-
-    So what we do is cycle through all docopt arguments: if they are also
-    present in sys.argv and contain spaces, we add quotes.
-    """
-    setup_command = ' '.join(argv[:])
-
-    for k, v in arguments.items():
-        if isinstance(v, str):
-            if ' ' in v:
-                if v in setup_command:
-                    setup_command = setup_command.replace(v, '"{}"'.format(v))
-
-    return setup_command
-
-
-def run_cmake(command, build_path, default_build_path, arguments):
+def run_cmake(command, build_path, default_build_path):
     """
     Execute CMake command.
     """
@@ -110,8 +88,7 @@ def run_cmake(command, build_path, default_build_path, arguments):
     configuration_successful = configuring_done and generating_done and build_files_written
 
     if configuration_successful:
-        setup_command = add_quotes_to_argv(sys.argv, arguments)
-        save_setup_command(setup_command, build_path)
+        save_setup_command(sys.argv, build_path)
         print_build_help(build_path, default_build_path)
 
 
@@ -128,16 +105,16 @@ def print_build_help(build_path, default_build_path):
     print('   $ make')
 
 
-def save_setup_command(setup_command, build_path):
+def save_setup_command(argv, build_path):
     """
     Save setup command to a file.
     """
     file_name = os.path.join(build_path, 'setup_command')
     with open(file_name, 'w') as f:
-        f.write(setup_command + '\n')
+        f.write(' '.join(argv[:]) + '\n')
 
 
-def configure(root_directory, build_path, cmake_command, arguments):
+def configure(root_directory, build_path, cmake_command, only_show):
     """
     Main configure function.
     """
@@ -149,12 +126,12 @@ def configure(root_directory, build_path, cmake_command, arguments):
     # deal with build path
     if build_path is None:
         build_path = default_build_path
-    if not arguments['--show']:
+    if not only_show:
         setup_build_path(build_path)
 
     cmake_command += ' -B' + build_path
     print('{0}\n'.format(cmake_command))
-    if arguments['--show']:
+    if only_show:
         sys.exit(0)
 
-    run_cmake(cmake_command, build_path, default_build_path, arguments)
+    run_cmake(cmake_command, build_path, default_build_path)
