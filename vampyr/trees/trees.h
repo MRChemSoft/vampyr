@@ -85,7 +85,21 @@ template <int D> void trees(pybind11::module &m) {
         .def("printSerialIndices", &FunctionTree<D>::printSerialIndices, "Print Serial Indices")
         .def("evalf",
              pybind11::overload_cast<const Coord<D> &>(&FunctionTree<D>::evalf, pybind11::const_),
-             "Returns the function value at a given point");
+             "Returns the function value at a given point")
+        .def("__repr__", [](const FunctionTree<D> &a) {
+            std::ostringstream os;
+            os << "  square norm: " << a.getSquareNorm() << std::endl;
+            os << "  root scale: " << a.getRootScale() << std::endl;
+            os << "  order: " << a.getOrder() << std::endl;
+            os << "  nodes: " << a.getNNodes() << std::endl;
+            os << "  endNodes: " << a.getNEndNodes() << std::endl;
+            // os << "  genNodes: " << a.getNGenNodes() << std::endl;
+            os << "  nodes per scale: " << std::endl;
+            for (int i = 0; i < a.getDepth(); i++) {
+                os << "    scale=" << i + a.getRootScale() << "  nodes=" << a.getNNodes(i) << std::endl;
+            }
+            return os.str();
+        });
 
     pybind11::class_<MWNode<D>> mwnode(m, "MWNode");
     mwnode.def(pybind11::init<MWNode<D>>())
