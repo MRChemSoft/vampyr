@@ -10,11 +10,11 @@ variables:
     run:
       name: Create Conda environment
       command: |
-        conda create --name vampyr python=3.6 gxx_impl_linux-64 -c conda-forge
+        conda create --name vampyr python=3.6 -c conda-forge
         conda env update --name vampyr --file environment.yml
-  configure-serial: &configure-serial
+  configure: &configure
     run:
-      name: Configuring serial
+      name: Configuring
       command: |
         source activate vampyr
         python ./setup \
@@ -22,7 +22,6 @@ variables:
           --cxx=${CONDA_PREFIX}/bin/x86_64-conda_cos6-linux-gnu-g++ \
           --generator=Ninja \
           --prefix=$HOME/Software/VAMPyR \
-          --omp \
           --cmake-options="-DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_VERBOSE_MAKEFILE=ON"
   build: &build
     run:
@@ -39,12 +38,12 @@ variables:
         ctest --output-on-failure --verbose
 
 jobs:
-  serial-py3:
+  py3:
     <<: *ubuntu-1804
     steps:
       - checkout
       - *setup
-      - *configure-serial
+      - *configure
       - *build
       - *tests
 
@@ -52,4 +51,4 @@ workflows:
   version: 2
   build:
     jobs:
-      - serial-py3
+      - py3
