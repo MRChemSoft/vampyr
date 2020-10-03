@@ -1,3 +1,7 @@
+# We save CMAKE_BUILD_TYPE, as we will set it to Release for externals
+set(_build_type ${CMAKE_BUILD_TYPE})
+set(CMAKE_BUILD_TYPE Release)
+
 include(FetchContent)
 
 set(PYBIND11_PYTHON_VERSION 3.6)
@@ -42,16 +46,16 @@ else()
   FetchContent_Declare(mrcpp_sources
     QUIET
     URL
-      https://github.com/MRChemSoft/mrcpp/archive/master.tar.gz
+      https://github.com/MRChemSoft/mrcpp/archive/v1.3.4.tar.gz
     )
 
   FetchContent_GetProperties(mrcpp_sources)
 
   set(CMAKE_INSTALL_PREFIX ${STAGED_INSTALL_PREFIX})
-  set(CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE})
   set(CMAKE_CXX_COMPILER ${CMAKE_CXX_COMPILER})
-  set(ENABLE_OPENMP ${ENABLE_OPENMP} CACHE BOOL "")
-  set(ENABLE_MPI ${ENABLE_MPI} CACHE BOOL "")
+  # Always build with OpenMP and without MPI
+  set(ENABLE_OPENMP TRUE CACHE BOOL "")
+  set(ENABLE_MPI FALSE CACHE BOOL "")
   set(ENABLE_TESTS FALSE CACHE BOOL "")
   set(ENABLE_EXAMPLES FALSE CACHE BOOL "")
 
@@ -64,3 +68,6 @@ else()
       )
   endif()
 endif()
+
+# reset CMAKE_BUILD_TYPE to whatever it was for VAMPyR
+set(CMAKE_BUILD_TYPE ${_build_type})

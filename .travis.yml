@@ -1,35 +1,22 @@
 language: cpp
+
 dist: bionic
 
 matrix:
   fast_finish: true
   include:
     - os: linux
-      addons: &1
+      env:
+        - BUILD_TYPE='release'
+    - os: linux
+      addons:
         apt:
           packages:
-            - g++
-            - gcc
             - lcov
-            - libeigen3-dev
-      env:
-        - BUILD_TYPE='release'
-        - CXX_COMPILER='g++'
-        - C_COMPILER='gcc'
-    - os: linux
-      addons: *1
-      env:
-        - BUILD_TYPE='release'
-        - CXX_COMPILER='g++'
-        - C_COMPILER='gcc'
-        - OPENMP='--omp'
-    - os: linux
-      addons: *1
       env:
         - BUILD_TYPE='debug'
-        - CXX_COMPILER='g++'
-        - C_COMPILER='gcc'
         - COVERAGE='--coverage'
+
 env:
   global:
     - LC_ALL="en_US.UTF-8"
@@ -37,45 +24,37 @@ env:
     - LANGUAGE="en_US.UTF-8"
     - PYTHONIOENCODING=UTF-8
     - OMP_NUM_THREADS=1
-    - CMAKE_VERSION="3.18.2"
-    # Invalidate PYENV_ROOT
-    - PYENV_ROOT=$HOME/fuffa
-
-cache:
-  timeout: 1000
-  pip: true
-  directories:
-    - $HOME/Deps/cmake/$CMAKE_VERSION
-
-before_install:
-  # Dependencies are downloaded in $HOME/Downloads and installed in $HOME/Deps
-  - mkdir -p $HOME/Downloads $HOME/Deps
 
 install:
-  - ./.ci/cmake.sh
-  - export PATH=$HOME/Deps/cmake/$CMAKE_VERSION/bin${PATH:+:$PATH}
-  - pip install --user pipenv --upgrade
-  - pipenv install --three --dev
-  - pipenv run python --version
+  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - source "$HOME/miniconda/etc/profile.d/conda.sh"
+  - hash -r
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update -q conda
+  - conda info -a
+  - conda create --name vampyr python=3.6 -c conda-forge
+  - conda env update --name vampyr --file environment.yml
 
 before_script:
-  - test -n $CC && unset CC
   - test -n $CXX && unset CXX
-  - test -n $FC && unset FC
-  - source $(pipenv --venv)/bin/activate
 
 script:
+  - conda activate vampyr
+  - echo ${CXX}
   - ./.ci/report_versions.sh
-  - |
-    python ./setup \
-           --type=${BUILD_TYPE} \
-           --prefix=$HOME/Software/VAMPyR \
-           --cxx=${CXX_COMPILER} \
-           ${COVERAGE} \
-           ${OPENMP}
+  - >
+      python ./setup \
+             --type=${BUILD_TYPE} \
+             --cxx=${CONDA_PREFIX}/bin/x86_64-conda_cos6-linux-gnu-g++ \
+             --generator=Ninja \
+             --prefix=$HOME/Software/VAMPyR \
+             ${COVERAGE} \
+             --cmake-options="-DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DPYTHON_EXECUTABLE=${CONDA_PREFIX}/bin/python -DCMAKE_VERBOSE_MAKEFILE=ON"
   - cd build
-  - cmake --build . --target install -- VERBOSE=1
+  - cmake --build . --target install -- -v -d stats
   - ctest --output-on-failure --verbose
+  - conda deactivate
 
 after_success:
   - |

@@ -2,7 +2,7 @@ version: 2
 variables:
   ubuntu-1804: &ubuntu-1804
     docker:
-      - image: quay.io/metamr/circleci_ubuntu-18.04-conda
+      - image: quay.io/metamr/circleci_ubuntu-18.04-conda:b31cfce
         name: tsubame
         user: merzbow
     working_directory: ~/vampyr
@@ -10,16 +10,16 @@ variables:
     run:
       name: Create Conda environment
       command: |
-        conda create --name vampyr python=3.6
+        conda create --name vampyr python=3.6 -c conda-forge
         conda env update --name vampyr --file environment.yml
-  configure-serial: &configure-serial
+  configure: &configure
     run:
-      name: Configuring serial
+      name: Configuring
       command: |
         source activate vampyr
         python ./setup \
           --type=release \
-          --cxx=g++ \
+          --cxx=${CONDA_PREFIX}/bin/x86_64-conda_cos6-linux-gnu-g++ \
           --generator=Ninja \
           --prefix=$HOME/Software/VAMPyR \
           --cmake-options="-DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_VERBOSE_MAKEFILE=ON"
@@ -38,12 +38,12 @@ variables:
         ctest --output-on-failure --verbose
 
 jobs:
-  serial-py3:
+  py3:
     <<: *ubuntu-1804
     steps:
       - checkout
       - *setup
-      - *configure-serial
+      - *configure
       - *build
       - *tests
 
@@ -51,4 +51,4 @@ workflows:
   version: 2
   build:
     jobs:
-      - serial-py3
+      - py3
