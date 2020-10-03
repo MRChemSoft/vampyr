@@ -8,7 +8,6 @@ matrix:
     - os: linux
       env:
         - BUILD_TYPE='release'
-        - OPENMP='--omp'
     - os: linux
       addons:
         apt:
@@ -34,7 +33,7 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  - conda create --name vampyr python=3.6 gxx_impl_linux-64 -c conda-forge
+  - conda create --name vampyr python=3.6 -c conda-forge
   - conda env update --name vampyr --file environment.yml
 
 before_script:
@@ -50,7 +49,6 @@ script:
              --cxx=${CONDA_PREFIX}/bin/x86_64-conda_cos6-linux-gnu-g++ \
              --generator=Ninja \
              --prefix=$HOME/Software/VAMPyR \
-             ${OPENMP} \
              ${COVERAGE} \
              --cmake-options="-DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DPYTHON_EXECUTABLE=${CONDA_PREFIX}/bin/python -DCMAKE_VERBOSE_MAKEFILE=ON"
   - cd build

@@ -3,6 +3,7 @@ channels:
   - defaults
 dependencies:
   - cmake
+  - gxx_impl_linux-64
   - mrcpp
   - ninja
   - numpy
