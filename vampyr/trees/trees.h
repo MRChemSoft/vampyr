@@ -1,5 +1,8 @@
 #pragma once
 
+#include <algorithm>
+#include <array>
+
 #include <pybind11/eigen.h>
 #include <pybind11/functional.h>
 #include <pybind11/pybind11.h>
@@ -24,13 +27,14 @@
 namespace vampyr {
 template <int D> void trees(pybind11::module &m) {
     using namespace mrcpp;
+    namespace py = pybind11;
     using namespace pybind11::literals;
 
     // The commented lines bellow were resulting in errors on compiling I (Evelin) didn't manage to fix.
     // I'm not completely sure of their importance on overall coding so left them to be "fixed" instead
     // of just deleting.
-    pybind11::class_<MWTree<D>> mwtree(m, "MWTree");
-    mwtree.def(pybind11::init<MultiResolutionAnalysis<D>>())
+    py::class_<MWTree<D>>(m, "MWTree")
+        .def(py::init<MultiResolutionAnalysis<D>>())
         .def("getSquareNorm", &MWTree<D>::getSquareNorm)
         .def("calcSquareNorm", &MWTree<D>::calcSquareNorm)
         .def("clearSquareNorm", &MWTree<D>::clearSquareNorm)
@@ -45,24 +49,24 @@ template <int D> void trees(pybind11::module &m) {
         .def("getRootScale", &MWTree<D>::getRootScale)
         .def("getDepth", &MWTree<D>::getDepth)
         .def("getSizeNodes", &MWTree<D>::getSizeNodes)
-        .def("mwTransform", pybind11::overload_cast<int, bool>(&MWTree<D>::mwTransform))
+        .def("mwTransform", py::overload_cast<int, bool>(&MWTree<D>::mwTransform))
         .def("setName", &MWTree<D>::setName)
-        .def("getRootIndex", pybind11::overload_cast<const Coord<D> &>(&MWTree<D>::getRootIndex, pybind11::const_))
-        //.def("makeNodeTable", pybind11::overload_cast<MWNodeVector<D> &>(&MWTree<D>::makeNodeTable_))
+        .def("getRootIndex", py::overload_cast<const Coord<D> &>(&MWTree<D>::getRootIndex, py::const_))
+        //.def("makeNodeTable", py::overload_cast<MWNodeVector<D> &>(&MWTree<D>::makeNodeTable_))
         .def("resetEndNodeTable", &MWTree<D>::resetEndNodeTable)
         .def("clearEndNodeTable", &MWTree<D>::clearEndNodeTable)
         .def("deleteGenerated", &MWTree<D>::deleteGenerated)
         .def("getNThreads", &MWTree<D>::getNThreads)
         .def("saveTree", &MWTree<D>::saveTree)
         .def("loadTree", &MWTree<D>::loadTree)
-        .def("countBranchNodes", pybind11::overload_cast<int>(&MWTree<D>::countBranchNodes))
-        .def("countLeafNodes", pybind11::overload_cast<int>(&MWTree<D>::countLeafNodes))
-        .def("countAllocNodes", pybind11::overload_cast<int>(&MWTree<D>::countAllocNodes))
-        .def("countNodes", pybind11::overload_cast<int>(&MWTree<D>::countNodes))
+        .def("countBranchNodes", py::overload_cast<int>(&MWTree<D>::countBranchNodes))
+        .def("countLeafNodes", py::overload_cast<int>(&MWTree<D>::countLeafNodes))
+        .def("countAllocNodes", py::overload_cast<int>(&MWTree<D>::countAllocNodes))
+        .def("countNodes", py::overload_cast<int>(&MWTree<D>::countNodes))
         .def("RecountNodes", &MWTree<D>::RecountNodes);
 
-    pybind11::class_<FunctionTree<D>> functree(m, "FunctionTree", mwtree);
-    functree.def(pybind11::init<MultiResolutionAnalysis<D>>())
+    py::class_<FunctionTree<D>, MWTree<D>>(m, "FunctionTree")
+        .def(py::init<MultiResolutionAnalysis<D>>())
         .def("clear", &FunctionTree<D>::clear, "Clears the FunctionTree")
         .def("integrate", &FunctionTree<D>::integrate, "Integral of the FunctionTree over all space")
         .def("normalize", &FunctionTree<D>::normalize, "Rescale the function by its norm, fixed grid")
@@ -77,23 +81,23 @@ template <int D> void trees(pybind11::module &m) {
              &FunctionTree<D>::multiply,
              "Multiply the function by a given number and it is multiplied by the function")
         .def("add", &FunctionTree<D>::add, "Multiply the function by a given number and adds it to the function")
-        .def("power", pybind11::overload_cast<double>(&FunctionTree<D>::power), "Raise an existing function to a given power")
+        .def("power", py::overload_cast<double>(&FunctionTree<D>::power), "Raise an existing function to a given power")
         .def("square", &FunctionTree<D>::square, "Multiply an existing function with itself")
-        .def("rescale", pybind11::overload_cast<double>(&FunctionTree<D>::rescale), "Rescales the function")
+        .def("rescale", py::overload_cast<double>(&FunctionTree<D>::rescale), "Rescales the function")
         .def("getNChunks", &FunctionTree<D>::getNChunks, "Get number of chunks")
         .def("getNChunksUsed", &FunctionTree<D>::getNChunksUsed, "Write size of tree")
         .def("printSerialIndices", &FunctionTree<D>::printSerialIndices, "Print Serial Indices")
         .def("evalf",
-             pybind11::overload_cast<const Coord<D> &>(&FunctionTree<D>::evalf, pybind11::const_),
+             py::overload_cast<const Coord<D> &>(&FunctionTree<D>::evalf, py::const_),
              "Returns the function value at a given point")
-        .def("__repr__", [](const FunctionTree<D> &a) {
+        .def("__repr__", [](FunctionTree<D> &a) {
             std::ostringstream os;
             os << "  square norm: " << a.getSquareNorm() << std::endl;
             os << "  root scale: " << a.getRootScale() << std::endl;
             os << "  order: " << a.getOrder() << std::endl;
             os << "  nodes: " << a.getNNodes() << std::endl;
             os << "  endNodes: " << a.getNEndNodes() << std::endl;
-            // os << "  genNodes: " << a.getNGenNodes() << std::endl;
+            os << "  genNodes: " << a.getNGenNodes() << std::endl;
             os << "  nodes per scale: " << std::endl;
             for (int i = 0; i < a.getDepth(); i++) {
                 os << "    scale=" << i + a.getRootScale() << "  nodes=" << a.getNNodes(i) << std::endl;
@@ -101,13 +105,13 @@ template <int D> void trees(pybind11::module &m) {
             return os.str();
         });
 
-    pybind11::class_<MWNode<D>> mwnode(m, "MWNode");
-    mwnode.def(pybind11::init<MWNode<D>>())
+    py::class_<MWNode<D>>(m, "MWNode")
+        .def(py::init<MWNode<D>>())
         .def("getSerialIx", &MWNode<D>::getSerialIx)
         .def("getTranslation", &MWNode<D>::getTranslation)
         .def("getCenter", &MWNode<D>::getCenter)
         .def("getBounds", &MWNode<D>::getBounds)
-        .def("hasCoord", pybind11::overload_cast<const Coord<D> &>(&MWNode<D>::hasCoord, pybind11::const_))
+        .def("hasCoord", py::overload_cast<const Coord<D> &>(&MWNode<D>::hasCoord, py::const_))
         .def("isCompatible", &MWNode<D>::isCompatible)
         .def("isAncestor", &MWNode<D>::isAncestor)
         .def("isDecendant", &MWNode<D>::isDecendant)
@@ -125,7 +129,7 @@ template <int D> void trees(pybind11::module &m) {
         .def("getComponentNorm", &MWNode<D>::getComponentNorm)
         //.def("hasComponentNorms", &MWNode<D>::hasComponentNorms)
         .def("getNCoefs", &MWNode<D>::getNCoefs)
-        // .def("getCoefs", pybind11::overload_cast<const double *>(&MWNode<D>::getCoefs, pybind11::const_))
+        // .def("getCoefs", py::overload_cast<const double *>(&MWNode<D>::getCoefs, py::const_))
         .def("printCoefs", &MWNode<D>::printCoefs)
         .def("zeroCoefs", &MWNode<D>::zeroCoefs)
         .def("setCoefBlock", &MWNode<D>::setCoefBlock)
@@ -154,45 +158,48 @@ template <int D> void trees(pybind11::module &m) {
         .def("clearIsRootNode", &MWNode<D>::clearIsRootNode)
         .def("clearIsAllocated", &MWNode<D>::clearIsAllocated);
 
-    // pybind11::class_<GenNode<D>> gennode(m, "GenNode", funcnode);
-    //gennode.def(pybind11::init<FunctionNode<D>>());
+    // py::class_<GenNode<D>> gennode(m, "GenNode", funcnode);
+    //gennode.def(py::init<FunctionNode<D>>());
 
-    pybind11::class_<HilbertPath<D>> hilbpath(m, "HilbertPath");
-    hilbpath.def(pybind11::init<HilbertPath<D>>())
+    py::class_<HilbertPath<D>>(m, "HilbertPath")
+        .def(py::init<HilbertPath<D>>())
         .def("getPath", &HilbertPath<D>::getPath)
         .def("getChildPath", &HilbertPath<D>::getChildPath)
         .def("getZIndex", &HilbertPath<D>::getZIndex)
         .def("getHIndex", &HilbertPath<D>::getHIndex);
 
-    pybind11::class_<NodeBox<D>> nodebox(m, "NodeBox");
-    nodebox
-        .def(pybind11::init<BoundingBox<D>>())
+    py::class_<NodeBox<D>>(m, "NodeBox")
+        .def(py::init<BoundingBox<D>>())
         //.def("setNode", &NodeBox<D>::setNode);
-        //.def("setNode", pybind11::overload_cast<int, MWNode<D>**>(&NodeBox<D>::setNode))
+        //.def("setNode", py::overload_cast<int, MWNode<D>**>(&NodeBox<D>::setNode))
         .def("clearNode", &NodeBox<D>::clearNode)
-        .def("getNode", pybind11::overload_cast<const NodeIndex<D> &>(&NodeBox<D>::getNode, pybind11::const_))
-        .def("getNode", pybind11::overload_cast<const Coord<D> &>(&NodeBox<D>::getNode, pybind11::const_))
-        .def("getNode", pybind11::overload_cast<int>(&NodeBox<D>::getNode, pybind11::const_))
+        .def("getNode", py::overload_cast<const NodeIndex<D> &>(&NodeBox<D>::getNode, py::const_))
+        .def("getNode", py::overload_cast<const Coord<D> &>(&NodeBox<D>::getNode, py::const_))
+        .def("getNode", py::overload_cast<int>(&NodeBox<D>::getNode, py::const_))
         .def("getNOccupied", &NodeBox<D>::getNOccupied);
 
-    // int * wont work since raw pointers does not exist in python
-    pybind11::class_<NodeIndex<D>> nodeindex(m, "NodeIndex");
-    nodeindex.def(pybind11::init<int, int *>())
+    py::class_<NodeIndex<D>>(m, "NodeIndex")
+        .def(py::init([](int n = 0, const std::array<int, D> l = {{0.0, 0.0, 0.0}}) {
+            return std::make_unique<NodeIndex<D>>(n, l.data());
+        }))
         .def("setScale", &NodeIndex<D>::setScale)
-        .def("setTranslation", &NodeIndex<D>::setTranslation)
+        .def("setTranslation", [](NodeIndex<D> &cls, const std::array<int, D> &l) { cls.setTranslation(l.data()); })
         .def("getScale", &NodeIndex<D>::getScale)
-        .def("getTranslation", pybind11::overload_cast<int>(&NodeIndex<D>::getTranslation, pybind11::const_));
-    //  .def("getTranslation", pybind11::overload_cast<int *>(&NodeIndex<D>::getTranslation))
-    //  .def("getTranslation", pybind11::overload_cast<const int *>(&NodeIndex<D>::getTranslation, pybind11::const_));
+        .def("getTranslation", py::overload_cast<int>(&NodeIndex<D>::getTranslation, py::const_))
+        .def("getTranslation", [](const NodeIndex<D> &cls) -> std::array<int, D> {
+            std::array<int, D> retval;
+            std::copy_n(cls.getTranslation(), D, std::begin(retval));
+            return retval;
+        });
 
-    pybind11::class_<SerialTree<D>> serialtree(m, "SerialTree");
-    serialtree.def("isShared", &SerialTree<D>::isShared)
+    py::class_<SerialTree<D>>(m, "SerialTree")
+        .def("isShared", &SerialTree<D>::isShared)
         .def("S_mwTransform", &SerialTree<D>::S_mwTransform)
         .def("S_mwTransformBack", &SerialTree<D>::S_mwTransformBack);
 
-    // <FunctionTree<D> * and SharedMemory * wont work since raw pointers does not exist in python
-    pybind11::class_<SerialFunctionTree<D>> serialfunctree(m, "SerialFunctionTree", serialtree);
-    serialfunctree.def(pybind11::init<FunctionTree<D> *, SharedMemory *>())
+    py::class_<SerialFunctionTree<D>, SerialTree<D>>(m, "SerialFunctionTree")
+        .def(py::init(
+            [](FunctionTree<D> &tree) { return std::make_unique<SerialFunctionTree<D>>(&tree, nullptr); }))
         .def("allocRoots", &SerialFunctionTree<D>::allocRoots)
         .def("allocChildren", &SerialFunctionTree<D>::allocChildren)
         .def("allocGenChildren", &SerialFunctionTree<D>::allocGenChildren)
@@ -205,8 +212,8 @@ template <int D> void trees(pybind11::module &m) {
         .def("rewritePointers", &SerialFunctionTree<D>::rewritePointers)
         .def("clear", &SerialFunctionTree<D>::clear);
 
-    pybind11::class_<TreeIterator<D>> treeiterator(m, "TreeIterator");
-    treeiterator.def("setReturnGenNodes", &TreeIterator<D>::setReturnGenNodes)
+    py::class_<TreeIterator<D>>(m, "TreeIterator")
+        .def("setReturnGenNodes", &TreeIterator<D>::setReturnGenNodes)
         .def("setMaxDepth", &TreeIterator<D>::setMaxDepth)
         .def("next", &TreeIterator<D>::next);
 }
