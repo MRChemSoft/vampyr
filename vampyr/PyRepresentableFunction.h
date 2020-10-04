@@ -22,7 +22,6 @@ public:
     double evalf(const mrcpp::Coord<D> &r) const override { PYBIND11_OVERLOAD_PURE(double, FunctionBase, evalf, r); }
 };
 
-// NOTE The following is currently not used
 template <int D, class GaussianBase = mrcpp::Gaussian<D>>
 class PyGaussian : public PyRepresentableFunction<D, GaussianBase> {
 public:
@@ -30,7 +29,7 @@ public:
     using PyRepresentableFunction<D, GaussianBase>::PyRepresentableFunction;
 
     GaussianBase *copy() const override { PYBIND11_OVERLOAD_PURE(GaussianBase *, GaussianBase, copy, ); }
-    double evalf(const mrcpp::Coord<D> &r) const override { PYBIND11_OVERLOAD_PURE(double, GaussianBase, evalf, r); }
+    double evalfCore(const mrcpp::Coord<D> &r) const override { PYBIND11_OVERLOAD_PURE(double, GaussianBase, evalfCore, r); }
     double evalf(double r, int dim) const override { PYBIND11_OVERLOAD_PURE(double, GaussianBase, evalf, r, dim); }
     double calcSquareNorm() override { PYBIND11_OVERLOAD_PURE(double, GaussianBase, calcSquareNorm, ); }
     double calcOverlap(mrcpp::GaussFunc<D> &b) override {

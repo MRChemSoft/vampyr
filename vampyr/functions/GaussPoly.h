@@ -16,7 +16,7 @@ template <int D> void gauss_poly(pybind11::module &m) {
     namespace py = pybind11;
     using namespace pybind11::literals;
 
-    py::class_<GaussPoly<D>, Gaussian<D>>(m, "GaussPoly")
+    py::class_<GaussPoly<D>, PyGaussian<D, GaussPoly<D>>, Gaussian<D>>(m, "GaussPoly")
         .def(pybind11::init<double, double, const Coord<D> &, const std::array<int, D> &>())
         .def("setPoly", &GaussPoly<D>::setPoly)
         .def("differentiate", &GaussPoly<D>::differentiate)
