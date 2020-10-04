@@ -11,8 +11,8 @@ void mw_operator(pybind11::module &m) {
     namespace py = pybind11;
 
     //MWOperator
-    py::class_<MWOperator> mwoperator(m, "MWOperator");
-    mwoperator.def(py::init<const MultiResolutionAnalysis<2> &>())
+    py::class_<MWOperator>(m, "MWOperator")
+        .def(py::init<const MultiResolutionAnalysis<2> &>())
         .def("size", &MWOperator::size, "Size")
         .def("push_back", &MWOperator::push_back, "Push")
         .def("clear", &MWOperator::clear, "Clear")
