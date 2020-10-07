@@ -12,7 +12,7 @@ template <int D> void gauss_func(pybind11::module &m) {
     namespace py = pybind11;
     using namespace pybind11::literals;
 
-    py::class_<GaussFunc<D>, Gaussian<D>>(m, "GaussFunc")
+    py::class_<GaussFunc<D>, PyGaussian<D, GaussFunc<D>>, Gaussian<D>>(m, "GaussFunc")
         .def(py::init<double, double, Coord<D> &, std::array<int, D> &>(),
              "alpha"_a,
              "beta"_a,

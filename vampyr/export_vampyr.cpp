@@ -51,13 +51,13 @@ template <int D> void bind_mr(py::module &mod) noexcept {
 
 PYBIND11_MODULE(_vampyr, m) {
     using namespace mrcpp;
-    m.doc() = "VAMPyR makes the MRCPP functionality available through a python interface";
+    m.doc() = "VAMPyR makes the MRCPP functionality available through a Python interface";
 
     // Dimension-independent bindings go in the main module
     bases(m);
 
-    py::class_<BandWidth> bandwidth(m, "BandWidth");
-    bandwidth.def(py::init<int>())
+    py::class_<BandWidth>(m, "BandWidth")
+        .def(py::init<int>())
         .def("clear", &BandWidth::clear)
         .def("isEmpty", &BandWidth::isEmpty)
         .def("getDepth", &BandWidth::getDepth)
