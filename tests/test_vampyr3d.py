@@ -119,6 +119,16 @@ def test_gaussFunc():
     assert g_tree.integrate() == pytest.approx(1.0, rel=prec)
 
 
+def test_gaussFuncAnalytic():
+    def gauss(x):
+        beta = 100.0
+        return np.exp(-beta * (x[0]**2 + x[1]**2 + x[2]**2))
+
+    g_tree = vp.vampyr3d.FunctionTree(MRA)
+    vp.project(prec, g_tree, gauss)
+    assert g_tree.integrate() == pytest.approx(0.00556832799694068, rel=prec)
+
+
 def test_gaussExp():
     gf = vp.vampyr3d.GaussFunc(1.0, 1.0)
     gexp = vp.vampyr3d.GaussExp()
