@@ -11,11 +11,13 @@
 namespace vampyr {
 template <int D> void project(pybind11::module &m) {
     using namespace mrcpp;
+    namespace py = pybind11;
     using namespace pybind11::literals;
 
     m.def("project",
-          pybind11::overload_cast<double, FunctionTree<D> &, std::function<double(const Coord<D> &)>, int, bool>(
+          py::overload_cast<double, FunctionTree<D> &, std::function<double(const Coord<D> &r)>, int, bool>(
               &mrcpp::project<D>),
+          py::call_guard<py::gil_scoped_release>(),
           "precision"_a,
           "output_tree"_a,
           "function"_a,
@@ -24,7 +26,7 @@ template <int D> void project(pybind11::module &m) {
           "Projects an analytic function onto a FunctionTree");
 
     m.def("project",
-          pybind11::overload_cast<double, FunctionTree<D> &, RepresentableFunction<D> &, int, bool>(&mrcpp::project<D>),
+          py::overload_cast<double, FunctionTree<D> &, RepresentableFunction<D> &, int, bool>(&mrcpp::project<D>),
           "precision"_a,
           "output_tree"_a,
           "GaussFunc"_a,
