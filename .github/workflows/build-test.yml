@@ -1,0 +1,56 @@
+name: Build and test VAMPyR
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  release:
+    types:
+      - created
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python-version: [3.6, 3.7, 3.8]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        sudo chown -R $USER $CONDA
+        $CONDA/bin/conda create --name vampyr python=${{ matrix.python-version }} -c conda-forge
+        $CONDA/bin/conda env update --file environment.yml --name vampyr
+  
+    - name: Configure
+      shell: bash
+      run: |
+        source $CONDA/bin/activate vampyr
+        python ./setup --type=$BUILD_TYPE --generator=Ninja --prefix=$GITHUB_WORKSPACE/Software/VAMPyR build --cmake-options="-DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DPYTHON_EXECUTABLE=$CONDA_PREFIX/bin/python -DCMAKE_VERBOSE_MAKEFILE=ON"
+
+    - name: Build
+      shell: bash
+      run: |
+        source $CONDA/bin/activate vampyr
+        cmake --build build --config $BUILD_TYPE --target install -- -v -d stats
+
+    - name: Test
+      shell: bash
+      run: |
+        cd build
+        source $CONDA/bin/activate vampyr
+        ctest -C $BUILD_TYPE --output-on-failure --verbose

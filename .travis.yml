@@ -6,16 +6,10 @@ matrix:
   fast_finish: true
   include:
     - os: linux
-      env:
-        - BUILD_TYPE='release'
-    - os: linux
       addons:
         apt:
           packages:
             - lcov
-      env:
-        - BUILD_TYPE='debug'
-        - COVERAGE='--coverage'
 
 env:
   global:
@@ -33,7 +27,7 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  - conda create --name vampyr python=3.6 -c conda-forge
+  - conda create --name vampyr python=3.6 gxx_impl_linux-64 -c conda-forge
   - conda env update --name vampyr --file environment.yml
 
 before_script:
@@ -41,28 +35,23 @@ before_script:
 
 script:
   - conda activate vampyr
-  - echo ${CXX}
-  - ./.ci/report_versions.sh
   - >
       python ./setup \
-             --type=${BUILD_TYPE} \
+             --type=debug \
              --cxx=${CONDA_PREFIX}/bin/x86_64-conda_cos6-linux-gnu-g++ \
              --generator=Ninja \
-             --prefix=$HOME/Software/VAMPyR \
-             ${COVERAGE} \
+             --coverage \
              --cmake-options="-DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DPYTHON_EXECUTABLE=${CONDA_PREFIX}/bin/python -DCMAKE_VERBOSE_MAKEFILE=ON"
   - cd build
-  - cmake --build . --target install -- -v -d stats
+  - cmake --build . -- -v -d stats
   - ctest --output-on-failure --verbose
   - conda deactivate
 
 after_success:
   - |
-    if [[ "${COVERAGE}" = "--coverage" ]]; then
-      cd ${TRAVIS_BUILD_DIR}
-      lcov --version
-      lcov --directory build/vampyr/ --capture --output-file coverage.info
-      lcov --remove coverage.info '/usr/*' --output-file coverage.info
-      lcov --list coverage.info
-      bash <(curl -s https://codecov.io/bash) -X gcov || echo "Codecov did not collect coverage reports"
-    fi
+    cd ${TRAVIS_BUILD_DIR}
+    lcov --version
+    lcov --directory build/vampyr/ --capture --output-file coverage.info
+    lcov --remove coverage.info '/usr/*' --output-file coverage.info
+    lcov --list coverage.info
+    bash <(curl -s https://codecov.io/bash) -X gcov || echo "Codecov did not collect coverage reports"
