@@ -16,6 +16,7 @@
 #include <MRCPP/trees/OperatorTree.h>
 #include <MRCPP/trees/SerialOperatorTree.h>
 #include <MRCPP/trees/SerialTree.h>
+#include <MRCPP/version.h>
 
 #include "PyRepresentableFunction.h"
 #include "applys/applys.h"
@@ -52,6 +53,8 @@ template <int D> void bind_mr(py::module &mod) noexcept {
 PYBIND11_MODULE(_vampyr, m) {
     using namespace mrcpp;
     m.doc() = "VAMPyR makes the MRCPP functionality available through a Python interface";
+
+    m.def("mrcpp_version", &mrcpp::program_version);
 
     // Dimension-independent bindings go in the main module
     bases(m);

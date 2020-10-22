@@ -23,6 +23,15 @@ if(APPLE)
 else()
   set(_RPATH "\$ORIGIN/${_rel}")
 endif()
+
+file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR})
+# configure __init__.py
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/__init__.py.in
+  ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR}/__init__.py
+  @ONLY
+  )
+
 set_target_properties(_vampyr
   PROPERTIES
     MACOSX_RPATH ON
@@ -33,19 +42,8 @@ set_target_properties(_vampyr
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
     LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR}
-    RESOURCE "${CMAKE_CURRENT_SOURCE_DIR}/__init__.py"
+    RESOURCE "${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR}/__init__.py"
   )
-
-# Create symlinks into build tree
-file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR})
-foreach(_f __init__.py)
-  file(
-    CREATE_LINK
-      ${CMAKE_CURRENT_SOURCE_DIR}/${_f}
-      ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR}/${_f}
-    SYMBOLIC
-    )
-endforeach()
 
 install(
   TARGETS
