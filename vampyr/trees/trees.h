@@ -179,7 +179,7 @@ template <int D> void trees(pybind11::module &m) {
         .def("getNOccupied", &NodeBox<D>::getNOccupied);
 
     py::class_<NodeIndex<D>>(m, "NodeIndex")
-        .def(py::init([](int n = 0, const std::array<int, D> l = {{0.0, 0.0, 0.0}}) {
+        .def(py::init([](int n = 0, const std::array<int, D>& l = std::array<int, D>()) {
             return std::make_unique<NodeIndex<D>>(n, l.data());
         }))
         .def("setScale", &NodeIndex<D>::setScale)
