@@ -26,5 +26,5 @@ Remigio (@robertodr)
 [VAMPyR]: https://github.com/MRChemSoft/vampyr
 [MRCPP]: https://mrcpp.readthedocs.io
 [pybind11]: https://pybind11.readthedocs.io
-[Hylleraas Centre for Quantum Molecular Sciences]: http://www.ctcc.no/
+[Hylleraas Centre for Quantum Molecular Sciences]: https://www.mn.uio.no/hylleraas/english/
 [UiT - The Arctic University of Norway]: http://en.uit.no/
