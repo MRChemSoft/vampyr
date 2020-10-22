@@ -7,7 +7,7 @@ through [pybind11].
 VAMPyR is developed at the [Hylleraas Centre for Quantum Molecular Sciences] at
 [UiT - The Arctic University of Norway].
 The project was initiated by Magnar Bjørgve (@bjorgve), with contributions from
-Evelin Battistella (@evelinbatt), Stig Rune Jense (@stigrj), and Roberto Di
+Evelin Battistella (@evelinbatt), Stig Rune Jensen (@stigrj), and Roberto Di
 Remigio (@robertodr)
 
 All notable changes to this project will be documented in this file.
