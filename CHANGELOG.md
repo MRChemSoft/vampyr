@@ -14,11 +14,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog], and this project adheres to [Semantic Versioning].
 
+## [Unreleased]
+
 ## [0.1.0rc0]
 
 First release candidate of VAMPyR.
 
-[Unreleased]: https://github.com/MRChemSoft/vampyr
+[Unreleased]: https://github.com/MRChemSoft/vampyr/compare/v0.1.0rc0...HEAD
 
 [0.1.0rc0]: https://github.com/MRChemSoft/vampyr/releases/tag/v0.1.0rc0
 
