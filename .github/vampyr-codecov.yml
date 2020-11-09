@@ -1,0 +1,12 @@
+name: vampyr-codecov
+channels:
+  - conda-forge
+dependencies:
+  - cmake
+  - cxx-compiler
+  - lcov
+  - mrcpp
+  - ninja
+  - numpy
+  - pybind11
+  - pytest
