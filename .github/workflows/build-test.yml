@@ -22,37 +22,42 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: [3.6, 3.7, 3.8]
+        python-version: [3.6, 3.7, 3.8, 3.9]
 
     steps:
     - uses: actions/checkout@v2
-
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+    
+    - name: Cache conda
+      uses: actions/cache@v1
+      env:
+        CACHE_NUMBER: 0  # Increase this value to reset cache if .github/xcfun-gha.yml has not changed
       with:
-        python-version: ${{ matrix.python-version }}
+        path: ~/conda_pkgs_dir
+        key:
+          ${{ matrix.os }}-${{ matrix.python-version }}-conda-${{ env.CACHE_NUMBER }}-${{ hashFiles('.github/vampyr-gha.yml') }}
 
-    - name: Install dependencies
-      run: |
-        sudo chown -R $USER $CONDA
-        $CONDA/bin/conda create --name vampyr python=${{ matrix.python-version }} -c conda-forge
-        $CONDA/bin/conda env update --file environment.yml --name vampyr
+    - uses: conda-incubator/setup-miniconda@v2
+      with:
+          auto-update-conda: true
+          auto-activate-base: false
+          activate-environment: vampyr-gha
+          environment-file: .github/vampyr-gha.yml
+          channel-priority: true
+          python-version: ${{ matrix.python-version }}
+          use-only-tar-bz2: true  # IMPORTANT: This needs to be set for caching to work properly!
   
     - name: Configure
-      shell: bash
+      shell: bash -l {0}
       run: |
-        source $CONDA/bin/activate vampyr
-        python ./setup --type=$BUILD_TYPE --generator=Ninja --prefix=$GITHUB_WORKSPACE/Software/VAMPyR build --cmake-options="-DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DPYTHON_EXECUTABLE=$CONDA_PREFIX/bin/python -DCMAKE_VERBOSE_MAKEFILE=ON"
+        python ./setup --type=$BUILD_TYPE --generator=Ninja --prefix=$GITHUB_WORKSPACE/Software/VAMPyR build --cmake-options="-DCMAKE_VERBOSE_MAKEFILE=ON"
 
     - name: Build
-      shell: bash
+      shell: bash -l {0}
       run: |
-        source $CONDA/bin/activate vampyr
         cmake --build build --config $BUILD_TYPE --target install -- -v -d stats
 
     - name: Test
-      shell: bash
+      shell: bash -l {0}
       run: |
         cd build
-        source $CONDA/bin/activate vampyr
         ctest -C $BUILD_TYPE --output-on-failure --verbose
