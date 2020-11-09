@@ -1,0 +1,11 @@
+name: vampyr-gha
+channels:
+  - conda-forge
+dependencies:
+  - cmake
+  - cxx-compiler
+  - mrcpp
+  - ninja
+  - numpy
+  - pybind11
+  - pytest
