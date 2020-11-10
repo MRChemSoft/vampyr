@@ -2,7 +2,6 @@
 
 [![License](https://img.shields.io/badge/license-%20LGPLv3-blue.svg)](../master/LICENSE)
 ![Build and test VAMPyR](https://github.com/MRChemSoft/vampyr/workflows/Build%20and%20test%20VAMPyR/badge.svg)
-[![Travis CI build status](https://travis-ci.org/MRChemSoft/vampyr.svg?branch=master)](https://travis-ci.org/MRChemSoft/vampyr)
 [![codecov](https://codecov.io/gh/MRChemSoft/vampyr/branch/master/graph/badge.svg)](https://codecov.io/gh/MRChemSoft/vampyr)
 
 The Very Accurate Multiresolution Python Routines (VAMPyR) package is a high
