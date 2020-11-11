@@ -44,3 +44,6 @@ To install VAMPyR in a Conda environment `myenv`:
 To list all available versions:
 
     $ conda search -c conda-forge vampyr
+
+Note that the conda-forge package is _always_ built with OpenMP support enabled
+in the MRCPP backend.
