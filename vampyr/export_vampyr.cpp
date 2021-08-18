@@ -16,6 +16,7 @@
 // #include <MRCPP/trees/OperatorTree.h>
 #include <MRCPP/version.h>
 
+#include "core/bases.h"
 // #include "PyRepresentableFunction.h"
 // #include "applys/applys.h"
 // #include "functions/functions.h"
@@ -25,29 +26,27 @@
 // #include "operators/operators_grid.h"
 // #include "project/project.h"
 // #include "trees/trees.h"
-// #include "world/world.h"
+#include "trees/world.h"
 
 namespace py = pybind11;
 
 namespace vampyr {
-void bases(py::module &);
-/*
+
 template <int D> void bind_mr(py::module &mod) noexcept {
-    applys<D>(mod);
-    math<D>(mod);
-    project<D>(mod);
-    operators_grid<D>(mod);
+    // applys<D>(mod);
+    // math<D>(mod);
+    // project<D>(mod);
+    // operators_grid<D>(mod);
 
     std::string name = "D" + std::to_string(D);
     py::module sub_mod = mod.def_submodule(name.c_str());
     sub_mod.doc() = std::to_string(D) + "-dimensional bindings";
 
-    functions<D>(sub_mod);
-    operators<D>(sub_mod);
-    trees<D>(sub_mod);
+    // functions<D>(sub_mod);
+    // operators<D>(sub_mod);
+    // trees<D>(sub_mod);
     world<D>(sub_mod);
 }
-*/
 
 PYBIND11_MODULE(_vampyr, m) {
     using namespace mrcpp;
@@ -56,7 +55,7 @@ PYBIND11_MODULE(_vampyr, m) {
     m.def("mrcpp_version", &mrcpp::program_version);
 
     // Dimension-independent bindings go in the main module
-    // bases(m);
+    bases(m);
 
     // py::class_<BandWidth>(m, "BandWidth")
     //     .def(py::init<int>())
@@ -74,13 +73,13 @@ PYBIND11_MODULE(_vampyr, m) {
     // identity_kernel(m);
 
     // Dimension-dependent bindings go into submodules
-    // bind_mr<1>(m);
+    bind_mr<1>(m);
     // NOTE We bind these 1D functions here as we need RepresentableFunction<1> bound first
     // polynomial(m);
     // legendre_poly(m);
     // boys_function(m);
 
-    // bind_mr<2>(m);
+    bind_mr<2>(m);
     // NOTE We bind these down here as we need MWTree<2> and SerialTree<2> as base classes
     // py::class_<OperatorTree, MWTree<2>>(m, "OperatorTree")
     //     .def(py::init<MultiResolutionAnalysis<2> &, double>())
@@ -100,6 +99,6 @@ PYBIND11_MODULE(_vampyr, m) {
     //     .def("deallocGenNodes", &SerialOperatorTree::deallocGenNodes)
     //     .def("deallocGenNodeChunks", &SerialOperatorTree::deallocGenNodeChunks);
 
-    // bind_mr<3>(m);
+    bind_mr<3>(m);
 }
 } // namespace vampyr

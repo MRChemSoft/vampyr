@@ -29,3 +29,5 @@ template <int D> void gauss_func(pybind11::module &m) {
         .def("calcCoulombEnergy", &GaussFunc<D>::calcCoulombEnergy);
 }
 } // namespace vampyr
+
+        // .def("__call__", [](const GaussFunc<D> &f, const Coord<D> &r){ return f.evalf(r); }, py::is_operator())
