@@ -13,9 +13,9 @@ target_link_libraries(_vampyr
     MRCPP::mrcpp
   )
 
-add_subdirectory(bases)
-add_subdirectory(functions)
-add_subdirectory(operators)
+#add_subdirectory(bases)
+#add_subdirectory(functions)
+#add_subdirectory(operators)
 
 file(RELATIVE_PATH _rel ${CMAKE_INSTALL_PREFIX}/${PYMOD_INSTALL_FULLDIR} ${CMAKE_INSTALL_PREFIX})
 if(APPLE)
