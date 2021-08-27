@@ -9,23 +9,11 @@
 
 #include <string>
 
-// #include <MRCPP/operators/GreensKernel.h>
-// #include <MRCPP/trees/BandWidth.h>
-// #include <MRCPP/trees/MWTree.h>
-// #include <MRCPP/trees/MultiResolutionAnalysis.h>
-// #include <MRCPP/trees/OperatorTree.h>
 #include <MRCPP/version.h>
 
 #include "core/bases.h"
-// #include "PyRepresentableFunction.h"
-// #include "applys/applys.h"
-// #include "functions/functions.h"
-// #include "math/math.h"
-// #include "operators/MWOperator.h"
-// #include "operators/operators.h"
-// #include "operators/operators_grid.h"
-// #include "project/project.h"
-// #include "trees/trees.h"
+#include "functions/functions.h"
+#include "functions/gaussians.h"
 #include "trees/world.h"
 
 namespace py = pybind11;
@@ -42,7 +30,8 @@ template <int D> void bind_mr(py::module &mod) noexcept {
     py::module sub_mod = mod.def_submodule(name.c_str());
     sub_mod.doc() = std::to_string(D) + "-dimensional bindings";
 
-    // functions<D>(sub_mod);
+    functions<D>(sub_mod);
+    gaussians<D>(sub_mod);
     // operators<D>(sub_mod);
     // trees<D>(sub_mod);
     world<D>(sub_mod);
