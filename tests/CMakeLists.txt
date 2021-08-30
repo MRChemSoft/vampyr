@@ -6,6 +6,8 @@ list(APPEND _tests
   mra_3d
   gauss_1d
   gauss_3d
+  trees_1d
+  trees_3d
   )
 
 foreach(_test IN LISTS _tests)

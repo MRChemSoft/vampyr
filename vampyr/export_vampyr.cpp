@@ -14,6 +14,7 @@
 #include "core/bases.h"
 #include "functions/functions.h"
 #include "functions/gaussians.h"
+#include "trees/trees.h"
 #include "trees/world.h"
 
 namespace py = pybind11;
@@ -33,7 +34,7 @@ template <int D> void bind_mr(py::module &mod) noexcept {
     functions<D>(sub_mod);
     gaussians<D>(sub_mod);
     // operators<D>(sub_mod);
-    // trees<D>(sub_mod);
+    trees<D>(sub_mod);
     world<D>(sub_mod);
 }
 
