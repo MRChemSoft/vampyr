@@ -10,6 +10,7 @@
 #include <string>
 
 #include <MRCPP/version.h>
+#include <MRCPP/constants.h>
 
 #include "core/bases.h"
 #include "functions/functions.h"
@@ -20,6 +21,17 @@
 namespace py = pybind11;
 
 namespace vampyr {
+
+void constants(py::module &m) {
+    py::enum_<Traverse>(m, "Traverse")
+        .value("TopDown", Traverse::TopDown)
+        .value("BottomUp", Traverse::BottomUp)
+        .export_values();
+    py::enum_<Iterator>(m, "Iterator")
+        .value("Lebesgue", Iterator::Lebesgue)
+        .value("Hilbert", Iterator::Hilbert)
+        .export_values();
+}
 
 template <int D> void bind_mr(py::module &mod) noexcept {
     // applys<D>(mod);
@@ -45,6 +57,7 @@ PYBIND11_MODULE(_vampyr, m) {
     m.def("mrcpp_version", &mrcpp::program_version);
 
     // Dimension-independent bindings go in the main module
+    constants(m);
     bases(m);
 
     // py::class_<BandWidth>(m, "BandWidth")

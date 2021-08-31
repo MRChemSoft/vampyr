@@ -4,8 +4,7 @@
 #include <MRCPP/trees/FunctionTree.h>
 #include <MRCPP/trees/MWNode.h>
 #include <MRCPP/trees/MWTree.h>
-#include <MRCPP/trees/HilbertIterator.h>
-#include <MRCPP/trees/LebesgueIterator.h>
+#include <MRCPP/trees/TreeIterator.h>
 
 namespace vampyr {
 template <int D> void trees(pybind11::module &m) {
@@ -105,15 +104,14 @@ template <int D> void trees(pybind11::module &m) {
         });
 
     py::class_<TreeIterator<D>>(m, "TreeIterator")
+        .def(py::init<Traverse, Iterator>(), "traverse"_a=TopDown, "iterator"_a=Lebesgue)
+        .def(py::init<MWTree<D> &, Traverse, Iterator>(), "tree"_a, "traverse"_a=TopDown, "iterator"_a=Lebesgue)
         .def("setReturnGenNodes", &TreeIterator<D>::setReturnGenNodes)
         .def("setMaxDepth", &TreeIterator<D>::setMaxDepth)
+        .def("setTraverse", &TreeIterator<D>::setTraverse)
+        .def("setIterator", &TreeIterator<D>::setIterator)
         .def("getNode", py::overload_cast<>(&TreeIterator<D>::getNode), py::return_value_policy::reference_internal)
+        .def("init", &TreeIterator<D>::init)
         .def("next", &TreeIterator<D>::next);
-
-    py::class_<HilbertIterator<D>, TreeIterator<D>>(m, "HilbertIterator")
-        .def(py::init<MWTree<D> *>(), "tree"_a);
-
-    py::class_<LebesgueIterator<D>, TreeIterator<D>>(m, "LebesgueIterator")
-        .def(py::init<MWTree<D> *>(), "tree"_a);
 }
 } // namespace vampyr

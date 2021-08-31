@@ -154,8 +154,9 @@ def test_HilbertIterator():
     tree.setZero()
     tree.getNode(idx) # generate extra nodes
 
-    it = vp.D1.HilbertIterator(tree)
+    it = vp.D1.TreeIterator(tree, iterator=vp.Hilbert)
     it.setMaxDepth(-1)
+    it.setTraverse(vp.TopDown)
     it.setReturnGenNodes(False)
 
     gen_count = 0
@@ -174,12 +175,15 @@ def test_LebesgueIterator():
     tree.setZero()
     tree.getNode(idx) # generate extra nodes
 
-    it = vp.D1.LebesgueIterator(tree)
+    it = vp.D1.TreeIterator(traverse=vp.BottomUp)
     it.setMaxDepth(-1)
+    it.setIterator(vp.Lebesgue)
     it.setReturnGenNodes(True)
 
     gen_count = 0
     node_count = 0
+
+    it.init(tree)
     while (it.next()):
         node = it.getNode()
         if node.isGenNode():
