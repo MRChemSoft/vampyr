@@ -24,7 +24,7 @@ def test_GaussDerivative():
     r_0 = [0.25, 0.25, 0.25]
     r_1 = [0.25, 0.25, 0.35]
     f = vp.D3.GaussFunc(coef=alpha, exp=beta, pos=r_0)
-    df = f.differentiate(dim=2)
+    df = f.differentiate(dir=2)
     ref = -(2.0/10.0)*alpha*beta*np.exp(-1.0)
     assert df.getPow(dim=2) == 1
     assert df(r_0) == 0.0
@@ -113,8 +113,8 @@ def test_GaussExpDerivative():
     fexp = vp.D3.GaussExp()
     fexp.append(f0)
     fexp.append(f1)
-    df0 = f0.differentiate(dim=2)
-    df1 = f1.differentiate(dim=2)
-    dfexp = fexp.differentiate(dim=2)
+    df0 = f0.differentiate(dir=2)
+    df1 = f1.differentiate(dir=2)
+    dfexp = fexp.differentiate(dir=2)
     ref = df0(r2) + df1(r2)
     assert dfexp(r2) == pytest.approx(ref, rel=numprec)

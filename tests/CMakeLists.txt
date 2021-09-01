@@ -12,6 +12,8 @@ list(APPEND _tests
   grids_and_project_3d
   arithmetics_1d
   arithmetics_3d
+  derivatives_1d
+  derivatives_3d
   )
 
 foreach(_test IN LISTS _tests)
