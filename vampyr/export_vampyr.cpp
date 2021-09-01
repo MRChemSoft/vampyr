@@ -36,6 +36,7 @@ void constants(py::module &m) {
 }
 
 template <int D> void bind_mr(py::module &mod) noexcept {
+    arithmetics<D>(mod);
     project<D>(mod);
     grids<D>(mod);
 

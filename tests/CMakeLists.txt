@@ -10,6 +10,8 @@ list(APPEND _tests
   trees_3d
   grids_and_project_1d
   grids_and_project_3d
+  arithmetics_1d
+  arithmetics_3d
   )
 
 foreach(_test IN LISTS _tests)
