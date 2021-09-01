@@ -8,6 +8,8 @@ list(APPEND _tests
   gauss_3d
   trees_1d
   trees_3d
+  grids_and_project_1d
+  grids_and_project_3d
   )
 
 foreach(_test IN LISTS _tests)

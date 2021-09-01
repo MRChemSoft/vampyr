@@ -16,7 +16,7 @@ template <int D> void trees(pybind11::module &m) {
     // I'm not completely sure of their importance on overall coding so left them to be "fixed" instead
     // of just deleting.
     py::class_<MWTree<D>>(m, "MWTree")
-        .def(py::init<MultiResolutionAnalysis<D>>())
+        .def(py::init<MultiResolutionAnalysis<D>>(), "mra"_a)
         .def("getMRA", &MWTree<D>::getMRA, py::return_value_policy::reference_internal)
         .def("getNNodes", &MWTree<D>::getNNodes)
         .def("getNEndNodes", &MWTree<D>::getNEndNodes)
