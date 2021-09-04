@@ -10,16 +10,20 @@ template <int D> void applys(pybind11::module &m) {
     namespace py = pybind11;
     using namespace pybind11::literals;
 
-    // m.def("apply",
-    //       py::overload_cast<double, FunctionTree<D> &, ConvolutionOperator<D> &, FunctionTree<D> &, int, bool>(
-    //           &apply<D>),
-    //       "precision"_a,
-    //       "output_tree"_a,
-    //       "oper"_a,
-    //       "input_tree"_a,
-    //       "maxIter"_a = -1,
-    //       "abs_prec"_a = false,
-    //       "Applies a given convolution operator onto a FunctionTree");
+    m.def("apply",
+          py::overload_cast<double,
+                            FunctionTree<D> &,
+                            ConvolutionOperator<D> &,
+                            FunctionTree<D> &,
+                            int,
+                            bool>
+                            (&apply<D>),
+          "prec"_a,
+          "out"_a,
+          "oper"_a,
+          "inp"_a,
+          "max_iter"_a = -1,
+          "abs_prec"_a = false);
 
     m.def("apply",
           py::overload_cast<FunctionTree<D> &,

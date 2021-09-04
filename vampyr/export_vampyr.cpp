@@ -15,6 +15,7 @@
 #include "core/bases.h"
 #include "functions/functions.h"
 #include "functions/gaussians.h"
+#include "operators/convolutions.h"
 #include "operators/derivatives.h"
 #include "treebuilders/arithmetics.h"
 #include "treebuilders/applys.h"
@@ -53,6 +54,7 @@ template <int D> void bind_mr(py::module &mod) noexcept {
     functions<D>(sub_mod);
     gaussians<D>(sub_mod);
     derivatives<D>(sub_mod);
+    convolutions<D>(sub_mod);
     trees<D>(sub_mod);
     world<D>(sub_mod);
 }

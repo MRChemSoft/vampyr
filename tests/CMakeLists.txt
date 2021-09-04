@@ -14,6 +14,8 @@ list(APPEND _tests
   arithmetics_3d
   derivatives_1d
   derivatives_3d
+  convolutions_1d
+  convolutions_3d
   )
 
 foreach(_test IN LISTS _tests)
