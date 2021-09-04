@@ -24,6 +24,8 @@
 #include "trees/world.h"
 
 namespace py = pybind11;
+using namespace mrcpp;
+using namespace pybind11::literals;
 
 namespace vampyr {
 

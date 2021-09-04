@@ -12,13 +12,13 @@
 #include <MRCPP/core/LegendreBasis.h>
 #include <MRCPP/core/ScalingBasis.h>
 
-using namespace mrcpp;
-namespace py = pybind11;
-using namespace pybind11::literals;
-
 namespace vampyr {
 
-void bases(py::module &m) {
+void bases(pybind11::module &m) {
+    using namespace mrcpp;
+    namespace py = pybind11;
+    using namespace pybind11::literals;
+
     py::class_<ScalingBasis>(m, "ScalingBasis")
         .def(py::init<int, int>(), "order"_a, "type"_a)
         .def("getScalingType", &ScalingBasis::getScalingType)

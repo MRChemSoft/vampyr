@@ -15,6 +15,7 @@ namespace vampyr {
 
 template <int D> void world(pybind11::module &m) {
     using namespace mrcpp;
+    namespace py = pybind11;
     using namespace pybind11::literals;
 
     pybind11::class_<BoundingBox<D>>(m, "BoundingBox")
