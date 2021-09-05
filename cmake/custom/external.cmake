@@ -45,8 +45,10 @@ else()
   message(STATUS "Suitable MRCPP could not be located. Fetching and building!")
   FetchContent_Declare(mrcpp_sources
     QUIET
-    URL
-      https://github.com/MRChemSoft/mrcpp/archive/v1.3.5.tar.gz
+    GIT_REPOSITORY
+      https://github.com/stigrj/mrcpp.git
+    GIT_TAG
+      06aaa3f81ffbc5fa3eb2f250838ee5f6d0ed89d7
     )
 
   FetchContent_GetProperties(mrcpp_sources)
