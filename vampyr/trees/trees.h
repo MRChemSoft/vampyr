@@ -12,9 +12,6 @@ template <int D> void trees(pybind11::module &m) {
     namespace py = pybind11;
     using namespace pybind11::literals;
 
-    // The commented lines bellow were resulting in errors on compiling I (Evelin) didn't manage to fix.
-    // I'm not completely sure of their importance on overall coding so left them to be "fixed" instead
-    // of just deleting.
     py::class_<MWTree<D>>(m, "MWTree")
         .def(py::init<MultiResolutionAnalysis<D>>(), "mra"_a)
         .def("getMRA", &MWTree<D>::getMRA, py::return_value_policy::reference_internal)
@@ -36,26 +33,21 @@ template <int D> void trees(pybind11::module &m) {
             os << tree;
             return os.str();
         });
-        // .def("makeNodeTable", py::overload_cast<MWNodeVector<D> &>(&MWTree<D>::makeNodeTable_))
 
     py::class_<FunctionTree<D>, MWTree<D>, RepresentableFunction<D>>(m, "FunctionTree")
         .def(py::init<MultiResolutionAnalysis<D>>())
         .def("getNGenNodes", &FunctionTree<D>::getNGenNodes)
-        .def("integrate", &FunctionTree<D>::integrate)
         .def("deleteGenerated", &FunctionTree<D>::deleteGenerated)
-        // .def("normalize", &FunctionTree<D>::normalize, "Rescale the function by its norm, fixed grid")
+        .def("integrate", &FunctionTree<D>::integrate)
+        .def("normalize", &FunctionTree<D>::normalize)
+        .def("rescale", &FunctionTree<D>::rescale, "coef"_a)
+        .def("crop", &FunctionTree<D>::crop, "prec"_a, "split_fac"_a=1.0, "abs_prec"_a=false)
+        .def("add", &FunctionTree<D>::add, "coef"_a=1.0, "inp"_a)
+        .def("multiply", &FunctionTree<D>::multiply, "coef"_a=1.0, "inp"_a)
+        .def("square", &FunctionTree<D>::square)
+        .def("power", &FunctionTree<D>::power, "pow"_a)
         .def("saveTree", &FunctionTree<D>::saveTree, "filename"_a)
         .def("loadTree", &FunctionTree<D>::loadTree, "filename"_a);
-        // .def("crop",
-        //      &FunctionTree<D>::crop,
-        //      "Recurse down until an EndNode is found, and then crop children with too high precision")
-        // .def("multiply",
-        //      &FunctionTree<D>::multiply,
-        //      "Multiply the function by a given number and it is multiplied by the function")
-        // .def("add", &FunctionTree<D>::add, "Multiply the function by a given number and adds it to the function")
-        // .def("power", py::overload_cast<double>(&FunctionTree<D>::power), "Raise an existing function to a given power")
-        // .def("square", &FunctionTree<D>::square, "Multiply an existing function with itself")
-        // .def("rescale", py::overload_cast<double>(&FunctionTree<D>::rescale), "Rescales the function")
 
     py::class_<MWNode<D>>(m, "MWNode")
         .def("getDepth", &MWNode<D>::getDepth)

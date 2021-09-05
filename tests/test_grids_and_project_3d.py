@@ -21,7 +21,7 @@ def func(r):
     R2 = sum([(x1 - x2)**2 for x1, x2 in zip(r, r0)])
     return alpha*np.exp(-beta*R2)
 
-def test_BuildProjectRefine():
+def test_BuildProjectRefineCrop():
     tree = vp.D3.FunctionTree(mra)
     vp.build_grid(out=tree, scales=s)
     assert tree.getDepth() == s + 1
@@ -36,6 +36,11 @@ def test_BuildProjectRefine():
     assert tree.getDepth() == s + 2
     assert tree.getNEndNodes() == 2**((s+1)*D)
     assert tree.integrate() == pytest.approx(1.0, rel=epsilon)
+
+    pre_crop = tree.getNNodes()
+    tree.crop(prec=epsilon)
+    post_crop = tree.getNNodes()
+    assert pre_crop > post_crop
 
 def test_BuildProjectCopyClear():
     tree_1 = vp.D3.FunctionTree(mra)
@@ -107,3 +112,15 @@ def test_ClearProjectRefine():
         nsplit = vp.refine_grid(out=tree, prec=epsilon)
         assert tree.getSquareNorm() > 0.0
     assert tree.integrate() == pytest.approx(1.0, rel=epsilon)
+
+def test_ProjectRescaleNormalize():
+    tree = vp.D3.FunctionTree(mra)
+    vp.build_grid(out=tree, inp=gauss)
+    vp.project(out=tree, inp=gauss)
+    assert tree.integrate() == pytest.approx(1.0, rel=epsilon)
+
+    tree.rescale(coef=np.pi)
+    assert tree.integrate() == pytest.approx(np.pi, rel=epsilon)
+
+    tree.normalize()
+    assert tree.getSquareNorm() == pytest.approx(1.0, rel=epsilon)
