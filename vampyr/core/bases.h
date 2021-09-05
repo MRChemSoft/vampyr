@@ -26,7 +26,7 @@ void bases(pybind11::module &m) {
         .def("getQuadratureOrder", &ScalingBasis::getQuadratureOrder)
         .def(py::self == py::self)
         .def(py::self != py::self)
-        .def("__repr__", [](const ScalingBasis &basis) {
+        .def("__str__", [](const ScalingBasis &basis) {
             std::ostringstream os;
             os << basis;
             return os.str();

@@ -14,7 +14,6 @@
 
 #include "core/bases.h"
 #include "functions/functions.h"
-#include "functions/gaussians.h"
 #include "operators/convolutions.h"
 #include "operators/derivatives.h"
 #include "treebuilders/arithmetics.h"
@@ -52,7 +51,6 @@ template <int D> void bind_mr(py::module &mod) noexcept {
     sub_mod.doc() = std::to_string(D) + "-dimensional bindings";
 
     functions<D>(sub_mod);
-    gaussians<D>(sub_mod);
     derivatives<D>(sub_mod);
     convolutions<D>(sub_mod);
     trees<D>(sub_mod);
@@ -69,48 +67,9 @@ PYBIND11_MODULE(_vampyr, m) {
     constants(m);
     bases(m);
 
-    // py::class_<BandWidth>(m, "BandWidth")
-    //     .def(py::init<int>())
-    //     .def("clear", &BandWidth::clear)
-    //     .def("isEmpty", &BandWidth::isEmpty)
-    //     .def("getDepth", &BandWidth::getDepth)
-    //     .def("getMaxWidth", &BandWidth::getMaxWidth)
-    //     .def("setWidth", &BandWidth::setWidth);
-
-    // mw_operator(m);
-    // NOTE We bind GreensKernel first, since it's the base class for the 3 following
-    // py::class_<GreensKernel>(m, "GreensKernel");
-    // derivative_kernel(m);
-    // helmholtz_kernel(m);
-    // identity_kernel(m);
-
     // Dimension-dependent bindings go into submodules
     bind_mr<1>(m);
-    // NOTE We bind these 1D functions here as we need RepresentableFunction<1> bound first
-    // polynomial(m);
-    // legendre_poly(m);
-    // boys_function(m);
-
     bind_mr<2>(m);
-    // NOTE We bind these down here as we need MWTree<2> and SerialTree<2> as base classes
-    // py::class_<OperatorTree, MWTree<2>>(m, "OperatorTree")
-    //     .def(py::init<MultiResolutionAnalysis<2> &, double>())
-    //     .def("getNormPrecision", &OperatorTree::getNormPrecision)
-    //     .def("calcBandWidth", py::overload_cast<double>(&OperatorTree::calcBandWidth))
-    //     .def("clearBandWidth", &OperatorTree::clearBandWidth)
-    //     .def("setupOperNodeCache", &OperatorTree::setupOperNodeCache)
-    //     .def("clearOperNodeCache", &OperatorTree::clearOperNodeCache)
-    //     .def("mwTransformDown", &OperatorTree::mwTransformDown)
-    //     .def("mwTransformUp", &OperatorTree::mwTransformUp);
-    // pybind11::class_<SerialOperatorTree, SerialTree<2>>(m, "SerialOperatorTree")
-    //     .def(py::init<OperatorTree *>())
-    //     .def("allocRoots", &SerialOperatorTree::allocRoots)
-    //     .def("allocChildren", &SerialOperatorTree::allocChildren)
-    //     .def("allocGenChildren", &SerialOperatorTree::allocGenChildren)
-    //     .def("deallocNodes", &SerialOperatorTree::deallocNodes)
-    //     .def("deallocGenNodes", &SerialOperatorTree::deallocGenNodes)
-    //     .def("deallocGenNodeChunks", &SerialOperatorTree::deallocGenNodeChunks);
-
     bind_mr<3>(m);
 }
 } // namespace vampyr

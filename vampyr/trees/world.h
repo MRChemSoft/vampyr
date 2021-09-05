@@ -19,17 +19,16 @@ template <int D> void world(pybind11::module &m) {
     using namespace pybind11::literals;
 
     pybind11::class_<BoundingBox<D>>(m, "BoundingBox")
-        .def(pybind11::init<int,
-                            std::array<int, D> &,
-                            std::array<int, D> &,
-                            std::array<double, D> &,
-                            bool>(),
-                            "scale"_a = 0,
-                            "corner"_a = std::array<int, D>{},
-                            "nboxes"_a = std::array<int, D>{},
-                            "scaling"_a = std::array<double, D>{},
-                            "pbc"_a = false
-                        )
+        .def(py::init<int,
+                      std::array<int, D> &,
+                      std::array<int, D> &,
+                      std::array<double, D> &,
+                      bool>(),
+                      "scale"_a = 0,
+                      "corner"_a = std::array<int, D>{},
+                      "nboxes"_a = std::array<int, D>{},
+                      "scaling"_a = std::array<double, D>{},
+                      "pbc"_a = false)
         .def("getBoxLengths", &BoundingBox<D>::getBoxLengths)
         .def("getBoxLength", &BoundingBox<D>::getBoxLength, "dim"_a)
         .def("getUpperBounds", &BoundingBox<D>::getUpperBounds)
@@ -53,12 +52,12 @@ template <int D> void world(pybind11::module &m) {
         });
 
     pybind11::class_<MultiResolutionAnalysis<D>>(m, "MultiResolutionAnalysis")
-        .def(pybind11::init<BoundingBox<D>,
-                            ScalingBasis,
-                            int>(),
-                            "box"_a,
-                            "basis"_a,
-                            "max_depth"_a = 30)
+        .def(py::init<BoundingBox<D>,
+                      ScalingBasis,
+                      int>(),
+                      "box"_a,
+                      "basis"_a,
+                      "max_depth"_a = 30)
         .def("getScalingBasis", &MultiResolutionAnalysis<D>::getScalingBasis)
         .def("getWorldBox", &MultiResolutionAnalysis<D>::getWorldBox)
         .def("getMaxDepth", &MultiResolutionAnalysis<D>::getMaxDepth)

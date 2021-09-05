@@ -2,6 +2,8 @@
 
 #include "PyRepresentableFunction.h"
 
+#include "gaussians.h"
+
 namespace vampyr {
 
 template <int D> void functions(pybind11::module &m) {
@@ -11,10 +13,11 @@ template <int D> void functions(pybind11::module &m) {
 
     // RepresentableFunction class
     py::class_<RepresentableFunction<D>, PyRepresentableFunction<D>>(m, "RepresentableFunction")
-        .def(py::init<const Coord<D> &, const Coord<D> &>())
+        .def(py::init<const std::vector<double> &, const std::vector<double> &>())
         .def("__call__", [](const RepresentableFunction<D> &func, const Coord<D> &r) {
             return func.evalf(r);
         });
 
+    gaussians<D>(m);
 }
 } // namespace vampyr
