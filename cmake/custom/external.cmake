@@ -37,7 +37,7 @@ endif()
 set(STAGED_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/stage)
 message(STATUS "${PROJECT_NAME} staged install: ${STAGED_INSTALL_PREFIX}")
 
-find_package(MRCPP 1.3.5 CONFIG QUIET)
+find_package(MRCPP 1.4 CONFIG QUIET)
 if(TARGET MRCPP::mrcpp)
   get_property(_loc TARGET MRCPP::mrcpp PROPERTY LOCATION)
   message(STATUS "Found MRCPP: ${_loc} (found version ${MRCPP_VERSION})")
