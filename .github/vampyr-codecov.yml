@@ -5,7 +5,6 @@ dependencies:
   - cmake
   - cxx-compiler
   - lcov
-  - mrcpp
   - ninja
   - numpy
   - pybind11
