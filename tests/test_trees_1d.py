@@ -19,8 +19,7 @@ world = vp.D1.BoundingBox(scale=N)
 root = vp.D1.NodeIndex(scale=N)
 idx = vp.D1.NodeIndex(scale=n, translation=l)
 mra = vp.D1.MultiResolutionAnalysis(box=world, basis=legendre)
-tree = vp.D1.FunctionTree(mra)
-tree.setName(name)
+tree = vp.D1.FunctionTree(mra, name)
 
 def test_FunctionTree():
     assert tree.getSquareNorm() < 0.0

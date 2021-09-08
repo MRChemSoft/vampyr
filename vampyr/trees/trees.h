@@ -13,7 +13,6 @@ template <int D> void trees(pybind11::module &m) {
     using namespace pybind11::literals;
 
     py::class_<MWTree<D>>(m, "MWTree")
-        .def(py::init<MultiResolutionAnalysis<D>>(), "mra"_a)
         .def("getMRA", &MWTree<D>::getMRA, py::return_value_policy::reference_internal)
         .def("getNNodes", &MWTree<D>::getNNodes)
         .def("getNEndNodes", &MWTree<D>::getNEndNodes)
@@ -35,7 +34,7 @@ template <int D> void trees(pybind11::module &m) {
         });
 
     py::class_<FunctionTree<D>, MWTree<D>, RepresentableFunction<D>>(m, "FunctionTree")
-        .def(py::init<MultiResolutionAnalysis<D>>())
+        .def(py::init<const MultiResolutionAnalysis<D> &, const std::string &>(), "mra"_a, "name"_a = "nn")
         .def("getNGenNodes", &FunctionTree<D>::getNGenNodes)
         .def("deleteGenerated", &FunctionTree<D>::deleteGenerated)
         .def("integrate", &FunctionTree<D>::integrate)
