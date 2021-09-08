@@ -24,8 +24,8 @@ template <int D> void convolutions(pybind11::module &m) {
              "mra"_a,
              "prec"_a);
 
-    if (D==3) helmholtz_operator(m);
-    if (D==3) poisson_operator(m);
+    if constexpr (D==3) helmholtz_operator(m);
+    if constexpr (D==3) poisson_operator(m);
 }
 
 void poisson_operator(pybind11::module &m) {
