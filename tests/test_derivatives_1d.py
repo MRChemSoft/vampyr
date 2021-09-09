@@ -15,7 +15,7 @@ r0 = [0.4]
 beta = 100.0
 alpha = (beta/np.pi)**(D/2.0)
 g = vp.D1.GaussFunc(coef=alpha, exp=beta, pos=r0)
-dg = vp.D1.GaussExp(g.differentiate(dir=0))
+dg = g.differentiate(dir=0)
 ddg = dg.differentiate(dir=0)
 
 f = vp.D1.FunctionTree(mra)

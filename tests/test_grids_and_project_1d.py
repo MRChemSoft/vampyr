@@ -124,3 +124,43 @@ def test_ProjectRescaleNormalize():
 
     tree.normalize()
     assert tree.getSquareNorm() == pytest.approx(1.0, rel=epsilon)
+
+def test_BuildProjectSemiPeriodicGauss():
+    sfac = [np.pi/3]
+    periodic_world = vp.D1.BoundingBox(scaling=sfac, pbc=True)
+    pbc = vp.D1.MultiResolutionAnalysis(box=periodic_world, basis=interpol)
+
+    tree_1 = vp.D1.FunctionTree(pbc)
+    vp.build_grid(out=tree_1, inp=gauss)
+    vp.project(out=tree_1, inp=gauss)
+    assert tree_1.integrate() < 1.0
+
+    pgauss = gauss.periodify(period=sfac, std_dev=6.0)
+    assert pgauss.size() > 0
+
+    tree_2 = vp.D1.FunctionTree(pbc)
+    vp.build_grid(out=tree_2, inp=pgauss)
+    vp.project(out=tree_2, inp=pgauss)
+    assert tree_2.integrate() == pytest.approx(1.0, rel=epsilon)
+
+def test_BuildProjectSemiPeriodicGaussExp():
+    gexp = vp.D1.GaussExp()
+    gexp.append(gauss)
+    gexp.append(gauss)
+
+    sfac = [np.pi/3]
+    periodic_world = vp.D1.BoundingBox(scaling=sfac, pbc=True)
+    pbc = vp.D1.MultiResolutionAnalysis(box=periodic_world, basis=interpol)
+
+    tree_1 = vp.D1.FunctionTree(pbc)
+    vp.build_grid(out=tree_1, inp=gexp)
+    vp.project(out=tree_1, inp=gexp)
+    assert tree_1.integrate() < 2.0
+
+    pexp = gexp.periodify(period=sfac, std_dev=6.0)
+    assert pexp.size() > 2
+
+    tree_2 = vp.D1.FunctionTree(pbc)
+    vp.build_grid(out=tree_2, inp=pexp)
+    vp.project(out=tree_2, inp=pexp)
+    assert tree_2.integrate() == pytest.approx(2.0, rel=epsilon)

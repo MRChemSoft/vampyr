@@ -15,9 +15,9 @@ r0 = [0.8, 0.8, 0.8]
 beta = 10.0
 alpha = (beta/np.pi)**(D/2.0)
 g = vp.D3.GaussFunc(coef=alpha, exp=beta, pos=r0)
-gx = vp.D3.GaussExp(g.differentiate(dir=0))
-gy = vp.D3.GaussExp(g.differentiate(dir=1))
-gz = vp.D3.GaussExp(g.differentiate(dir=2))
+gx = g.differentiate(dir=0)
+gy = g.differentiate(dir=1)
+gz = g.differentiate(dir=2)
 
 f = vp.D3.FunctionTree(mra)
 vp.build_grid(out=f, inp=g)

@@ -15,12 +15,11 @@ public:
     using PyRepresentableFunction<D, GaussianBase>::PyRepresentableFunction;
 
     GaussianBase *copy() const override { PYBIND11_OVERLOAD_PURE(GaussianBase *, GaussianBase, copy, ); }
-    double evalfCore(const mrcpp::Coord<D> &r) const override { PYBIND11_OVERLOAD_PURE(double, GaussianBase, evalfCore, r); }
-    double evalf1D(double r, int dim) const override { PYBIND11_OVERLOAD_PURE(double, GaussianBase, evalf, r, dim); }
-    double calcSquareNorm() override { PYBIND11_OVERLOAD_PURE(double, GaussianBase, calcSquareNorm, ); }
-    double calcOverlap(mrcpp::GaussFunc<D> &b) override { PYBIND11_OVERLOAD_PURE(double, GaussianBase, calcOverlap, b); }
-    double calcOverlap(mrcpp::GaussPoly<D> &b) override { PYBIND11_OVERLOAD_PURE(double, GaussianBase, calcOverlap, b); }
-    mrcpp::GaussPoly<D> differentiate(int dir) override { PYBIND11_OVERLOAD_PURE(mrcpp::GaussPoly<D>, GaussianBase, differentiate, dir); }
+    double evalf(const mrcpp::Coord<D> &r) const override { PYBIND11_OVERLOAD_PURE(double, GaussianBase, evalf, r); }
+    double evalf1D(double r, int dim) const override { PYBIND11_OVERLOAD_PURE(double, GaussianBase, evalf1D, r, dim); }
+    double calcSquareNorm() const override { PYBIND11_OVERLOAD_PURE(double, GaussianBase, calcSquareNorm, ); }
+    mrcpp::GaussExp<D> asGaussExp() const override { PYBIND11_OVERLOAD_PURE(mrcpp::GaussExp<D>, GaussianBase, differentiate); }
+    mrcpp::GaussPoly<D> differentiate(int dir) const override { PYBIND11_OVERLOAD_PURE(mrcpp::GaussPoly<D>, GaussianBase, differentiate, dir); }
     void setPow(const std::array<int, D> &p) override { PYBIND11_OVERLOAD_PURE(void, GaussianBase, setPow, p); }
     void setPow(int d, int p) override { PYBIND11_OVERLOAD_PURE(void, GaussianBase, setPow, d, p); }
     std::ostream &print(std::ostream &out) const override { PYBIND11_OVERLOAD_PURE(std::ostream &, GaussianBase, print, out); }

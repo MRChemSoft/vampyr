@@ -24,9 +24,8 @@ def test_GaussDerivative():
     r_0 = [0.25]
     r_1 = [0.35]
     f = vp.D1.GaussFunc(coef=alpha, exp=beta, pos=r_0)
-    df = f.differentiate(0)
+    df = f.differentiate(dir=0)
     ref = -(2.0/10.0)*alpha*beta*np.exp(-1.0)
-    assert df.getPow(dim=0) == 1
     assert df(r_0) == 0.0
     assert df(r_1) == pytest.approx(ref, rel=numprec)
 
