@@ -16,13 +16,17 @@ template <int D> void convolutions(pybind11::module &m) {
     using namespace mrcpp;
     using namespace pybind11::literals;
 
-    py::class_<ConvolutionOperator<D>>(m, "ConvolutionOperator")
-        .def(py::init<const MultiResolutionAnalysis<D> &, double>());
+    py::class_<ConvolutionOperator<D>>(m, "ConvolutionOperator");
 
     py::class_<IdentityConvolution<D>, ConvolutionOperator<D>>(m, "IdentityConvolution")
         .def(py::init<const MultiResolutionAnalysis<D> &, double>(),
              "mra"_a,
-             "prec"_a);
+             "prec"_a)
+        .def(py::init<const MultiResolutionAnalysis<D> &, double, int, int>(),
+             "mra"_a,
+             "prec"_a,
+             "root"_a=0,
+             "reach"_a=1);
 
     if constexpr (D==3) helmholtz_operator(m);
     if constexpr (D==3) poisson_operator(m);
@@ -36,7 +40,12 @@ void poisson_operator(pybind11::module &m) {
     py::class_<PoissonOperator, ConvolutionOperator<3>>(m, "PoissonOperator")
         .def(py::init<const MultiResolutionAnalysis<3> &, double>(),
              "mra"_a,
-             "prec"_a);
+             "prec"_a)
+        .def(py::init<const MultiResolutionAnalysis<3> &, double, int, int>(),
+             "mra"_a,
+             "prec"_a,
+             "root"_a=0,
+             "reach"_a=1);
 }
 
 void helmholtz_operator(pybind11::module &m) {
@@ -48,7 +57,13 @@ void helmholtz_operator(pybind11::module &m) {
         .def(py::init<const MultiResolutionAnalysis<3> &, double, double>(),
              "mra"_a,
              "exp"_a,
-             "prec"_a);
+             "prec"_a)
+        .def(py::init<const MultiResolutionAnalysis<3> &, double, double, int, int>(),
+             "mra"_a,
+             "exp"_a,
+             "prec"_a,
+             "root"_a=0,
+             "reach"_a=1);
 }
 
 } // namespace vampyr
