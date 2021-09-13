@@ -41,10 +41,10 @@ def test_Gradient():
 
     assert len(grad_f) == 3
     assert grad_f[0].integrate() == pytest.approx(fx.integrate(), abs=epsilon)
-    assert grad_f[0].getSquareNorm() == pytest.approx(fx.getSquareNorm(), rel=epsilon)
     assert grad_f[1].integrate() == pytest.approx(fy.integrate(), abs=epsilon)
-    assert grad_f[1].getSquareNorm() == pytest.approx(fy.getSquareNorm(), rel=epsilon)
     assert grad_f[2].integrate() == pytest.approx(fz.integrate(), abs=epsilon)
+    assert grad_f[0].getSquareNorm() == pytest.approx(fx.getSquareNorm(), rel=epsilon)
+    assert grad_f[1].getSquareNorm() == pytest.approx(fy.getSquareNorm(), rel=epsilon)
     assert grad_f[2].getSquareNorm() == pytest.approx(fz.getSquareNorm(), rel=epsilon)
 
 def test_Divergence():

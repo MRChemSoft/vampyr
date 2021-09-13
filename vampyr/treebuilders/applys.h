@@ -46,9 +46,16 @@ template <int D> void applys(pybind11::module &m) {
           "inp"_a);
 
     m.def("gradient",
-          py::overload_cast<DerivativeOperator<D> &,
-                            FunctionTree<D> &>
-                            (&gradient<D>),
+          [] (DerivativeOperator<D> &oper, FunctionTree<D> &inp) {
+              auto tmp = mrcpp::gradient(oper, inp);
+              std::vector<std::unique_ptr<FunctionTree<D>>> out;
+              for (int i = 0; i < tmp.size(); i++) {
+                  auto *tmp_p = std::get<1>(tmp[i]);
+                  out.push_back(std::unique_ptr<FunctionTree<D>>(tmp_p));
+              }
+              mrcpp::clear(tmp, false);
+              return out;
+          },
           "oper"_a,
           "inp"_a);
 }
