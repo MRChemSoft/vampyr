@@ -1,39 +1,55 @@
-set(_tests_in_build_tree ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR}/..)
-
-list(APPEND _tests
-  basis
-  mra_1d
-  mra_3d
-  gauss_1d
-  gauss_3d
-  trees_1d
-  trees_3d
-  grids_and_project_1d
-  grids_and_project_3d
-  arithmetics_1d
-  arithmetics_3d
-  derivatives_1d
-  derivatives_3d
-  convolutions_1d
-  convolutions_3d
+# we glob the Python test files and let CMake add a rule such that
+# the glob is repeated every time we rebuild.
+# This is NOT RECOMMENDED by CMake
+# (https://cmake.org/cmake/help/v3.16/command/file.html#filesystem) but you only
+# live once!
+file(
+   GLOB
+    _vmp_pytests
+  LIST_DIRECTORIES
+    FALSE
+  CONFIGURE_DEPENDS
+  RELATIVE
+    ${CMAKE_CURRENT_LIST_DIR}
+  test_*.py
   )
 
-foreach(_test IN LISTS _tests)
-  configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/test_${_test}.py
-    ${_tests_in_build_tree}/test_${_test}.py
-    COPYONLY
+foreach(_f IN LISTS _vmp_pytests)
+  # link the Python files under the build folder
+  file(
+     CREATE_LINK
+      ${CMAKE_CURRENT_LIST_DIR}/${_f}
+      ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR}/tests/${_f}
+    COPY_ON_ERROR
+    SYMBOLIC
     )
+
+  # extract the name and label for the test from the file name
+  # by removing the "test_" prefix and the ".py" suffix
+  string(REGEX REPLACE "test_(.*).py" "\\1" _name ${_f})
   add_test(
     NAME
-      ${_test}
+      ${_name}
     COMMAND
-      COMMAND ${PYTHON_EXECUTABLE} -m pytest -x -rws -vv ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR}/../test_${_test}.py
+      ${PYTHON_EXECUTABLE} -m pytest -x -rws -vv test_${_name}.py
+    WORKING_DIRECTORY
+      ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR}/tests
     )
-  install(
-    FILES
-      test_${_test}.py
-    DESTINATION
-      ${PYMOD_INSTALL_FULLDIR}/..
+
+  set_tests_properties(${_name}
+    PROPERTIES
+      LABELS
+        "integration;${_name}"
     )
 endforeach()
+
+
+# install the current folder
+install(
+  DIRECTORY
+    ${CMAKE_CURRENT_LIST_DIR}/
+  DESTINATION
+    ${PYMOD_INSTALL_FULLDIR}/tests
+  PATTERN "CMakeLists.txt" EXCLUDE
+  )
+
