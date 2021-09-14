@@ -31,9 +31,9 @@ foreach(_f IN LISTS _vmp_pytests)
     NAME
       ${_name}
     COMMAND
-      ${PYTHON_EXECUTABLE} -m pytest -x -rws -vv test_${_name}.py
+      ${PYTHON_EXECUTABLE} -m pytest -x -rws -vv tests/test_${_name}.py
     WORKING_DIRECTORY
-      ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR}/tests
+      ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR}
     )
 
   set_tests_properties(${_name}
