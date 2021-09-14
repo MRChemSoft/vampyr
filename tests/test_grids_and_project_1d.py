@@ -1,5 +1,5 @@
 import numpy as np
-import vampyr as vp
+from vampyr import vampyr1d as vp
 import pytest
 
 epsilon = 1.0e-3
@@ -8,21 +8,20 @@ D = 1
 s = 2
 k = 5
 N = -2
-interpol = vp.InterpolatingBasis(order=k)
-world = vp.D1.BoundingBox(scale=N)
-mra = vp.D1.MultiResolutionAnalysis(box=world, basis=interpol)
+world = vp.BoundingBox(scale=N)
+mra = vp.MultiResolutionAnalysis(box=world, order=k)
 
 r0 = [0.8]
 beta = 10.0
 alpha = (beta/np.pi)**(D/2.0)
-gauss = vp.D1.GaussFunc(coef=alpha, exp=beta, pos=r0)
+gauss = vp.GaussFunc(coef=alpha, exp=beta, pos=r0)
 
 def func(r):
     R2 = sum([(x1 - x2)**2 for x1, x2 in zip(r, r0)])
     return alpha*np.exp(-beta*R2)
 
 def test_BuildProjectRefineCrop():
-    tree = vp.D1.FunctionTree(mra)
+    tree = vp.FunctionTree(mra)
     vp.build_grid(out=tree, scales=s)
     assert tree.getDepth() == s + 1
     assert tree.getNEndNodes() == 2**(s*D)
@@ -43,8 +42,8 @@ def test_BuildProjectRefineCrop():
     assert pre_crop > post_crop
 
 def test_BuildProjectCopyClear():
-    tree_1 = vp.D1.FunctionTree(mra)
-    tree_2 = vp.D1.FunctionTree(mra)
+    tree_1 = vp.FunctionTree(mra)
+    tree_2 = vp.FunctionTree(mra)
 
     vp.build_grid(out=tree_1, inp=gauss)
     assert tree_1.getDepth() > 1
@@ -65,17 +64,17 @@ def test_BuildProjectCopyClear():
 
 def test_BuildUnionGrid():
     # building sharp grid
-    tree_1 = vp.D1.FunctionTree(mra)
+    tree_1 = vp.FunctionTree(mra)
     vp.build_grid(out=tree_1, inp=gauss)
     assert tree_1.getDepth() > 1
 
     # building wide grid
-    tree_2 = vp.D1.FunctionTree(mra)
+    tree_2 = vp.FunctionTree(mra)
     vp.build_grid(out=tree_2, scales=s)
     assert tree_2.getDepth() > 1
 
     # building union grid
-    tree_3 = vp.D1.FunctionTree(mra)
+    tree_3 = vp.FunctionTree(mra)
     vp.build_grid(out=tree_3, inp=tree_1)
     vp.build_grid(out=tree_3, inp=tree_2)
     assert tree_3.getSquareNorm() < 0.0
@@ -83,7 +82,7 @@ def test_BuildUnionGrid():
     assert tree_3.getNNodes() > tree_2.getNNodes()
 
     # refining union grid
-    tree_4 = vp.D1.FunctionTree(mra)
+    tree_4 = vp.FunctionTree(mra)
     tree_4.setZero()
     while vp.refine_grid(out=tree_4, inp=tree_1) > 0:
         pass
@@ -97,13 +96,13 @@ def test_BuildUnionGrid():
     tree_vec.append(tree_1)
     tree_vec.append(tree_2)
 
-    tree_5 = vp.D1.FunctionTree(mra)
+    tree_5 = vp.FunctionTree(mra)
     vp.build_grid(out=tree_5, inp=tree_vec)
     assert tree_5.getSquareNorm() < 0.0
     assert tree_5.getNNodes() == tree_3.getNNodes()
 
 def test_ClearProjectRefine():
-    tree = vp.D1.FunctionTree(mra)
+    tree = vp.FunctionTree(mra)
 
     nsplit = 1
     while nsplit > 0:
@@ -114,7 +113,7 @@ def test_ClearProjectRefine():
     assert tree.integrate() == pytest.approx(1.0, rel=epsilon)
 
 def test_ProjectRescaleNormalize():
-    tree = vp.D1.FunctionTree(mra)
+    tree = vp.FunctionTree(mra)
     vp.build_grid(out=tree, inp=gauss)
     vp.project(out=tree, inp=gauss)
     assert tree.integrate() == pytest.approx(1.0, rel=epsilon)
@@ -127,10 +126,10 @@ def test_ProjectRescaleNormalize():
 
 def test_BuildProjectSemiPeriodicGauss():
     sfac = [np.pi/3]
-    periodic_world = vp.D1.BoundingBox(scaling=sfac, pbc=True)
-    pbc = vp.D1.MultiResolutionAnalysis(box=periodic_world, basis=interpol)
+    periodic_world = vp.BoundingBox(scaling=sfac, pbc=True)
+    pbc = vp.MultiResolutionAnalysis(box=periodic_world, order=k)
 
-    tree_1 = vp.D1.FunctionTree(pbc)
+    tree_1 = vp.FunctionTree(pbc)
     vp.build_grid(out=tree_1, inp=gauss)
     vp.project(out=tree_1, inp=gauss)
     assert tree_1.integrate() < 1.0
@@ -138,21 +137,21 @@ def test_BuildProjectSemiPeriodicGauss():
     pgauss = gauss.periodify(period=sfac, std_dev=6.0)
     assert pgauss.size() > 0
 
-    tree_2 = vp.D1.FunctionTree(pbc)
+    tree_2 = vp.FunctionTree(pbc)
     vp.build_grid(out=tree_2, inp=pgauss)
     vp.project(out=tree_2, inp=pgauss)
     assert tree_2.integrate() == pytest.approx(1.0, rel=epsilon)
 
 def test_BuildProjectSemiPeriodicGaussExp():
-    gexp = vp.D1.GaussExp()
+    gexp = vp.GaussExp()
     gexp.append(gauss)
     gexp.append(gauss)
 
     sfac = [np.pi/3]
-    periodic_world = vp.D1.BoundingBox(scaling=sfac, pbc=True)
-    pbc = vp.D1.MultiResolutionAnalysis(box=periodic_world, basis=interpol)
+    periodic_world = vp.BoundingBox(scaling=sfac, pbc=True)
+    pbc = vp.MultiResolutionAnalysis(box=periodic_world, order=k)
 
-    tree_1 = vp.D1.FunctionTree(pbc)
+    tree_1 = vp.FunctionTree(pbc)
     vp.build_grid(out=tree_1, inp=gexp)
     vp.project(out=tree_1, inp=gexp)
     assert tree_1.integrate() < 2.0
@@ -160,7 +159,7 @@ def test_BuildProjectSemiPeriodicGaussExp():
     pexp = gexp.periodify(period=sfac, std_dev=6.0)
     assert pexp.size() > 2
 
-    tree_2 = vp.D1.FunctionTree(pbc)
+    tree_2 = vp.FunctionTree(pbc)
     vp.build_grid(out=tree_2, inp=pexp)
     vp.project(out=tree_2, inp=pexp)
     assert tree_2.integrate() == pytest.approx(2.0, rel=epsilon)

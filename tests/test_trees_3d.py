@@ -1,5 +1,6 @@
 import numpy as np
-import vampyr as vp
+from vampyr import vampyr3d as vp
+from vampyr import Lebesgue, Hilbert, TopDown, BottomUp
 import pytest
 
 r0 = [0.1, 0.1, 0.1]
@@ -14,12 +15,11 @@ name = "func"
 two_d = 2**D
 kp1_d = (k + 1)**D
 
-legendre = vp.LegendreBasis(order=k)
-world = vp.D3.BoundingBox(scale=N)
-root = vp.D3.NodeIndex(scale=N)
-idx = vp.D3.NodeIndex(scale=n, translation=l)
-mra = vp.D3.MultiResolutionAnalysis(box=world, basis=legendre)
-tree = vp.D3.FunctionTree(mra, name)
+world = vp.BoundingBox(scale=N)
+root = vp.NodeIndex(scale=N)
+idx = vp.NodeIndex(scale=n, translation=l)
+mra = vp.MultiResolutionAnalysis(box=world, order=k)
+tree = vp.FunctionTree(mra, name)
 
 def test_FunctionTree():
     assert tree.getSquareNorm() < 0.0
@@ -47,7 +47,7 @@ def test_FunctionTreeSave():
     tree.setZero()
     tree.saveTree(filename=name)
 
-    tree_2 = vp.D3.FunctionTree(mra)
+    tree_2 = vp.FunctionTree(mra)
     tree_2.setName("func_2")
     tree_2.loadTree(filename=name)
 
@@ -153,9 +153,9 @@ def test_HilbertIterator():
     tree.setZero()
     tree.getNode(idx) # generate extra nodes
 
-    it = vp.D3.TreeIterator(tree, iterator=vp.Hilbert)
+    it = vp.TreeIterator(tree, iterator=Hilbert)
     it.setMaxDepth(-1)
-    it.setTraverse(vp.TopDown)
+    it.setTraverse(TopDown)
     it.setReturnGenNodes(False)
 
     gen_count = 0
@@ -174,9 +174,9 @@ def test_LebesgueIterator():
     tree.setZero()
     tree.getNode(idx) # generate extra nodes
 
-    it = vp.D3.TreeIterator(traverse=vp.BottomUp)
+    it = vp.TreeIterator(traverse=BottomUp)
     it.setMaxDepth(-1)
-    it.setIterator(vp.Lebesgue)
+    it.setIterator(Lebesgue)
     it.setReturnGenNodes(True)
 
     gen_count = 0

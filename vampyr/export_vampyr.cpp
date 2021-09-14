@@ -41,14 +41,14 @@ void constants(py::module &m) {
 }
 
 template <int D> void bind_mr(py::module &mod) noexcept {
-    applys<D>(mod);
-    arithmetics<D>(mod);
-    project<D>(mod);
-    grids<D>(mod);
-
-    std::string name = "D" + std::to_string(D);
+    std::string name = "vampyr" + std::to_string(D) + "d";
     py::module sub_mod = mod.def_submodule(name.c_str());
     sub_mod.doc() = std::to_string(D) + "-dimensional bindings";
+
+    applys<D>(sub_mod);
+    arithmetics<D>(sub_mod);
+    project<D>(sub_mod);
+    grids<D>(sub_mod);
 
     functions<D>(sub_mod);
     derivatives<D>(sub_mod);
