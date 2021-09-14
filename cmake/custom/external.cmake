@@ -37,7 +37,7 @@ endif()
 set(STAGED_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/stage)
 message(STATUS "${PROJECT_NAME} staged install: ${STAGED_INSTALL_PREFIX}")
 
-find_package(MRCPP 1.3.5 CONFIG QUIET)
+find_package(MRCPP 1.4 CONFIG QUIET)
 if(TARGET MRCPP::mrcpp)
   get_property(_loc TARGET MRCPP::mrcpp PROPERTY LOCATION)
   message(STATUS "Found MRCPP: ${_loc} (found version ${MRCPP_VERSION})")
@@ -45,8 +45,10 @@ else()
   message(STATUS "Suitable MRCPP could not be located. Fetching and building!")
   FetchContent_Declare(mrcpp_sources
     QUIET
-    URL
-      https://github.com/MRChemSoft/mrcpp/archive/v1.3.5.tar.gz
+    GIT_REPOSITORY
+      https://github.com/MRChemSoft/mrcpp.git
+    GIT_TAG
+      c900bb52d6524d24d2fc23ffaab5ee3a059739a4
     )
 
   FetchContent_GetProperties(mrcpp_sources)
