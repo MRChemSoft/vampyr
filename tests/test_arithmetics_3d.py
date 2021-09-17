@@ -183,3 +183,8 @@ def test_OverloadedOperators():
     tree_9 = tree_1 * tree_1
     assert tree_9.getNNodes() > ref_nodes
     assert tree_9.integrate() == pytest.approx(ref_norm, rel=epsilon)
+
+    tree_10 = (tree_1 * tree_1).crop(epsilon) + (tree_1**2).crop(epsilon)
+    assert tree_10.getNNodes() > tree_1.getNNodes()
+    assert tree_10.getNNodes() < tree_9.getNNodes()
+    assert tree_10.integrate() == pytest.approx(2.0*ref_norm, rel=epsilon)

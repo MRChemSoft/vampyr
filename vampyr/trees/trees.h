@@ -40,13 +40,16 @@ template <int D> void trees(pybind11::module &m) {
         .def("integrate", &FunctionTree<D>::integrate)
         .def("normalize", &FunctionTree<D>::normalize)
         .def("rescale", &FunctionTree<D>::rescale, "coef"_a)
-        .def("crop", &FunctionTree<D>::crop, "prec"_a, "split_fac"_a=1.0, "abs_prec"_a=false)
         .def("add", &FunctionTree<D>::add, "coef"_a=1.0, "inp"_a)
         .def("multiply", &FunctionTree<D>::multiply, "coef"_a=1.0, "inp"_a)
         .def("square", &FunctionTree<D>::square)
         .def("power", &FunctionTree<D>::power, "pow"_a)
         .def("saveTree", &FunctionTree<D>::saveTree, "filename"_a)
         .def("loadTree", &FunctionTree<D>::loadTree, "filename"_a)
+        .def("crop", [](FunctionTree<D> *out, double prec, bool abs_prec) {
+                out->crop(prec, 1.0, abs_prec);
+                return out;
+            }, "prec"_a, "abs_prec"_a=false)
         .def("deepCopy", [](FunctionTree<D> *inp) {
                 auto out = std::make_unique<FunctionTree<D>>(inp->getMRA());
                 copy_grid(*out, *inp);
