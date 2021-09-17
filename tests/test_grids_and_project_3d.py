@@ -112,7 +112,7 @@ def test_ClearProjectRefine():
         assert tree.getSquareNorm() > 0.0
     assert tree.integrate() == pytest.approx(1.0, rel=epsilon)
 
-def test_ProjectRescaleNormalize():
+def test_ProjectRescaleCopyNormalize():
     tree = vp.FunctionTree(mra)
     vp.build_grid(out=tree, inp=gauss)
     vp.project(out=tree, inp=gauss)
@@ -121,8 +121,15 @@ def test_ProjectRescaleNormalize():
     tree.rescale(coef=np.pi)
     assert tree.integrate() == pytest.approx(np.pi, rel=epsilon)
 
+    tree_shallow = tree
+    tree_deep = tree.deepCopy()
+    assert tree_shallow.integrate() == pytest.approx(np.pi, rel=epsilon)
+    assert tree_deep.integrate() == pytest.approx(np.pi, rel=epsilon)
+
     tree.normalize()
     assert tree.getSquareNorm() == pytest.approx(1.0, rel=epsilon)
+    assert tree_deep.integrate() == pytest.approx(np.pi, rel=epsilon)
+    assert tree_shallow.integrate() != pytest.approx(np.pi, rel=epsilon)
 
 def test_BuildProjectSemiPeriodicGauss():
     sfac = [np.pi/3, np.pi/3, np.pi/3]
