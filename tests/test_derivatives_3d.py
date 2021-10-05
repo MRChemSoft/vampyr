@@ -35,7 +35,7 @@ vp.build_grid(out=fz, inp=gz)
 vp.project(prec=epsilon, out=fz, inp=gz)
 
 def test_Gradient():
-    D = vp.ABGVOperator(mra, a=0.0, b=0.0)
+    D = vp.ABGVDerivative(mra, a=0.0, b=0.0)
     grad_f = vp.gradient(oper=D, inp=f)
 
     assert len(grad_f) == 3
@@ -47,7 +47,7 @@ def test_Gradient():
     assert grad_f[2].getSquareNorm() == pytest.approx(fz.getSquareNorm(), rel=epsilon)
 
 def test_Divergence():
-    D = vp.ABGVOperator(mra, a=0.0, b=0.0)
+    D = vp.ABGVDerivative(mra, a=0.0, b=0.0)
     grad_f = []
     grad_f.append(f)
     grad_f.append(f)
@@ -66,7 +66,7 @@ def test_Divergence():
     assert lap_f.getSquareNorm() == pytest.approx(ref_lap.getSquareNorm(), rel=epsilon)
 
 def test_OverloadedOperators():
-    D = vp.ABGVOperator(mra, a=0.0, b=0.0)
+    D = vp.ABGVDerivative(mra, a=0.0, b=0.0)
     assert D.getOrder() == 1
 
     gx = D(f, axis=0)
