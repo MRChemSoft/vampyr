@@ -188,3 +188,27 @@ def test_OverloadedOperators():
     assert tree_10.getNNodes() > tree_1.getNNodes()
     assert tree_10.getNNodes() < tree_9.getNNodes()
     assert tree_10.integrate() == pytest.approx(2.0*ref_norm, rel=epsilon)
+
+    tree_vec_1 = []
+    tree_vec_1.append((1.0, tree_1))
+    tree_vec_1.append((-.5, tree_1))
+
+    tree_11 = vp.sum(tree_vec_1)
+    assert tree_11.getNNodes() == tree_1.getNNodes()
+    assert tree_11.integrate() == pytest.approx(0.5 * ref_int, rel=epsilon)
+
+    tree_12 = vp.prod(tree_vec_1)
+    assert tree_12.getNNodes() > tree_1.getNNodes()
+    assert tree_12.integrate() == pytest.approx(-0.5 * ref_norm, rel=epsilon)
+
+    tree_vec_2 = []
+    tree_vec_2.append(tree_1)
+    tree_vec_2.append(tree_1)
+
+    tree_13 = vp.sum(tree_vec_2)
+    assert tree_13.getNNodes() == tree_1.getNNodes()
+    assert tree_13.integrate() == pytest.approx(2.0 * ref_int, rel=epsilon)
+
+    tree_14 = vp.prod(tree_vec_2)
+    assert tree_14.getNNodes() > tree_1.getNNodes()
+    assert tree_14.integrate() == pytest.approx(ref_norm, rel=epsilon)
