@@ -52,8 +52,7 @@ def test_Divergence():
     grad_f.append(f)
     grad_f.append(f)
     grad_f.append(f)
-    lap_f = vp.FunctionTree(mra)
-    vp.divergence(out=lap_f, oper=D, inp=grad_f)
+    lap_f = vp.divergence(oper=D, inp=grad_f)
 
     ref_vec = []
     ref_vec.append(fx)
@@ -65,3 +64,17 @@ def test_Divergence():
 
     assert lap_f.integrate() == pytest.approx(ref_lap.integrate(), abs=epsilon)
     assert lap_f.getSquareNorm() == pytest.approx(ref_lap.getSquareNorm(), rel=epsilon)
+
+def test_OverloadedOperators():
+    D = vp.ABGVOperator(mra, a=0.0, b=0.0)
+    assert D.getOrder() == 1
+
+    gx = D(f, axis=0)
+    gy = D(f, axis=1)
+    gz = D(f, axis=2)
+    assert gx.integrate() == pytest.approx(fx.integrate(), abs=epsilon)
+    assert gy.integrate() == pytest.approx(fy.integrate(), abs=epsilon)
+    assert gz.integrate() == pytest.approx(fz.integrate(), abs=epsilon)
+    assert gx.getSquareNorm() == pytest.approx(fx.getSquareNorm(), rel=epsilon)
+    assert gy.getSquareNorm() == pytest.approx(fy.getSquareNorm(), rel=epsilon)
+    assert gz.getSquareNorm() == pytest.approx(fz.getSquareNorm(), rel=epsilon)

@@ -37,11 +37,14 @@ template <int D> void applys(pybind11::module &m) {
           "dir"_a = -1);
 
     m.def("divergence",
-          py::overload_cast<FunctionTree<D> &,
-                            DerivativeOperator<D> &,
-                            std::vector<FunctionTree<D> *> &>
-                            (&mrcpp::divergence<D>),
-          "out"_a,
+          [] (DerivativeOperator<D> &oper, std::vector<FunctionTree<D> *> &inp) {
+              std::unique_ptr<FunctionTree<D>> out{nullptr};
+              if (inp.size() == D) {
+                  out = std::make_unique<FunctionTree<D>>(inp[0]->getMRA());
+                  divergence<D>(*out, oper, inp);
+              }
+              return out;
+          },
           "oper"_a,
           "inp"_a);
 
