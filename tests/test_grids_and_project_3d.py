@@ -113,9 +113,8 @@ def test_ClearProjectRefine():
     assert tree.integrate() == pytest.approx(1.0, rel=epsilon)
 
 def test_ProjectRescaleCopyNormalize():
-    tree = vp.FunctionTree(mra)
-    vp.build_grid(out=tree, inp=gauss)
-    vp.project(out=tree, inp=gauss)
+    Q = vp.MWProjector(mra, epsilon)
+    tree = Q(gauss)
     assert tree.integrate() == pytest.approx(1.0, rel=epsilon)
 
     tree.rescale(coef=np.pi)

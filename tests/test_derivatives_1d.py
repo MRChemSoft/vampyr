@@ -30,34 +30,46 @@ vp.build_grid(out=ddf, inp=ddg)
 vp.project(prec=epsilon/10, out=ddf, inp=ddg)
 
 def test_DerivativeABGV_00():
-    D = vp.ABGVOperator(mra, a=0.0, b=0.0)
+    D = vp.ABGVDerivative(mra, a=0.0, b=0.0)
     assert D.getOrder() == 1
 
     dh = vp.FunctionTree(mra)
     vp.apply(out=dh, oper=D, inp=f, dir=0)
     assert dh.integrate() == pytest.approx(df.integrate(), abs=epsilon)
     assert dh.getSquareNorm() == pytest.approx(df.getSquareNorm(), rel=epsilon)
+
+    dh2 = D(f)
+    assert dh2.integrate() == pytest.approx(df.integrate(), abs=epsilon)
+    assert dh2.getSquareNorm() == pytest.approx(df.getSquareNorm(), rel=epsilon)
 
 def test_DerivativeABGV_55():
-    D = vp.ABGVOperator(mra, a=0.5, b=0.5)
+    D = vp.ABGVDerivative(mra, a=0.5, b=0.5)
     assert D.getOrder() == 1
 
     dh = vp.FunctionTree(mra)
     vp.apply(out=dh, oper=D, inp=f, dir=0)
     assert dh.integrate() == pytest.approx(df.integrate(), abs=epsilon)
     assert dh.getSquareNorm() == pytest.approx(df.getSquareNorm(), rel=epsilon)
+
+    dh2 = D(f)
+    assert dh2.integrate() == pytest.approx(df.integrate(), abs=epsilon)
+    assert dh2.getSquareNorm() == pytest.approx(df.getSquareNorm(), rel=epsilon)
 
 def test_DerivativePH_1():
-    D = vp.PHOperator(mra, order=1)
+    D = vp.PHDerivative(mra, order=1)
     assert D.getOrder() == 1
 
     dh = vp.FunctionTree(mra)
     vp.apply(out=dh, oper=D, inp=f, dir=0)
     assert dh.integrate() == pytest.approx(df.integrate(), abs=epsilon)
     assert dh.getSquareNorm() == pytest.approx(df.getSquareNorm(), rel=epsilon)
+
+    dh2 = D(f)
+    assert dh2.integrate() == pytest.approx(df.integrate(), abs=epsilon)
+    assert dh2.getSquareNorm() == pytest.approx(df.getSquareNorm(), rel=epsilon)
 
 def test_DerivativePH_2():
-    D = vp.PHOperator(mra, order=2)
+    D = vp.PHDerivative(mra, order=2)
     assert D.getOrder() == 2
 
     ddh = vp.FunctionTree(mra)
@@ -65,8 +77,12 @@ def test_DerivativePH_2():
     assert ddh.integrate() == pytest.approx(ddf.integrate(), abs=epsilon)
     assert ddh.getSquareNorm() == pytest.approx(ddf.getSquareNorm(), rel=epsilon)
 
+    ddh2 = D(f)
+    assert ddh2.integrate() == pytest.approx(ddf.integrate(), abs=epsilon)
+    assert ddh2.getSquareNorm() == pytest.approx(ddf.getSquareNorm(), rel=epsilon)
+
 def test_DerivativeBS_1():
-    D = vp.BSOperator(mra, order=1)
+    D = vp.BSDerivative(mra, order=1)
     assert D.getOrder() == 1
 
     dh = vp.FunctionTree(mra)
@@ -74,11 +90,19 @@ def test_DerivativeBS_1():
     assert dh.integrate() == pytest.approx(df.integrate(), abs=epsilon)
     assert dh.getSquareNorm() == pytest.approx(df.getSquareNorm(), rel=epsilon)
 
+    dh2 = D(f)
+    assert dh2.integrate() == pytest.approx(df.integrate(), abs=epsilon)
+    assert dh2.getSquareNorm() == pytest.approx(df.getSquareNorm(), rel=epsilon)
+
 def test_DerivativeBS_2():
-    D = vp.BSOperator(mra, order=2)
+    D = vp.BSDerivative(mra, order=2)
     assert D.getOrder() == 2
 
     ddh = vp.FunctionTree(mra)
     vp.apply(out=ddh, oper=D, inp=f, dir=0)
     assert ddh.integrate() == pytest.approx(ddf.integrate(), abs=epsilon)
     assert ddh.getSquareNorm() == pytest.approx(ddf.getSquareNorm(), rel=epsilon)
+
+    ddh2 = D(f)
+    assert ddh2.integrate() == pytest.approx(ddf.integrate(), abs=epsilon)
+    assert ddh2.getSquareNorm() == pytest.approx(ddf.getSquareNorm(), rel=epsilon)

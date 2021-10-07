@@ -23,21 +23,33 @@ vp.project(prec=epsilon, out=ftree, inp=ffunc)
 
 def test_Identity():
     I = vp.IdentityConvolution(mra, prec=epsilon)
+
     gtree = vp.FunctionTree(mra)
     vp.apply(prec=epsilon, out=gtree, oper=I, inp=ftree)
     assert gtree.integrate() == pytest.approx(ftree.integrate(), rel=epsilon)
 
+    gtree2 = I(ftree)
+    assert gtree2.integrate() == pytest.approx(ftree.integrate(), rel=epsilon)
+
 def test_Poisson():
     P = vp.PoissonOperator(mra, prec=epsilon)
+
     gtree = vp.FunctionTree(mra)
     vp.apply(prec=epsilon, out=gtree, oper=P, inp=ftree)
     assert vp.dot(gtree, ftree) == pytest.approx(ref_energy, rel=epsilon)
 
+    gtree2 = P(ftree)
+    assert vp.dot(gtree2, ftree) == pytest.approx(ref_energy, rel=epsilon)
+
 def test_Helmholtz():
     H = vp.HelmholtzOperator(mra, exp=mu, prec=epsilon)
+
     gtree = vp.FunctionTree(mra)
     vp.apply(prec=epsilon, out=gtree, oper=H, inp=ftree)
     assert vp.dot(gtree, ftree) == pytest.approx(ref_energy, rel=epsilon)
+
+    gtree2 = H(ftree)
+    assert vp.dot(gtree2, ftree) == pytest.approx(ref_energy, rel=epsilon)
 
 def test_PeriodicIdentity():
     world = vp.BoundingBox(pbc=True, corner=[-1,-1,-1], nboxes=[2,2,2])

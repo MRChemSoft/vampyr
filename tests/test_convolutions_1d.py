@@ -16,14 +16,18 @@ alpha = (beta/np.pi)**(D/2.0)
 ffunc = vp.GaussFunc(coef=alpha, exp=beta, pos=r0)
 
 def test_Identity():
+    I = vp.IdentityConvolution(mra, prec=epsilon)
+
     ftree = vp.FunctionTree(mra)
     vp.build_grid(out=ftree, inp=ffunc)
     vp.project(prec=epsilon, out=ftree, inp=ffunc)
 
-    I = vp.IdentityConvolution(mra, prec=epsilon)
     gtree = vp.FunctionTree(mra)
     vp.apply(prec=epsilon, out=gtree, oper=I, inp=ftree)
     assert gtree.integrate() == pytest.approx(ftree.integrate(), rel=epsilon)
+
+    gtree2 = I(ftree)
+    assert gtree2.integrate() == pytest.approx(ftree.integrate(), rel=epsilon)
 
 def test_PeriodicIdentity():
     world = vp.BoundingBox(pbc=True)
