@@ -41,7 +41,7 @@ def test_Poisson():
     vp.apply(prec=epsilon, out=gtree, oper=P, inp=ftree)
     assert vp.dot(gtree, ftree) == pytest.approx(ref_energy, rel=epsilon)
 
-    gtree2 = P(ftree)
+    gtree2 = P(4*np.pi*ftree)
     assert vp.dot(gtree2, ftree) == pytest.approx(ref_energy, rel=epsilon)
 
 
@@ -52,7 +52,7 @@ def test_Helmholtz():
     vp.apply(prec=epsilon, out=gtree, oper=H, inp=ftree)
     assert vp.dot(gtree, ftree) == pytest.approx(ref_energy, rel=epsilon)
 
-    gtree2 = H(ftree)
+    gtree2 = H(4*np.pi*ftree)
     assert vp.dot(gtree2, ftree) == pytest.approx(ref_energy, rel=epsilon)
 
 
