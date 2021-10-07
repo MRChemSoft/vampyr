@@ -2,35 +2,7 @@
 
 #include <pybind11/functional.h>
 
-#include <MRCPP/treebuilders/project.h>
-
-namespace mrcpp {
-template <int D>
-class MWProjector final {
-public:
-    MWProjector(const MultiResolutionAnalysis<D> &mra, double prec)
-        : precision(prec)
-        , MRA(mra) {
-    }
-
-    std::unique_ptr<FunctionTree<D>> operator()(RepresentableFunction<D> &func) {
-        auto out = std::make_unique<FunctionTree<D>>(this->MRA);
-        build_grid<D>(*out, func);
-        project<D>(this->precision, *out, func);
-        return out;
-    }
-
-    std::unique_ptr<FunctionTree<D>> operator()(std::function<double(const Coord<D> &r)> func) {
-        auto out = std::make_unique<FunctionTree<D>>(this->MRA);
-        project<D>(this->precision, *out, func);
-        return out;
-    }
-
-private:
-    double precision;
-    MultiResolutionAnalysis<D> MRA;
-};
-} // namespace mrcpp
+#include "PyMWProjector.h"
 
 namespace vampyr {
 template <int D> void project(pybind11::module &m) {
@@ -38,16 +10,20 @@ template <int D> void project(pybind11::module &m) {
     namespace py = pybind11;
     using namespace pybind11::literals;
 
-    py::class_<MWProjector<D>>(m, "MWProjector")
+    py::class_<PyMWProjector<D>>(m, "MWProjector")
         .def(py::init<const MultiResolutionAnalysis<D> &, double>(),
             "mra"_a,
             "prec"_a)
-        .def("__call__", [](MWProjector<D> &proj, RepresentableFunction<D> &func){
-                return proj(func);
+        .def("__call__", [](PyMWProjector<D> &P, RepresentableFunction<D> &func){
+                return P(func);
             },
             "func"_a)
-        .def("__call__", [](MWProjector<D> &proj, std::function<double (const Coord<D> &r)> func){
-                return proj(func);
+        .def("__call__", [](PyMWProjector<D> &P, std::function<double (const Coord<D> &r)> func){
+                auto old_threads = mrcpp_get_num_threads();
+                set_max_threads(1);
+                auto out = P(func);
+                set_max_threads(old_threads);
+                return out;
             },
             "func"_a);
 
