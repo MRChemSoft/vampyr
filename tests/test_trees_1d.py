@@ -22,26 +22,29 @@ mra = vp.MultiResolutionAnalysis(box=world, order=k)
 tree = vp.FunctionTree(mra, name)
 
 def test_FunctionTree():
-    assert tree.getSquareNorm() < 0.0
-    assert tree.getNNodes() == 1
-    assert tree.getNEndNodes() == 1
-    assert tree.getNGenNodes() == 0
-    assert tree.getRootScale() == N
-    assert tree.getDepth() == 1
-    assert tree.getName() == name
-    assert tree.getMRA() == mra
+    assert tree.norm() < 0.0
+    assert tree.squaredNorm() < 0.0
+    assert tree.nNodes() == 1
+    assert tree.nEndNodes() == 1
+    assert tree.nGenNodes() == 0
+    assert tree.rootScale() == N
+    assert tree.depth() == 1
+    assert tree.name() == name
+    assert tree.MRA() == mra
 
 def test_FunctionTreeZero():
     tree.setZero()
 
-    assert tree.getSquareNorm() == 0.0
+    assert tree.norm() == 0.0
+    assert tree.squaredNorm() == 0.0
     assert tree.integrate() == 0.0
     assert tree(r0) == 0.0
     assert tree(r1) == 0.0
 
     tree.clear()
 
-    assert tree.getSquareNorm() < 0.0
+    assert tree.norm() < 0.0
+    assert tree.squaredNorm() < 0.0
 
 def test_FunctionTreeSave():
     tree.setZero()
@@ -51,10 +54,11 @@ def test_FunctionTreeSave():
     tree_2.setName("func_2")
     tree_2.loadTree(filename=name)
 
-    assert tree_2.getName() == "func_2"
-    assert tree_2.getSquareNorm() == 0.0
+    assert tree_2.name() == "func_2"
+    assert tree_2.norm() == 0.0
+    assert tree_2.squaredNorm() == 0.0
     assert tree_2.integrate() == 0.0
-    assert tree_2.getMRA() == tree.getMRA()
+    assert tree_2.MRA() == tree.MRA()
     assert tree_2(r0) == 0.0
     assert tree_2(r1) == 0.0
 
@@ -63,14 +67,14 @@ def test_NodeIndex():
     child_0 = root.child(0)
     child_1 = root.child(1)
 
-    assert root.getScale() == N
-    assert root.getTranslation() == [0]
-    assert parent.getScale() == N - 1
-    assert child_0.getScale() == N + 1
-    assert child_1.getScale() == N + 1
-    assert parent.getTranslation() == [0]
-    assert child_0.getTranslation() == [0]
-    assert child_1.getTranslation() == [1]
+    assert root.scale() == N
+    assert root.translation() == [0]
+    assert parent.scale() == N - 1
+    assert child_0.scale() == N + 1
+    assert child_1.scale() == N + 1
+    assert parent.translation() == [0]
+    assert child_0.translation() == [0]
+    assert child_1.translation() == [1]
     assert child_0 != root
     assert child_0 != parent
     assert child_0 != child_1
@@ -88,8 +92,8 @@ def test_NodeIndex():
 def test_RootNode():
     tree.setZero()
 
-    for i in range(tree.getNRootNodes()):
-        root_i = tree.getRootNode(i)
+    for i in range(tree.nRootNodes()):
+        root_i = tree.fetchRootNode(i)
         assert root_i.hasCoefs()
         assert root_i.isAllocated()
         assert root_i.isRootNode()
@@ -98,29 +102,29 @@ def test_RootNode():
         assert not root_i.isBranchNode()
         assert not root_i.isGenNode()
         assert not root_i.hasParent()
-        assert root_i.getNChildren() == 0
-        assert root_i.getDepth() == 0
-        assert root_i.getScale() == N
-        assert root_i.getNCoefs() == two_d * kp1_d
+        assert root_i.nChildren() == 0
+        assert root_i.depth() == 0
+        assert root_i.scale() == N
+        assert root_i.nCoefs() == two_d * kp1_d
         assert root_i.integrate() == 0.0
-        assert root_i.getSquareNorm() == 0.0
-        assert root_i.getScalingNorm() == 0.0
-        assert root_i.getWaveletNorm() == 0.0
+        assert root_i.squaredNorm() == 0.0
+        assert root_i.scalingNorm() == 0.0
+        assert root_i.waveletNorm() == 0.0
         for t in range(two_d):
-            assert root_i.getComponentNorm(t) == 0.0
+            assert root_i.componentNorm(t) == 0.0
 
 def test_GenNode():
     tree.setZero()
 
-    assert tree.getNNodes() == 1
-    assert tree.getNEndNodes() == 1
-    assert tree.getNGenNodes() == 0
+    assert tree.nNodes() == 1
+    assert tree.nEndNodes() == 1
+    assert tree.nGenNodes() == 0
 
-    node = tree.getNode(idx)
+    node = tree.fetchNode(idx)
 
-    assert tree.getNNodes() == 1
-    assert tree.getNEndNodes() == 1
-    assert tree.getNGenNodes() == 4
+    assert tree.nNodes() == 1
+    assert tree.nEndNodes() == 1
+    assert tree.nGenNodes() == 4
 
     two_d = 2**D
     kp1_d = (k + 1)**D
@@ -132,26 +136,26 @@ def test_GenNode():
     assert not node.isEndNode()
     assert not node.isRootNode()
     assert not node.isBranchNode()
-    assert node.getNChildren() == 0
-    assert node.getDepth() == n - N
-    assert node.getScale() == n
-    assert node.getNCoefs() == kp1_d
+    assert node.nChildren() == 0
+    assert node.depth() == n - N
+    assert node.scale() == n
+    assert node.nCoefs() == kp1_d
     assert node.integrate() == 0.0
-    assert node.getSquareNorm() == 0.0
-    assert node.getScalingNorm() == 0.0
-    assert node.getWaveletNorm() == 0.0
+    assert node.squaredNorm() == 0.0
+    assert node.scalingNorm() == 0.0
+    assert node.waveletNorm() == 0.0
     for t in range(two_d):
-        assert node.getComponentNorm(t) == 0.0
+        assert node.componentNorm(t) == 0.0
 
     tree.deleteGenerated()
 
-    assert tree.getNNodes() == 1
-    assert tree.getNEndNodes() == 1
-    assert tree.getNGenNodes() == 0
+    assert tree.nNodes() == 1
+    assert tree.nEndNodes() == 1
+    assert tree.nGenNodes() == 0
 
 def test_HilbertIterator():
     tree.setZero()
-    tree.getNode(idx) # generate extra nodes
+    tree.fetchNode(idx) # generate extra nodes
 
     it = vp.TreeIterator(tree, iterator=Hilbert)
     it.setMaxDepth(-1)
@@ -161,18 +165,18 @@ def test_HilbertIterator():
     gen_count = 0
     node_count = 0
     while (it.next()):
-        node = it.getNode()
+        node = it.get()
         if node.isGenNode():
             gen_count += 1
         else:
             node_count += 1
 
     assert gen_count == 0
-    assert node_count == tree.getNNodes()
+    assert node_count == tree.nNodes()
 
 def test_LebesgueIterator():
     tree.setZero()
-    tree.getNode(idx) # generate extra nodes
+    tree.fetchNode(idx) # generate extra nodes
 
     it = vp.TreeIterator(traverse=BottomUp)
     it.setMaxDepth(-1)
@@ -184,11 +188,11 @@ def test_LebesgueIterator():
 
     it.init(tree)
     while (it.next()):
-        node = it.getNode()
+        node = it.get()
         if node.isGenNode():
             gen_count += 1
         else:
             node_count += 1
 
-    assert gen_count == tree.getNGenNodes()
-    assert node_count == tree.getNNodes()
+    assert gen_count == tree.nGenNodes()
+    assert node_count == tree.nNodes()

@@ -13,10 +13,10 @@ def test_GaussFunc():
     ref = alpha*np.exp(-1.0)
     assert f(r_0) == alpha
     assert f(r_1) == pytest.approx(ref, rel=numprec)
-    assert f.getCoef() == alpha
-    assert f.getPos() == r_0
-    assert f.getExp() == beta
-    assert f.getPow(dim=0) == 0
+    assert f.coef() == alpha
+    assert f.pos() == r_0
+    assert f.exp() == beta
+    assert f.pow(dim=0) == 0
 
 def test_GaussDerivative():
     beta = 100.0
@@ -40,14 +40,14 @@ def test_GaussOverlap():
     mu = b1*b2/p
     R12 = sum([(x1 - x2)**2 for x1, x2 in zip(r1, r2)])
     ref = (np.pi/p)**(1.0/2.0)*np.exp(-mu*R12)
-    assert f1.calcOverlap(f2) == pytest.approx(ref, rel=numprec)
+    assert f1.overlap(f2) == pytest.approx(ref, rel=numprec)
 
 def test_GaussNorm():
     beta = 10.0
     f = vp.GaussFunc(exp=beta)
     ref = (np.pi/(2.0*beta))**(1.0/2.0)
-    assert f.calcSquareNorm() == pytest.approx(ref, rel=numprec)
-    assert f.calcSquareNorm() == f.calcOverlap(f)
+    assert f.squaredNorm() == pytest.approx(ref, rel=numprec)
+    assert f.squaredNorm() == f.overlap(f)
 
 def test_GaussExp():
     b0 = 10.0
@@ -61,8 +61,8 @@ def test_GaussExp():
     fexp.append(f1)
     ref = f0(r0) + f1(r0)
     assert fexp.size() == 2
-    assert fexp.getFunc(term=0).getExp() == b0
-    assert fexp.getFunc(term=1).getExp() == b1
+    assert fexp.func(term=0).exp() == b0
+    assert fexp.func(term=1).exp() == b1
     assert fexp(r0) == pytest.approx(ref, rel=numprec)
 
 def test_GaussExpNorm():
@@ -75,8 +75,8 @@ def test_GaussExpNorm():
     fexp = vp.GaussExp()
     fexp.append(f0)
     fexp.append(f1)
-    ref = f0.calcSquareNorm() + 2.0*f0.calcOverlap(f1) + f1.calcSquareNorm()
-    assert fexp.calcSquareNorm() == pytest.approx(ref, rel=numprec)
+    ref = f0.squaredNorm() + 2.0*f0.overlap(f1) + f1.squaredNorm()
+    assert fexp.squaredNorm() == pytest.approx(ref, rel=numprec)
 
 def test_GaussExpDerivative():
     b0 = 10.0

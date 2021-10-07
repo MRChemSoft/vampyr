@@ -17,12 +17,12 @@ template <int D> void gaussians(pybind11::module &m) {
     // Gaussian class
     py::class_<Gaussian<D>, PyGaussian<D>, RepresentableFunction<D>>(m, "Gaussian")
         .def(py::init<double, double, const Coord<D> &, const std::array<int, D> &>())
-        .def("getPow", py::overload_cast<int>(&Gaussian<D>::getPower, py::const_), "dim"_a)
-        .def("getExp", py::overload_cast<int>(&Gaussian<D>::getExp, py::const_), "dim"_a=0)
-        .def("getPos", &Gaussian<D>::getPos)
-        .def("getCoef", &Gaussian<D>::getCoef)
+        .def("pow", py::overload_cast<int>(&Gaussian<D>::getPower, py::const_), "dim"_a)
+        .def("exp", py::overload_cast<int>(&Gaussian<D>::getExp, py::const_), "dim"_a=0)
+        .def("pos", &Gaussian<D>::getPos)
+        .def("coef", &Gaussian<D>::getCoef)
         .def("periodify", &Gaussian<D>::periodify, "period"_a, "std_dev"_a=4.0)
-        .def("calcOverlap", &Gaussian<D>::calcOverlap, "inp"_a)
+        .def("overlap", &Gaussian<D>::calcOverlap, "inp"_a)
         .def("__str__", [](const Gaussian<D> &func) {
             std::ostringstream os;
             os << func;
@@ -40,18 +40,18 @@ template <int D> void gaussians(pybind11::module &m) {
                       "pos"_a = Coord<D>{},
                       "pow"_a = std::array<int, D>{})
         .def("differentiate", [](const GaussFunc<D> &gauss, int dir) { return gauss.differentiate(dir).asGaussExp(); }, "dir"_a)
-        .def("calcSquareNorm", &GaussFunc<D>::calcSquareNorm)
+        .def("squaredNorm", &GaussFunc<D>::calcSquareNorm)
         .def("calcCoulombEnergy", &GaussFunc<D>::calcCoulombEnergy);
 
     // GaussExp class
     py::class_<GaussExp<D>, RepresentableFunction<D>>(m, "GaussExp")
         .def(py::init())
         .def("size", py::overload_cast<>(&GaussExp<D>::size, py::const_))
+        .def("func", py::overload_cast<int>(&GaussExp<D>::getFunc), "term"_a, py::return_value_policy::reference_internal)
         .def("append", py::overload_cast<const Gaussian<D> &>(&GaussExp<D>::append))
-        .def("getFunc", py::overload_cast<int>(&GaussExp<D>::getFunc), "term"_a, py::return_value_policy::reference_internal)
         .def("periodify", &GaussExp<D>::periodify, "period"_a, "std_dev"_a=4.0)
         .def("differentiate", &GaussExp<D>::differentiate, "dir"_a)
-        .def("calcSquareNorm", &GaussExp<D>::calcSquareNorm)
+        .def("squaredNorm", &GaussExp<D>::calcSquareNorm)
         .def("calcCoulombEnergy", &GaussExp<D>::calcCoulombEnergy)
         .def("__str__", [](const GaussExp<D> &func) {
             std::ostringstream os;

@@ -21,9 +21,9 @@ void bases(pybind11::module &m) {
 
     py::class_<ScalingBasis>(m, "ScalingBasis")
         .def(py::init<int, int>(), "order"_a, "type"_a)
-        .def("getScalingType", &ScalingBasis::getScalingType)
-        .def("getScalingOrder", &ScalingBasis::getScalingOrder)
-        .def("getQuadratureOrder", &ScalingBasis::getQuadratureOrder)
+        .def("scalingType", &ScalingBasis::getScalingType)
+        .def("scalingOrder", &ScalingBasis::getScalingOrder)
+        .def("quadratureOrder", &ScalingBasis::getQuadratureOrder)
         .def(py::self == py::self)
         .def(py::self != py::self)
         .def("__str__", [](const ScalingBasis &basis) {
