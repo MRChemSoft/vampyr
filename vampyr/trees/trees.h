@@ -13,20 +13,24 @@ template <int D> void trees(pybind11::module &m) {
     using namespace pybind11::literals;
 
     py::class_<MWTree<D>>(m, "MWTree")
-        .def("getMRA", &MWTree<D>::getMRA, py::return_value_policy::reference_internal)
-        .def("getNNodes", &MWTree<D>::getNNodes)
-        .def("getNEndNodes", &MWTree<D>::getNEndNodes)
-        .def("getNRootNodes", &MWTree<D>::getNRootNodes)
-        .def("getEndNode", py::overload_cast<int>(&MWTree<D>::getEndMWNode, py::const_), py::return_value_policy::reference_internal)
-        .def("getRootNode", py::overload_cast<int>(&MWTree<D>::getRootMWNode, py::const_), py::return_value_policy::reference_internal)
-        .def("getRootScale", &MWTree<D>::getRootScale)
-        .def("getDepth", &MWTree<D>::getDepth)
+        .def("MRA", &MWTree<D>::getMRA, py::return_value_policy::reference_internal)
+        .def("nNodes", &MWTree<D>::getNNodes)
+        .def("nEndNodes", &MWTree<D>::getNEndNodes)
+        .def("nRootNodes", &MWTree<D>::getNRootNodes)
+        .def("fetchEndNode", py::overload_cast<int>(&MWTree<D>::getEndMWNode, py::const_), py::return_value_policy::reference_internal)
+        .def("fetchRootNode", py::overload_cast<int>(&MWTree<D>::getRootMWNode, py::const_), py::return_value_policy::reference_internal)
+        .def("rootScale", &MWTree<D>::getRootScale)
+        .def("depth", &MWTree<D>::getDepth)
         .def("setZero", &MWTree<D>::setZero)
         .def("clear", &MWTree<D>::clear)
         .def("setName", &MWTree<D>::setName)
-        .def("getName", &MWTree<D>::getName)
-        .def("getNode", py::overload_cast<NodeIndex<D>>(&MWTree<D>::getNode), py::return_value_policy::reference_internal)
-        .def("getSquareNorm", &MWTree<D>::getSquareNorm)
+        .def("name", &MWTree<D>::getName)
+        .def("fetchNode", py::overload_cast<NodeIndex<D>>(&MWTree<D>::getNode), py::return_value_policy::reference_internal)
+        .def("squaredNorm", &MWTree<D>::getSquareNorm)
+        .def("norm", [](MWTree<D> &tree) {
+            auto sqNorm = tree.getSquareNorm();
+            return (sqNorm >= 0.0) ? std::sqrt(sqNorm) : -1.0;
+        })
         .def("__str__", [](MWTree<D> &tree) {
             std::ostringstream os;
             os << tree;
@@ -35,7 +39,7 @@ template <int D> void trees(pybind11::module &m) {
 
     py::class_<FunctionTree<D>, MWTree<D>, RepresentableFunction<D>>(m, "FunctionTree")
         .def(py::init<const MultiResolutionAnalysis<D> &, const std::string &>(), "mra"_a, "name"_a = "nn")
-        .def("getNGenNodes", &FunctionTree<D>::getNGenNodes)
+        .def("nGenNodes", &FunctionTree<D>::getNGenNodes)
         .def("deleteGenerated", &FunctionTree<D>::deleteGenerated)
         .def("integrate", &FunctionTree<D>::integrate)
         .def("normalize", &FunctionTree<D>::normalize)
@@ -161,16 +165,19 @@ template <int D> void trees(pybind11::module &m) {
             }, py::is_operator());
 
     py::class_<MWNode<D>>(m, "MWNode")
-        .def("getDepth", &MWNode<D>::getDepth)
-        .def("getScale", &MWNode<D>::getScale)
-        .def("getNCoefs", &MWNode<D>::getNCoefs)
-        .def("getNChildren", &MWNode<D>::getNChildren)
-        .def("getNodeIndex", py::overload_cast<>(&MWNode<D>::getNodeIndex, py::const_), py::return_value_policy::reference_internal)
-        .def("getSquareNorm", &MWNode<D>::getSquareNorm)
-        .def("getScalingNorm", &MWNode<D>::getScalingNorm)
-        .def("getWaveletNorm", &MWNode<D>::getWaveletNorm)
-        .def("getComponentNorm", &MWNode<D>::getComponentNorm)
-        .def("hasCoefs", &MWNode<D>::hasCoefs)
+        .def("depth", &MWNode<D>::getDepth)
+        .def("scale", &MWNode<D>::getScale)
+        .def("nCoefs", &MWNode<D>::getNCoefs)
+        .def("nChildren", &MWNode<D>::getNChildren)
+        .def("index", py::overload_cast<>(&MWNode<D>::getNodeIndex, py::const_), py::return_value_policy::reference_internal)
+        .def("norm", [](MWNode<D> &node) {
+            auto sqNorm = node.getSquareNorm();
+            return (sqNorm >= 0.0) ? std::sqrt(sqNorm) : -1.0;
+        })
+        .def("squaredNorm", &MWNode<D>::getSquareNorm)
+        .def("scalingNorm", &MWNode<D>::getScalingNorm)
+        .def("waveletNorm", &MWNode<D>::getWaveletNorm)
+        .def("componentNorm", &MWNode<D>::getComponentNorm)
         .def("isAllocated", &MWNode<D>::isAllocated)
         .def("isRootNode", &MWNode<D>::isRootNode)
         .def("isEndNode", &MWNode<D>::isEndNode)
@@ -178,6 +185,7 @@ template <int D> void trees(pybind11::module &m) {
         .def("isBranchNode", &MWNode<D>::isBranchNode)
         .def("isGenNode", &MWNode<D>::isGenNode)
         .def("hasParent", &MWNode<D>::hasParent)
+        .def("hasCoefs", &MWNode<D>::hasCoefs)
         .def("__str__", [](MWNode<D> &node) {
             std::ostringstream os;
             os << node;
@@ -195,10 +203,10 @@ template <int D> void trees(pybind11::module &m) {
         .def(py::self != py::self)
         .def("child", &NodeIndex<D>::child)
         .def("parent", &NodeIndex<D>::parent)
-        .def("getScale", &NodeIndex<D>::getScale)
+        .def("scale", &NodeIndex<D>::getScale)
         .def("setScale", &NodeIndex<D>::setScale)
-        .def("getTranslation", py::overload_cast<>(&NodeIndex<D>::getTranslation, py::const_))
-        .def("getTranslation", py::overload_cast<int>(&NodeIndex<D>::getTranslation, py::const_))
+        .def("translation", py::overload_cast<>(&NodeIndex<D>::getTranslation, py::const_))
+        .def("translation", py::overload_cast<int>(&NodeIndex<D>::getTranslation, py::const_))
         .def("setTranslation", py::overload_cast<const std::array<int, D> &>(&NodeIndex<D>::setTranslation))
         .def("__str__", [](NodeIndex<D> &idx) {
             std::ostringstream os;
@@ -213,7 +221,7 @@ template <int D> void trees(pybind11::module &m) {
         .def("setMaxDepth", &TreeIterator<D>::setMaxDepth)
         .def("setTraverse", &TreeIterator<D>::setTraverse)
         .def("setIterator", &TreeIterator<D>::setIterator)
-        .def("getNode", py::overload_cast<>(&TreeIterator<D>::getNode), py::return_value_policy::reference_internal)
+        .def("get", py::overload_cast<>(&TreeIterator<D>::getNode), py::return_value_policy::reference_internal)
         .def("init", &TreeIterator<D>::init)
         .def("next", &TreeIterator<D>::next);
 }

@@ -23,22 +23,22 @@ def func(r):
 def test_BuildProjectRefineCrop():
     tree = vp.FunctionTree(mra)
     vp.build_grid(out=tree, scales=s)
-    assert tree.getDepth() == s + 1
-    assert tree.getNEndNodes() == 2**(s*D)
+    assert tree.depth() == s + 1
+    assert tree.nEndNodes() == 2**(s*D)
 
     vp.project(out=tree, inp=func)
-    assert tree.getDepth() == s + 1
-    assert tree.getNEndNodes() == 2**(s*D)
+    assert tree.depth() == s + 1
+    assert tree.nEndNodes() == 2**(s*D)
     assert tree.integrate() == pytest.approx(1.0, rel=epsilon);
 
     vp.refine_grid(out=tree, scales=1)
-    assert tree.getDepth() == s + 2
-    assert tree.getNEndNodes() == 2**((s+1)*D)
+    assert tree.depth() == s + 2
+    assert tree.nEndNodes() == 2**((s+1)*D)
     assert tree.integrate() == pytest.approx(1.0, rel=epsilon)
 
-    pre_crop = tree.getNNodes()
+    pre_crop = tree.nNodes()
     tree.crop(prec=epsilon)
-    post_crop = tree.getNNodes()
+    post_crop = tree.nNodes()
     assert pre_crop > post_crop
 
 def test_BuildProjectCopyClear():
@@ -46,40 +46,40 @@ def test_BuildProjectCopyClear():
     tree_2 = vp.FunctionTree(mra)
 
     vp.build_grid(out=tree_1, inp=gauss)
-    assert tree_1.getDepth() > 1
+    assert tree_1.depth() > 1
 
     vp.project(prec=epsilon, out=tree_1, inp=gauss, abs_prec=True)
     assert tree_1.integrate() == pytest.approx(1.0, rel=epsilon);
 
     vp.copy_grid(out=tree_2, inp=tree_1)
-    assert tree_2.getDepth() == tree_1.getDepth()
+    assert tree_2.depth() == tree_1.depth()
 
     vp.copy_func(out=tree_2, inp=tree_1)
     assert tree_2.integrate() == pytest.approx(tree_1.integrate(), rel=epsilon)
-    assert tree_2.getSquareNorm() == pytest.approx(tree_1.getSquareNorm(), rel=epsilon)
+    assert tree_2.norm() == pytest.approx(tree_1.norm(), rel=epsilon)
 
     vp.clear_grid(out=tree_2)
-    assert tree_2.getDepth() == tree_1.getDepth()
-    assert tree_2.getSquareNorm() < 0.0
+    assert tree_2.depth() == tree_1.depth()
+    assert tree_2.norm() < 0.0
 
 def test_BuildUnionGrid():
     # building sharp grid
     tree_1 = vp.FunctionTree(mra)
     vp.build_grid(out=tree_1, inp=gauss)
-    assert tree_1.getDepth() > 1
+    assert tree_1.depth() > 1
 
     # building wide grid
     tree_2 = vp.FunctionTree(mra)
     vp.build_grid(out=tree_2, scales=s)
-    assert tree_2.getDepth() > 1
+    assert tree_2.depth() > 1
 
     # building union grid
     tree_3 = vp.FunctionTree(mra)
     vp.build_grid(out=tree_3, inp=tree_1)
     vp.build_grid(out=tree_3, inp=tree_2)
-    assert tree_3.getSquareNorm() < 0.0
-    assert tree_3.getNNodes() > tree_1.getNNodes()
-    assert tree_3.getNNodes() > tree_2.getNNodes()
+    assert tree_3.norm() < 0.0
+    assert tree_3.nNodes() > tree_1.nNodes()
+    assert tree_3.nNodes() > tree_2.nNodes()
 
     # refining union grid
     tree_4 = vp.FunctionTree(mra)
@@ -88,8 +88,8 @@ def test_BuildUnionGrid():
         pass
     while vp.refine_grid(out=tree_4, inp=tree_2) > 0:
         pass
-    assert tree_4.getSquareNorm() == pytest.approx(0.0, abs=epsilon)
-    assert tree_4.getNNodes() == tree_3.getNNodes()
+    assert tree_4.norm() == pytest.approx(0.0, abs=epsilon)
+    assert tree_4.nNodes() == tree_3.nNodes()
 
     # building union grid from vector
     tree_vec = []
@@ -98,8 +98,8 @@ def test_BuildUnionGrid():
 
     tree_5 = vp.FunctionTree(mra)
     vp.build_grid(out=tree_5, inp=tree_vec)
-    assert tree_5.getSquareNorm() < 0.0
-    assert tree_5.getNNodes() == tree_3.getNNodes()
+    assert tree_5.norm() < 0.0
+    assert tree_5.nNodes() == tree_3.nNodes()
 
 def test_ClearProjectRefine():
     tree = vp.FunctionTree(mra)
@@ -109,7 +109,7 @@ def test_ClearProjectRefine():
         vp.clear_grid(out=tree)
         vp.project(out=tree, inp=func)
         nsplit = vp.refine_grid(out=tree, prec=epsilon)
-        assert tree.getSquareNorm() > 0.0
+        assert tree.norm() > 0.0
     assert tree.integrate() == pytest.approx(1.0, rel=epsilon)
 
 def test_ProjectRescaleCopyNormalize():
@@ -126,7 +126,7 @@ def test_ProjectRescaleCopyNormalize():
     assert tree_deep.integrate() == pytest.approx(np.pi, rel=epsilon)
 
     tree.normalize()
-    assert tree.getSquareNorm() == pytest.approx(1.0, rel=epsilon)
+    assert tree.norm() == pytest.approx(1.0, rel=epsilon)
     assert tree_deep.integrate() == pytest.approx(np.pi, rel=epsilon)
     assert tree_shallow.integrate() != pytest.approx(np.pi, rel=epsilon)
 

@@ -42,9 +42,9 @@ def test_Gradient():
     assert grad_f[0].integrate() == pytest.approx(fx.integrate(), abs=epsilon)
     assert grad_f[1].integrate() == pytest.approx(fy.integrate(), abs=epsilon)
     assert grad_f[2].integrate() == pytest.approx(fz.integrate(), abs=epsilon)
-    assert grad_f[0].getSquareNorm() == pytest.approx(fx.getSquareNorm(), rel=epsilon)
-    assert grad_f[1].getSquareNorm() == pytest.approx(fy.getSquareNorm(), rel=epsilon)
-    assert grad_f[2].getSquareNorm() == pytest.approx(fz.getSquareNorm(), rel=epsilon)
+    assert grad_f[0].norm() == pytest.approx(fx.norm(), rel=epsilon)
+    assert grad_f[1].norm() == pytest.approx(fy.norm(), rel=epsilon)
+    assert grad_f[2].norm() == pytest.approx(fz.norm(), rel=epsilon)
 
 def test_Divergence():
     D = vp.ABGVDerivative(mra, a=0.0, b=0.0)
@@ -63,7 +63,7 @@ def test_Divergence():
     vp.add(out=ref_lap, inp=ref_vec)
 
     assert lap_f.integrate() == pytest.approx(ref_lap.integrate(), abs=epsilon)
-    assert lap_f.getSquareNorm() == pytest.approx(ref_lap.getSquareNorm(), rel=epsilon)
+    assert lap_f.norm() == pytest.approx(ref_lap.norm(), rel=epsilon)
 
 def test_OverloadedOperators():
     D = vp.ABGVDerivative(mra, a=0.0, b=0.0)
@@ -75,6 +75,6 @@ def test_OverloadedOperators():
     assert gx.integrate() == pytest.approx(fx.integrate(), abs=epsilon)
     assert gy.integrate() == pytest.approx(fy.integrate(), abs=epsilon)
     assert gz.integrate() == pytest.approx(fz.integrate(), abs=epsilon)
-    assert gx.getSquareNorm() == pytest.approx(fx.getSquareNorm(), rel=epsilon)
-    assert gy.getSquareNorm() == pytest.approx(fy.getSquareNorm(), rel=epsilon)
-    assert gz.getSquareNorm() == pytest.approx(fz.getSquareNorm(), rel=epsilon)
+    assert gx.norm() == pytest.approx(fx.norm(), rel=epsilon)
+    assert gy.norm() == pytest.approx(fy.norm(), rel=epsilon)
+    assert gz.norm() == pytest.approx(fz.norm(), rel=epsilon)
