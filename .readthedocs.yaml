@@ -23,7 +23,6 @@ formats:
 # Optionally declare the Python requirements required to build your docs
 
 sphinx:
-  fail_on_warning: true
   configuration: docs/source/conf.py
   builder: html
 
