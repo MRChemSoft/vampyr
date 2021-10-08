@@ -1,6 +1,7 @@
 import numpy as np
-from vampyr import vampyr1d as vp
 import pytest
+
+from vampyr import vampyr1d as vp
 
 epsilon = 1.0e-3
 
@@ -12,8 +13,9 @@ mra = vp.MultiResolutionAnalysis(box=world, order=k)
 
 r0 = [0.8]
 beta = 10.0
-alpha = (beta/np.pi)**(D/2.0)
+alpha = (beta / np.pi) ** (D / 2.0)
 ffunc = vp.GaussFunc(coef=alpha, exp=beta, pos=r0)
+
 
 def test_Identity():
     I = vp.IdentityConvolution(mra, prec=epsilon)
@@ -29,6 +31,7 @@ def test_Identity():
     gtree2 = I(ftree)
     assert gtree2.integrate() == pytest.approx(ftree.integrate(), rel=epsilon)
 
+
 def test_PeriodicIdentity():
     world = vp.BoundingBox(pbc=True)
     pbc = vp.MultiResolutionAnalysis(box=world, order=k)
@@ -42,6 +45,7 @@ def test_PeriodicIdentity():
     gtree = vp.FunctionTree(mra=pbc)
     vp.apply(prec=epsilon, out=gtree, oper=I, inp=ftree)
     assert gtree.integrate() == pytest.approx(ftree.integrate(), rel=epsilon)
+
 
 def test_PeriodicIdentity():
     world = vp.BoundingBox(pbc=True, corner=[-1], nboxes=[2])

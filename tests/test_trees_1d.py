@@ -1,7 +1,8 @@
 import numpy as np
-from vampyr import vampyr1d as vp
-from vampyr import Lebesgue, Hilbert, TopDown, BottomUp
 import pytest
+
+from vampyr import BottomUp, Hilbert, Lebesgue, TopDown
+from vampyr import vampyr1d as vp
 
 r0 = [0.1]
 r1 = [-0.1]
@@ -12,14 +13,15 @@ N = -1
 n = 1
 l = [2]
 name = "func"
-two_d = 2**D
-kp1_d = (k + 1)**D
+two_d = 2 ** D
+kp1_d = (k + 1) ** D
 
 world = vp.BoundingBox(scale=N)
 root = vp.NodeIndex(scale=N)
 idx = vp.NodeIndex(scale=n, translation=l)
 mra = vp.MultiResolutionAnalysis(box=world, order=k)
 tree = vp.FunctionTree(mra, name)
+
 
 def test_FunctionTree():
     assert tree.norm() < 0.0
@@ -31,6 +33,7 @@ def test_FunctionTree():
     assert tree.depth() == 1
     assert tree.name() == name
     assert tree.MRA() == mra
+
 
 def test_FunctionTreeZero():
     tree.setZero()
@@ -45,6 +48,7 @@ def test_FunctionTreeZero():
 
     assert tree.norm() < 0.0
     assert tree.squaredNorm() < 0.0
+
 
 def test_FunctionTreeSave():
     tree.setZero()
@@ -61,6 +65,7 @@ def test_FunctionTreeSave():
     assert tree_2.MRA() == tree.MRA()
     assert tree_2(r0) == 0.0
     assert tree_2(r1) == 0.0
+
 
 def test_NodeIndex():
     parent = root.parent()
@@ -89,6 +94,7 @@ def test_NodeIndex():
     assert parent == root
     assert child_1 == child_0
 
+
 def test_RootNode():
     tree.setZero()
 
@@ -113,6 +119,7 @@ def test_RootNode():
         for t in range(two_d):
             assert root_i.componentNorm(t) == 0.0
 
+
 def test_GenNode():
     tree.setZero()
 
@@ -126,8 +133,8 @@ def test_GenNode():
     assert tree.nEndNodes() == 1
     assert tree.nGenNodes() == 4
 
-    two_d = 2**D
-    kp1_d = (k + 1)**D
+    two_d = 2 ** D
+    kp1_d = (k + 1) ** D
     assert node.hasCoefs()
     assert node.isAllocated()
     assert node.isLeafNode()
@@ -153,9 +160,10 @@ def test_GenNode():
     assert tree.nEndNodes() == 1
     assert tree.nGenNodes() == 0
 
+
 def test_HilbertIterator():
     tree.setZero()
-    tree.fetchNode(idx) # generate extra nodes
+    tree.fetchNode(idx)  # generate extra nodes
 
     it = vp.TreeIterator(tree, iterator=Hilbert)
     it.setMaxDepth(-1)
@@ -164,7 +172,7 @@ def test_HilbertIterator():
 
     gen_count = 0
     node_count = 0
-    while (it.next()):
+    while it.next():
         node = it.get()
         if node.isGenNode():
             gen_count += 1
@@ -174,9 +182,10 @@ def test_HilbertIterator():
     assert gen_count == 0
     assert node_count == tree.nNodes()
 
+
 def test_LebesgueIterator():
     tree.setZero()
-    tree.fetchNode(idx) # generate extra nodes
+    tree.fetchNode(idx)  # generate extra nodes
 
     it = vp.TreeIterator(traverse=BottomUp)
     it.setMaxDepth(-1)
@@ -187,7 +196,7 @@ def test_LebesgueIterator():
     node_count = 0
 
     it.init(tree)
-    while (it.next()):
+    while it.next():
         node = it.get()
         if node.isGenNode():
             gen_count += 1

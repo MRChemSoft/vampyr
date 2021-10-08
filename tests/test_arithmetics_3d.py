@@ -1,6 +1,7 @@
 import numpy as np
-from vampyr import vampyr3d as vp
 import pytest
+
+from vampyr import vampyr3d as vp
 
 epsilon = 1.0e-3
 
@@ -12,8 +13,9 @@ mra = vp.MultiResolutionAnalysis(box=world, order=k)
 
 r0 = [0.8, 0.8, 0.8]
 beta = 10.0
-alpha = (beta/np.pi)**(D/2.0)
+alpha = (beta / np.pi) ** (D / 2.0)
 gauss = vp.GaussFunc(coef=alpha, exp=beta, pos=r0)
+
 
 def test_Addition():
     tree_1 = vp.FunctionTree(mra)
@@ -28,7 +30,7 @@ def test_Addition():
 
     tree_vec_1 = []
     tree_vec_1.append((1.0, tree_1))
-    tree_vec_1.append((-.5, tree_1))
+    tree_vec_1.append((-0.5, tree_1))
 
     tree_3 = vp.FunctionTree(mra)
     vp.build_grid(out=tree_3, inp=tree_vec_1)
@@ -53,6 +55,7 @@ def test_Addition():
     tree_5.add(coef=1.0, inp=tree_1)
     assert tree_5.nNodes() == tree_1.nNodes()
     assert tree_5.integrate() == pytest.approx(2.0 * tree_1.integrate(), rel=epsilon)
+
 
 def test_Multiplication():
     tree_1 = vp.FunctionTree(mra)
@@ -120,6 +123,7 @@ def test_Multiplication():
     assert tree_9.nNodes() == tree_1.nNodes()
     assert tree_9.integrate() == pytest.approx(tree_1.squaredNorm(), rel=epsilon)
 
+
 def test_OverloadedOperators():
     tree_1 = vp.FunctionTree(mra)
     vp.build_grid(out=tree_1, inp=gauss)
@@ -134,7 +138,7 @@ def test_OverloadedOperators():
 
     tree_2 *= -2.0
     assert tree_2.nNodes() == ref_nodes
-    assert tree_2.integrate() == pytest.approx(-2.0*ref_int, rel=epsilon)
+    assert tree_2.integrate() == pytest.approx(-2.0 * ref_int, rel=epsilon)
 
     tree_3 = -tree_1
     assert tree_3.nNodes() == ref_nodes
@@ -142,31 +146,31 @@ def test_OverloadedOperators():
 
     tree_3 /= 2.0
     assert tree_3.nNodes() == ref_nodes
-    assert tree_3.integrate() == pytest.approx(-0.5*ref_int, rel=epsilon)
+    assert tree_3.integrate() == pytest.approx(-0.5 * ref_int, rel=epsilon)
 
     tree_3 *= tree_2
     assert tree_3.nNodes() > ref_nodes
     assert tree_3.integrate() == pytest.approx(ref_norm, rel=epsilon)
 
-    tree_4 = tree_1*2.0
+    tree_4 = tree_1 * 2.0
     assert tree_4.nNodes() == ref_nodes
-    assert tree_4.integrate() == pytest.approx(2.0*ref_int, rel=epsilon)
+    assert tree_4.integrate() == pytest.approx(2.0 * ref_int, rel=epsilon)
 
-    tree_5 = 2.0*tree_1
+    tree_5 = 2.0 * tree_1
     assert tree_5.nNodes() == ref_nodes
-    assert tree_5.integrate() == pytest.approx(2.0*ref_int, rel=epsilon)
+    assert tree_5.integrate() == pytest.approx(2.0 * ref_int, rel=epsilon)
 
-    tree_6 = tree_1/2.0 + 1.5*tree_1
+    tree_6 = tree_1 / 2.0 + 1.5 * tree_1
     assert tree_6.nNodes() == ref_nodes
-    assert tree_6.integrate() == pytest.approx(2.0*ref_int, rel=epsilon)
+    assert tree_6.integrate() == pytest.approx(2.0 * ref_int, rel=epsilon)
 
     tree_6 += tree_1
     assert tree_6.nNodes() == ref_nodes
-    assert tree_6.integrate() == pytest.approx(3.0*ref_int, rel=epsilon)
+    assert tree_6.integrate() == pytest.approx(3.0 * ref_int, rel=epsilon)
 
-    tree_6 -= 2.0*tree_4
+    tree_6 -= 2.0 * tree_4
     assert tree_6.nNodes() == ref_nodes
-    assert tree_6.integrate() == pytest.approx(-1.0*ref_int, rel=epsilon)
+    assert tree_6.integrate() == pytest.approx(-1.0 * ref_int, rel=epsilon)
 
     tree_6 **= 2.0
     assert tree_6.nNodes() > ref_nodes
@@ -174,9 +178,9 @@ def test_OverloadedOperators():
 
     tree_7 = tree_1 - tree_2
     assert tree_7.nNodes() == ref_nodes
-    assert tree_7.integrate() == pytest.approx(3.0*ref_int, rel=epsilon)
+    assert tree_7.integrate() == pytest.approx(3.0 * ref_int, rel=epsilon)
 
-    tree_8 = tree_1**2.0
+    tree_8 = tree_1 ** 2.0
     assert tree_8.nNodes() > ref_nodes
     assert tree_8.integrate() == pytest.approx(ref_norm, rel=epsilon)
 
@@ -184,14 +188,14 @@ def test_OverloadedOperators():
     assert tree_9.nNodes() > ref_nodes
     assert tree_9.integrate() == pytest.approx(ref_norm, rel=epsilon)
 
-    tree_10 = (tree_1 * tree_1).crop(epsilon) + (tree_1**2).crop(epsilon)
+    tree_10 = (tree_1 * tree_1).crop(epsilon) + (tree_1 ** 2).crop(epsilon)
     assert tree_10.nNodes() > tree_1.nNodes()
     assert tree_10.nNodes() < tree_9.nNodes()
-    assert tree_10.integrate() == pytest.approx(2.0*ref_norm, rel=epsilon)
+    assert tree_10.integrate() == pytest.approx(2.0 * ref_norm, rel=epsilon)
 
     tree_vec_1 = []
     tree_vec_1.append((1.0, tree_1))
-    tree_vec_1.append((-.5, tree_1))
+    tree_vec_1.append((-0.5, tree_1))
 
     tree_11 = vp.sum(tree_vec_1)
     assert tree_11.nNodes() == tree_1.nNodes()

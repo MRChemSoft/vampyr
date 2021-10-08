@@ -1,6 +1,7 @@
 import numpy as np
-from vampyr import vampyr3d as vp
 import pytest
+
+from vampyr import vampyr3d as vp
 
 epsilon = 1.0e-3
 
@@ -12,7 +13,7 @@ mra = vp.MultiResolutionAnalysis(box=world, order=k)
 
 r0 = [0.8, 0.8, 0.8]
 beta = 10.0
-alpha = (beta/np.pi)**(D/2.0)
+alpha = (beta / np.pi) ** (D / 2.0)
 g = vp.GaussFunc(coef=alpha, exp=beta, pos=r0)
 gx = g.differentiate(dir=0)
 gy = g.differentiate(dir=1)
@@ -34,6 +35,7 @@ fz = vp.FunctionTree(mra)
 vp.build_grid(out=fz, inp=gz)
 vp.project(prec=epsilon, out=fz, inp=gz)
 
+
 def test_Gradient():
     D = vp.ABGVDerivative(mra, a=0.0, b=0.0)
     grad_f = vp.gradient(oper=D, inp=f)
@@ -45,6 +47,7 @@ def test_Gradient():
     assert grad_f[0].norm() == pytest.approx(fx.norm(), rel=epsilon)
     assert grad_f[1].norm() == pytest.approx(fy.norm(), rel=epsilon)
     assert grad_f[2].norm() == pytest.approx(fz.norm(), rel=epsilon)
+
 
 def test_Divergence():
     D = vp.ABGVDerivative(mra, a=0.0, b=0.0)
@@ -64,6 +67,7 @@ def test_Divergence():
 
     assert lap_f.integrate() == pytest.approx(ref_lap.integrate(), abs=epsilon)
     assert lap_f.norm() == pytest.approx(ref_lap.norm(), rel=epsilon)
+
 
 def test_OverloadedOperators():
     D = vp.ABGVDerivative(mra, a=0.0, b=0.0)
