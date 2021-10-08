@@ -9,15 +9,15 @@
 
 #include <string>
 
-#include <MRCPP/version.h>
 #include <MRCPP/constants.h>
+#include <MRCPP/version.h>
 
 #include "core/bases.h"
 #include "functions/functions.h"
 #include "operators/convolutions.h"
 #include "operators/derivatives.h"
-#include "treebuilders/arithmetics.h"
 #include "treebuilders/applys.h"
+#include "treebuilders/arithmetics.h"
 #include "treebuilders/grids.h"
 #include "treebuilders/project.h"
 #include "trees/trees.h"
@@ -43,7 +43,6 @@ void constants(py::module &m) {
 template <int D> void bind_mr(py::module &mod) noexcept {
     std::string name = "vampyr" + std::to_string(D) + "d";
     py::module sub_mod = mod.def_submodule(name.c_str());
-    sub_mod.doc() = std::to_string(D) + "-dimensional bindings";
 
     applys<D>(sub_mod);
     arithmetics<D>(sub_mod);
@@ -58,11 +57,21 @@ template <int D> void bind_mr(py::module &mod) noexcept {
 }
 
 PYBIND11_MODULE(_vampyr, m) {
-    m.doc() = "VAMPyR makes the MRCPP functionality available through a Python interface";
+    m.doc() = R"pbdoc(
+        VAMPyR
+        ------
+ 
+        VAMPyR makes the MRCPP functionality available through a Python interface.
+
+        .. currentmodule:: vampyr
+
+        .. autosummary::
+           :toctree: _generate
+    )pbdoc";
 
     m.attr("__version__") = VERSION_INFO;
 
-    m.def("mrcpp_version", &program_version);
+    m.def("mrcpp_version", &program_version, "Return version of the underlying MRCPP library.");
 
     // Dimension-independent bindings go in the main module
     constants(m);
