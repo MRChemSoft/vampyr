@@ -1,0 +1,2 @@
+.. automodule:: vampyr
+   :members:

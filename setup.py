@@ -37,5 +37,11 @@ setup(
         "-DCMAKE_JOB_POOLS:STRING=compile=4;link=2",
     ],
     include_package_data=True,
-    extras_require={"test": ["numpy", "pytest"]},
+    extras_require={
+        "test": ["numpy", "pytest"],
+        "docs": [
+            "Sphinx",
+            "sphinx_rtd_theme",
+        ],
+    },
 )
