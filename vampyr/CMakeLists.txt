@@ -3,6 +3,11 @@ pybind11_add_module(_vampyr MODULE THIN_LTO
     export_vampyr.cpp
   )
 
+target_compile_definitions(_vampyr
+  PRIVATE
+    VERSION_INFO="${PROGRAM_VERSION}"
+  )
+
 target_include_directories(_vampyr
   PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}
@@ -21,12 +26,6 @@ else()
 endif()
 
 file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR})
-# configure __init__.py
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/__init__.py.in
-  ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR}/__init__.py
-  @ONLY
-  )
 
 set_target_properties(_vampyr
   PROPERTIES
@@ -39,6 +38,14 @@ set_target_properties(_vampyr
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
     LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR}
     RESOURCE "${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR}/__init__.py"
+  )
+
+add_custom_command(
+  TARGET 
+    _vampyr 
+  PRE_BUILD
+  COMMAND 
+    ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_LIST_DIR}/__init__.py $<TARGET_FILE_DIR:_vampyr>
   )
 
 install(
