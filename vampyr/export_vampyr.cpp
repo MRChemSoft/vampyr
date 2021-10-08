@@ -65,11 +65,11 @@ PYBIND11_MODULE(_vampyr, m) {
 
     // Dimension-independent bindings go in the main module
     constants(m);
-    bases(m);
 
     // Dimension-dependent bindings go into submodules
     bind_mr<1>(m);
     bind_mr<2>(m);
     bind_mr<3>(m);
+    bases(m);
 }
 } // namespace vampyr

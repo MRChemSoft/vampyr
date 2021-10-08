@@ -12,6 +12,10 @@
 #include <MRCPP/core/LegendreBasis.h>
 #include <MRCPP/core/ScalingBasis.h>
 
+#include "functions/PyRepresentableFunction.h"
+#include "functions/PyScalingFunction.h"
+#include "functions/PyWaveletFunction.h"
+
 namespace vampyr {
 
 void bases(pybind11::module &m) {
@@ -19,11 +23,24 @@ void bases(pybind11::module &m) {
     namespace py = pybind11;
     using namespace pybind11::literals;
 
+
+    py::class_<Polynomial, PyRepresentableFunction<1, Polynomial>, RepresentableFunction<1>>(m, "Polynomial");
+
+    py::class_<PyScalingFunction, Polynomial>(m, "ScalingFunction");
+
+    py::class_<PyWaveletFunction, RepresentableFunction<1>>(m, "WaveletFunction");
+
     py::class_<ScalingBasis>(m, "ScalingBasis")
         .def(py::init<int, int>(), "order"_a, "type"_a)
         .def("scalingType", &ScalingBasis::getScalingType)
         .def("scalingOrder", &ScalingBasis::getScalingOrder)
         .def("quadratureOrder", &ScalingBasis::getQuadratureOrder)
+        .def("scaling", [](const ScalingBasis &basis, int i, int l, int n) {
+            return PyScalingFunction(basis, i, l, n);
+        }, "i"_a, "l"_a=0, "n"_a=0)
+        .def("wavelet", [](const ScalingBasis &basis, int i, int l, int n) {
+            return PyWaveletFunction(basis, i, l, n);
+        }, "i"_a, "l"_a=0, "n"_a=0)
         .def(py::self == py::self)
         .def(py::self != py::self)
         .def("__str__", [](const ScalingBasis &basis) {
