@@ -27,6 +27,22 @@ endif()
 
 file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR})
 
+# we glob any Python file present and let CMake add a rule such that
+# the glob is repeated every time we rebuild.
+# This is NOT RECOMMENDED by CMake
+# (https://cmake.org/cmake/help/v3.16/command/file.html#filesystem) but you only
+# live once!
+file(
+   GLOB
+    _vmp_pys
+  LIST_DIRECTORIES
+    FALSE
+  CONFIGURE_DEPENDS
+  RELATIVE
+    ${CMAKE_CURRENT_LIST_DIR}
+  *.py
+  )
+
 set_target_properties(_vampyr
   PROPERTIES
     MACOSX_RPATH ON
@@ -37,16 +53,19 @@ set_target_properties(_vampyr
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
     LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR}
-    RESOURCE "${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR}/__init__.py"
+    RESOURCE "${_vmp_pys}"
   )
 
-add_custom_command(
-  TARGET 
-    _vampyr 
-  PRE_BUILD
-  COMMAND 
-    ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_LIST_DIR}/__init__.py $<TARGET_FILE_DIR:_vampyr>
-  )
+foreach(_f IN LISTS _vmp_pys)
+  # link the Python files under the build folder
+  file(
+     CREATE_LINK
+      ${CMAKE_CURRENT_LIST_DIR}/${_f}
+      ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR}/${_f}
+    COPY_ON_ERROR
+    SYMBOLIC
+    )
+endforeach()
 
 install(
   TARGETS

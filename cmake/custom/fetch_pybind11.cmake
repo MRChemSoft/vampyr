@@ -1,18 +1,4 @@
-# make sure site-packages is on path
-execute_process(
-  COMMAND
-    "${Python_EXECUTABLE}" -c "import pybind11; print(pybind11.get_cmake_dir())"
-  OUTPUT_VARIABLE
-    _tmp_dir
-  OUTPUT_STRIP_TRAILING_WHITESPACE
-  OUTPUT_QUIET
-  ERROR_QUIET
-  )
-
-find_package(pybind11 2.6 CONFIG QUIET
-  HINTS
-    ${_tmp_dir}
-  )
+find_package(pybind11 2.6 CONFIG QUIET)
 
 set(PYBIND11_CPP_STANDARD "-std=c++${CMAKE_CXX_STANDARD}")
 
@@ -29,6 +15,4 @@ else()
   set(PYBIND11_TEST OFF CACHE BOOL "")
   FetchContent_MakeAvailable(pybind11)
 endif()
-
-unset(_tmp_dir)
 
