@@ -31,7 +31,7 @@ jobs:
     - name: Configure
       shell: bash -l {0}
       run: |
-        python ./setup --type=$BUILD_TYPE --generator=Ninja --prefix=$GITHUB_WORKSPACE/Software/VAMPyR build --cmake-options="-DCMAKE_VERBOSE_MAKEFILE=ON" --coverage
+        cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=$BUILD_TYPE -GNinja -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/Software/VAMPyR -DCMAKE_VERBOSE_MAKEFILE=ON -DENABLE_CODE_COVERAGE=ON
     
     - name: Build
       shell: bash -l {0}
