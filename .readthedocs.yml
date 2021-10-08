@@ -18,11 +18,6 @@ python:
      extra_requirements:
        - docs
 
-# additional formats to be built
-formats:
-  - epub
-  - pdf
-
 # how to run sphinx
 sphinx:
   configuration: docs/source/conf.py
