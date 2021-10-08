@@ -13,7 +13,7 @@ _dim_doc = """VAMPyR {dim:d}D
 .. currentmodule:: vampyr{dim:d}d
 
 .. autosummary::
-   :toctree: _generate
+   :toctree: generate
 """
 
 vampyr1d.__doc__ = _dim_doc.format(dim=1)

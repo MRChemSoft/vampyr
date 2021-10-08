@@ -66,7 +66,7 @@ PYBIND11_MODULE(_vampyr, m) {
         .. currentmodule:: vampyr
 
         .. autosummary::
-           :toctree: _generate
+           :toctree: generate
     )pbdoc";
 
     m.attr("__version__") = VERSION_INFO;

@@ -31,6 +31,13 @@ extensions = [
 
 autosummary_generate = True
 
+autodoc_default_options = {
+    "members": None,
+    "imported-members": True,
+    "undoc-members": True,
+    "show-inheritance": True,
+}
+
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3/", None),
     "sphinx": ("https://www.sphinx-doc.org/en/master/", None),
