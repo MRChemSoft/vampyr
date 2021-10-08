@@ -7,7 +7,6 @@ build:
     python: "3.9"
   apt_packages:
     - build-essential
-    - cmake
     - g++
 
 # Python environment
