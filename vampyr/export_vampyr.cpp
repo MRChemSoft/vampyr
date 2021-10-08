@@ -58,10 +58,11 @@ template <int D> void bind_mr(py::module &mod) noexcept {
 }
 
 PYBIND11_MODULE(_vampyr, m) {
-    using namespace mrcpp;
     m.doc() = "VAMPyR makes the MRCPP functionality available through a Python interface";
 
-    m.def("mrcpp_version", &mrcpp::program_version);
+    m.attr("__version__") = VERSION_INFO;
+
+    m.def("mrcpp_version", &program_version);
 
     // Dimension-independent bindings go in the main module
     constants(m);
