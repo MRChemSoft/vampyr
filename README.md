@@ -1,4 +1,4 @@
-![VAMPyR logo](https://github.com/MRChemSoft/VAMPyR/raw/master/doc/gfx/logo.png)
+![VAMPyR logo](https://github.com/MRChemSoft/VAMPyR/raw/master/docs/gfx/logo.png)
 
 [![License](https://img.shields.io/badge/license-%20LGPLv3-blue.svg)](../master/LICENSE)
 ![Build and test VAMPyR](https://github.com/MRChemSoft/vampyr/workflows/Build%20and%20test%20VAMPyR/badge.svg)
