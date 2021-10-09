@@ -14,6 +14,9 @@ template <int D> void project(pybind11::module &m) {
         .def(py::init<const MultiResolutionAnalysis<D> &, double>(),
             "mra"_a,
             "prec"_a)
+        .def(py::init<const MultiResolutionAnalysis<D> &, int>(),
+            "mra"_a,
+            "scale"_a)
         .def("__call__", [](PyMWProjector<D> &P, RepresentableFunction<D> &func){
                 return P(func);
             },
