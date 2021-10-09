@@ -1,0 +1,31 @@
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+line_length = 88
+
+[tool.pytest.ini_options]
+addopts = "-rws"
+norecursedirs = [
+  "env",
+  ".direnv",
+  "venv",
+  ".env",
+  ".venv",
+  "docs",
+  ".eggs",
+  ".git",
+]
+collect_ignore = ["setup.py"]
+
+[build-system]
+requires = [
+    "setuptools>=42",
+    "wheel",
+    "pybind11>=2.7.1",
+    "cmake>=3.17",
+    "scikit-build>=0.12",
+]
+
+build-backend = "setuptools.build_meta"

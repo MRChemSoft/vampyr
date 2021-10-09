@@ -1,9 +1,10 @@
 import numpy as np
-from vampyr import vampyr3d as vp
 import pytest
 
+from vampyr import vampyr3d as vp
+
 epsilon = 1.0e-3
-mu = epsilon/10
+mu = epsilon / 10
 
 D = 3
 k = 5
@@ -13,13 +14,14 @@ mra = vp.MultiResolutionAnalysis(box=world, order=k)
 
 r0 = [0.8, 0.8, 0.8]
 beta = 10.0
-alpha = (beta/np.pi)**(D/2.0)
+alpha = (beta / np.pi) ** (D / 2.0)
 ffunc = vp.GaussFunc(coef=alpha, exp=beta, pos=r0)
 ref_energy = ffunc.calcCoulombEnergy(ffunc)
 
 ftree = vp.FunctionTree(mra)
 vp.build_grid(out=ftree, inp=ffunc)
 vp.project(prec=epsilon, out=ftree, inp=ffunc)
+
 
 def test_Identity():
     I = vp.IdentityConvolution(mra, prec=epsilon)
@@ -31,6 +33,7 @@ def test_Identity():
     gtree2 = I(ftree)
     assert gtree2.integrate() == pytest.approx(ftree.integrate(), rel=epsilon)
 
+
 def test_Poisson():
     P = vp.PoissonOperator(mra, prec=epsilon)
 
@@ -40,6 +43,7 @@ def test_Poisson():
 
     gtree2 = P(ftree)
     assert vp.dot(gtree2, ftree) == pytest.approx(ref_energy, rel=epsilon)
+
 
 def test_Helmholtz():
     H = vp.HelmholtzOperator(mra, exp=mu, prec=epsilon)
@@ -51,11 +55,12 @@ def test_Helmholtz():
     gtree2 = H(ftree)
     assert vp.dot(gtree2, ftree) == pytest.approx(ref_energy, rel=epsilon)
 
+
 def test_PeriodicIdentity():
-    world = vp.BoundingBox(pbc=True, corner=[-1,-1,-1], nboxes=[2,2,2])
+    world = vp.BoundingBox(pbc=True, corner=[-1, -1, -1], nboxes=[2, 2, 2])
     pbc = vp.MultiResolutionAnalysis(box=world, order=k)
 
-    pfunc = ffunc.periodify([1.0,1.0,1.0])
+    pfunc = ffunc.periodify([1.0, 1.0, 1.0])
     ftree = vp.FunctionTree(mra=pbc)
     vp.build_grid(out=ftree, inp=pfunc)
     vp.project(prec=epsilon, out=ftree, inp=pfunc)

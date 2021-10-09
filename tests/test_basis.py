@@ -1,6 +1,8 @@
 import numpy as np
-import vampyr as vp
 import pytest
+
+import vampyr as vp
+
 
 def test_LegendreBasis():
     basis = vp.LegendreBasis(order=5)
@@ -10,6 +12,7 @@ def test_LegendreBasis():
     assert basis.scalingType() == 0
     assert basis.scalingOrder() == 5
     assert basis.quadratureOrder() == 6
+
 
 def test_InterpolatingBasis():
     basis = vp.InterpolatingBasis(order=5)

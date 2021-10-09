@@ -31,7 +31,7 @@ foreach(_f IN LISTS _vmp_pytests)
     NAME
       ${_name}
     COMMAND
-      ${PYTHON_EXECUTABLE} -m pytest -x -rws -vv test_${_name}.py
+      ${Python_EXECUTABLE} -m pytest -x -rws -vv test_${_name}.py
     WORKING_DIRECTORY
       ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR}
     )
@@ -49,7 +49,7 @@ install(
   DIRECTORY
     ${CMAKE_CURRENT_LIST_DIR}/
   DESTINATION
-    ${PYMOD_INSTALL_FULLDIR}
+    ${PYMOD_INSTALL_FULLDIR}/tests
   PATTERN "CMakeLists.txt" EXCLUDE
   )
 

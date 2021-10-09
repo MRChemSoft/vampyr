@@ -1,7 +1,9 @@
 import numpy as np
-from vampyr import vampyr1d as vp
-from vampyr import InterpolatingBasis, LegendreBasis
 import pytest
+
+from vampyr import InterpolatingBasis, LegendreBasis
+from vampyr import vampyr1d as vp
+
 
 def test_BoundingBox():
     world = vp.BoundingBox(corner=[-1], nboxes=[2], scaling=[np.pi])
@@ -9,8 +11,8 @@ def test_BoundingBox():
     assert world.size(dim=0) == 2
     assert world.scale() == 0
     assert world.isPeriodic() == False
-    assert world.boxLengths() == pytest.approx([2*np.pi])
-    assert world.boxLength(dim=0) == pytest.approx(2*np.pi)
+    assert world.boxLengths() == pytest.approx([2 * np.pi])
+    assert world.boxLength(dim=0) == pytest.approx(2 * np.pi)
     assert world.upperBounds() == pytest.approx([np.pi])
     assert world.upperBound(dim=0) == pytest.approx(np.pi)
     assert world.lowerBounds() == pytest.approx([-np.pi])
@@ -19,6 +21,7 @@ def test_BoundingBox():
     assert world.unitLength(dim=0) == pytest.approx(np.pi)
     assert world.scalingFactors() == pytest.approx([np.pi])
     assert world.scalingFactor(dim=0) == pytest.approx(np.pi)
+
 
 def test_PeriodicBox():
     world = vp.BoundingBox(scaling=[np.pi], pbc=True)
@@ -36,6 +39,7 @@ def test_PeriodicBox():
     assert world.unitLength(dim=0) == pytest.approx(np.pi)
     assert world.scalingFactors() == pytest.approx([np.pi])
     assert world.scalingFactor(dim=0) == pytest.approx(np.pi)
+
 
 def test_MRA():
     legendre = LegendreBasis(order=5)

@@ -51,7 +51,7 @@ jobs:
       env:
         CXXFLAGS: ""
       run: |
-        python ./setup --type=$BUILD_TYPE --generator=Ninja --prefix=$GITHUB_WORKSPACE/Software/VAMPyR build --cmake-options="-DCMAKE_VERBOSE_MAKEFILE=ON"
+        cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=$BUILD_TYPE -GNinja -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/Software/VAMPyR -DCMAKE_VERBOSE_MAKEFILE=ON
 
     - name: Build
       shell: bash -l {0}
