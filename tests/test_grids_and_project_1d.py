@@ -120,8 +120,8 @@ def test_ClearProjectRefine():
 
 
 def test_ProjectRescaleCopyNormalize():
-    Q = vp.MWProjector(mra, epsilon)
-    tree = Q(gauss)
+    P_eps = vp.ScalingProjector(mra, epsilon)
+    tree = P_eps(gauss)
     assert tree.integrate() == pytest.approx(1.0, rel=epsilon)
 
     tree.rescale(coef=np.pi)
