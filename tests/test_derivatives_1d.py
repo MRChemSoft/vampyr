@@ -2,6 +2,7 @@ import numpy as np
 import pytest
 
 from vampyr import vampyr1d as vp
+from vampyr import advanced1d as adv
 
 epsilon = 1.0e-3
 
@@ -19,16 +20,16 @@ dg = g.differentiate(dir=0)
 ddg = dg.differentiate(dir=0)
 
 f = vp.FunctionTree(mra)
-vp.build_grid(out=f, inp=g)
-vp.project(prec=epsilon / 10, out=f, inp=g)
+adv.build_grid(out=f, inp=g)
+adv.project(prec=epsilon / 10, out=f, inp=g)
 
 df = vp.FunctionTree(mra)
-vp.build_grid(out=df, inp=dg)
-vp.project(prec=epsilon / 10, out=df, inp=dg)
+adv.build_grid(out=df, inp=dg)
+adv.project(prec=epsilon / 10, out=df, inp=dg)
 
 ddf = vp.FunctionTree(mra)
-vp.build_grid(out=ddf, inp=ddg)
-vp.project(prec=epsilon / 10, out=ddf, inp=ddg)
+adv.build_grid(out=ddf, inp=ddg)
+adv.project(prec=epsilon / 10, out=ddf, inp=ddg)
 
 
 def test_DerivativeABGV_00():
@@ -36,7 +37,7 @@ def test_DerivativeABGV_00():
     assert D.getOrder() == 1
 
     dh = vp.FunctionTree(mra)
-    vp.apply(out=dh, oper=D, inp=f, dir=0)
+    adv.apply(out=dh, oper=D, inp=f, dir=0)
     assert dh.integrate() == pytest.approx(df.integrate(), abs=epsilon)
     assert dh.norm() == pytest.approx(df.norm(), rel=epsilon)
 
@@ -50,7 +51,7 @@ def test_DerivativeABGV_55():
     assert D.getOrder() == 1
 
     dh = vp.FunctionTree(mra)
-    vp.apply(out=dh, oper=D, inp=f, dir=0)
+    adv.apply(out=dh, oper=D, inp=f, dir=0)
     assert dh.integrate() == pytest.approx(df.integrate(), abs=epsilon)
     assert dh.norm() == pytest.approx(df.norm(), rel=epsilon)
 
@@ -64,7 +65,7 @@ def test_DerivativePH_1():
     assert D.getOrder() == 1
 
     dh = vp.FunctionTree(mra)
-    vp.apply(out=dh, oper=D, inp=f, dir=0)
+    adv.apply(out=dh, oper=D, inp=f, dir=0)
     assert dh.integrate() == pytest.approx(df.integrate(), abs=epsilon)
     assert dh.norm() == pytest.approx(df.norm(), rel=epsilon)
 
@@ -78,7 +79,7 @@ def test_DerivativePH_2():
     assert D.getOrder() == 2
 
     ddh = vp.FunctionTree(mra)
-    vp.apply(out=ddh, oper=D, inp=f, dir=0)
+    adv.apply(out=ddh, oper=D, inp=f, dir=0)
     assert ddh.integrate() == pytest.approx(ddf.integrate(), abs=epsilon)
     assert ddh.norm() == pytest.approx(ddf.norm(), rel=epsilon)
 
@@ -92,7 +93,7 @@ def test_DerivativeBS_1():
     assert D.getOrder() == 1
 
     dh = vp.FunctionTree(mra)
-    vp.apply(out=dh, oper=D, inp=f, dir=0)
+    adv.apply(out=dh, oper=D, inp=f, dir=0)
     assert dh.integrate() == pytest.approx(df.integrate(), abs=epsilon)
     assert dh.norm() == pytest.approx(df.norm(), rel=epsilon)
 
@@ -106,7 +107,7 @@ def test_DerivativeBS_2():
     assert D.getOrder() == 2
 
     ddh = vp.FunctionTree(mra)
-    vp.apply(out=ddh, oper=D, inp=f, dir=0)
+    adv.apply(out=ddh, oper=D, inp=f, dir=0)
     assert ddh.integrate() == pytest.approx(ddf.integrate(), abs=epsilon)
     assert ddh.norm() == pytest.approx(ddf.norm(), rel=epsilon)
 

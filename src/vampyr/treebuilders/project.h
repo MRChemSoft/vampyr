@@ -46,6 +46,12 @@ template <int D> void project(pybind11::module &m) {
                 return out;
             },
             "func"_a);
+}
+
+template <int D> void advanced_project(pybind11::module &m) {
+    using namespace mrcpp;
+    namespace py = pybind11;
+    using namespace pybind11::literals;
 
     m.def("project",
           py::overload_cast<double,

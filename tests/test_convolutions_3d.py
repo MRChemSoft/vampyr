@@ -2,6 +2,7 @@ import numpy as np
 import pytest
 
 from vampyr import vampyr3d as vp
+from vampyr import advanced3d as adv
 
 epsilon = 1.0e-3
 mu = epsilon / 10
@@ -19,15 +20,15 @@ ffunc = vp.GaussFunc(coef=alpha, exp=beta, pos=r0)
 ref_energy = ffunc.calcCoulombEnergy(ffunc)
 
 ftree = vp.FunctionTree(mra)
-vp.build_grid(out=ftree, inp=ffunc)
-vp.project(prec=epsilon, out=ftree, inp=ffunc)
+adv.build_grid(out=ftree, inp=ffunc)
+adv.project(prec=epsilon, out=ftree, inp=ffunc)
 
 
 def test_Identity():
     I = vp.IdentityConvolution(mra, prec=epsilon)
 
     gtree = vp.FunctionTree(mra)
-    vp.apply(prec=epsilon, out=gtree, oper=I, inp=ftree)
+    adv.apply(prec=epsilon, out=gtree, oper=I, inp=ftree)
     assert gtree.integrate() == pytest.approx(ftree.integrate(), rel=epsilon)
 
     gtree2 = I(ftree)
@@ -38,7 +39,7 @@ def test_Poisson():
     P = vp.PoissonOperator(mra, prec=epsilon)
 
     gtree = vp.FunctionTree(mra)
-    vp.apply(prec=epsilon, out=gtree, oper=P, inp=ftree)
+    adv.apply(prec=epsilon, out=gtree, oper=P, inp=ftree)
     assert vp.dot(gtree, ftree) == pytest.approx(ref_energy, rel=epsilon)
 
     gtree2 = P(4*np.pi*ftree)
@@ -49,7 +50,7 @@ def test_Helmholtz():
     H = vp.HelmholtzOperator(mra, exp=mu, prec=epsilon)
 
     gtree = vp.FunctionTree(mra)
-    vp.apply(prec=epsilon, out=gtree, oper=H, inp=ftree)
+    adv.apply(prec=epsilon, out=gtree, oper=H, inp=ftree)
     assert vp.dot(gtree, ftree) == pytest.approx(ref_energy, rel=epsilon)
 
     gtree2 = H(4*np.pi*ftree)
@@ -62,15 +63,15 @@ def test_PeriodicIdentity():
 
     pfunc = ffunc.periodify([1.0, 1.0, 1.0])
     ftree = vp.FunctionTree(mra=pbc)
-    vp.build_grid(out=ftree, inp=pfunc)
-    vp.project(prec=epsilon, out=ftree, inp=pfunc)
+    adv.build_grid(out=ftree, inp=pfunc)
+    adv.project(prec=epsilon, out=ftree, inp=pfunc)
 
     I1 = vp.IdentityConvolution(mra=pbc, prec=epsilon, root=-5)
     gtree1 = vp.FunctionTree(mra=pbc)
-    vp.apply(prec=epsilon, out=gtree1, oper=I1, inp=ftree)
+    adv.apply(prec=epsilon, out=gtree1, oper=I1, inp=ftree)
     assert gtree1.integrate() == pytest.approx(ftree.integrate(), rel=epsilon)
 
     I2 = vp.IdentityConvolution(mra=pbc, prec=epsilon, reach=5)
     gtree2 = vp.FunctionTree(mra=pbc)
-    vp.apply(prec=epsilon, out=gtree2, oper=I2, inp=ftree)
+    adv.apply(prec=epsilon, out=gtree2, oper=I2, inp=ftree)
     assert gtree2.integrate() == pytest.approx(ftree.integrate(), rel=epsilon)

@@ -9,33 +9,7 @@ template <int D> void applys(pybind11::module &m) {
     using namespace mrcpp;
     namespace py = pybind11;
     using namespace pybind11::literals;
-
-    m.def("apply",
-          py::overload_cast<double,
-                            FunctionTree<D> &,
-                            ConvolutionOperator<D> &,
-                            FunctionTree<D> &,
-                            int,
-                            bool>
-                            (&apply<D>),
-          "prec"_a,
-          "out"_a,
-          "oper"_a,
-          "inp"_a,
-          "max_iter"_a = -1,
-          "abs_prec"_a = false);
-
-    m.def("apply",
-          py::overload_cast<FunctionTree<D> &,
-                            DerivativeOperator<D> &,
-                            FunctionTree<D> &,
-                            int>
-                            (&apply<D>),
-          "out"_a,
-          "oper"_a,
-          "inp"_a,
-          "dir"_a = -1);
-
+    
     m.def("divergence",
           [] (DerivativeOperator<D> &oper, std::vector<FunctionTree<D> *> &inp) {
               std::unique_ptr<FunctionTree<D>> out{nullptr};
@@ -62,4 +36,38 @@ template <int D> void applys(pybind11::module &m) {
           "oper"_a,
           "inp"_a);
 }
+
+// Direct bindings to MRCPP functionality
+template <int D> void advanced_applys(pybind11::module &m) {
+    using namespace mrcpp;
+    namespace py = pybind11;
+    using namespace pybind11::literals;
+
+    m.def("apply",
+          py::overload_cast<double,
+                            FunctionTree<D> &,
+                            ConvolutionOperator<D> &,
+                            FunctionTree<D> &,
+                            int,
+                            bool>
+                            (&apply<D>),
+          "prec"_a,
+          "out"_a,
+          "oper"_a,
+          "inp"_a,
+          "max_iter"_a = -1,
+          "abs_prec"_a = false);
+
+    m.def("apply",
+          py::overload_cast<FunctionTree<D> &,
+                            DerivativeOperator<D> &,
+                            FunctionTree<D> &,
+                            int>
+                            (&apply<D>),
+          "out"_a,
+          "oper"_a,
+          "inp"_a,
+          "dir"_a = -1);
+}
+
 } // namespace vampyr

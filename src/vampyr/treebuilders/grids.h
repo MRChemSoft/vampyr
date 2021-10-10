@@ -5,7 +5,7 @@
 #include <MRCPP/treebuilders/grid.h>
 
 namespace vampyr {
-template <int D> void grids(pybind11::module &m) {
+template <int D> void advanced_grids(pybind11::module &m) {
     using namespace mrcpp;
     namespace py = pybind11;
     using namespace pybind11::literals;
@@ -68,6 +68,6 @@ template <int D> void grids(pybind11::module &m) {
           py::overload_cast<FunctionTree<D> &, FunctionTree<D> &>(&refine_grid<D>),
           "out"_a,
           "inp"_a);
-
 }
+
 } // namespace vampyr
