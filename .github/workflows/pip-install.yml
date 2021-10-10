@@ -32,6 +32,10 @@ jobs:
       run: |
         python -m pip install -vvv .[test]
 
+    - name: Import VAMPyR
+      run: |
+        python -c "import vampyr; print(vampyr.__version__); print(vampyr.mrcpp_version())"
+
     - name: Test with pytest
       run: |
-        python -m pytest vampyr
+        python -m pytest -rws -v --pyargs vampyr
