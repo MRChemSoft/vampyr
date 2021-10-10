@@ -2,7 +2,7 @@
 
 #include <pybind11/functional.h>
 
-#include "PyMWProjector.h"
+#include "PyProjectors.h"
 
 namespace vampyr {
 template <int D> void project(pybind11::module &m) {
@@ -10,15 +10,35 @@ template <int D> void project(pybind11::module &m) {
     namespace py = pybind11;
     using namespace pybind11::literals;
 
-    py::class_<PyMWProjector<D>>(m, "MWProjector")
+    py::class_<PyScalingProjector<D>>(m, "ScalingProjector")
         .def(py::init<const MultiResolutionAnalysis<D> &, double>(),
             "mra"_a,
             "prec"_a)
-        .def("__call__", [](PyMWProjector<D> &P, RepresentableFunction<D> &func){
+        .def(py::init<const MultiResolutionAnalysis<D> &, int>(),
+            "mra"_a,
+            "scale"_a)
+        .def("__call__", [](PyScalingProjector<D> &P, RepresentableFunction<D> &func){
                 return P(func);
             },
             "func"_a)
-        .def("__call__", [](PyMWProjector<D> &P, std::function<double (const Coord<D> &r)> func){
+        .def("__call__", [](PyScalingProjector<D> &P, std::function<double (const Coord<D> &r)> func){
+                auto old_threads = mrcpp_get_num_threads();
+                set_max_threads(1);
+                auto out = P(func);
+                set_max_threads(old_threads);
+                return out;
+            },
+            "func"_a);
+
+    py::class_<PyWaveletProjector<D>>(m, "WaveletProjector")
+        .def(py::init<const MultiResolutionAnalysis<D> &, int>(),
+            "mra"_a,
+            "scale"_a)
+        .def("__call__", [](PyWaveletProjector<D> &P, RepresentableFunction<D> &func){
+                return P(func);
+            },
+            "func"_a)
+        .def("__call__", [](PyWaveletProjector<D> &P, std::function<double (const Coord<D> &r)> func){
                 auto old_threads = mrcpp_get_num_threads();
                 set_max_threads(1);
                 auto out = P(func);
