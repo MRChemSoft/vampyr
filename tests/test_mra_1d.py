@@ -46,8 +46,8 @@ def test_MRA():
     interpol = InterpolatingBasis(order=5)
     world = vp.BoundingBox(scale=-1)
     mra = vp.MultiResolutionAnalysis(box=world, basis=interpol, max_depth=20)
+    assert mra == vp.MultiResolutionAnalysis(box=[0,2], order=5, max_depth=20)
     assert mra == vp.MultiResolutionAnalysis(box=world, order=5, max_depth=20)
-    assert mra == vp.MultiResolutionAnalysis(box=world, basis=interpol, max_depth=20)
     assert mra != vp.MultiResolutionAnalysis(box=world, basis=legendre, max_depth=20)
     assert mra.maxDepth() == 20
     assert mra.maxScale() == 19
