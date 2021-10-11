@@ -2,7 +2,6 @@ import numpy as np
 import pytest
 
 from vampyr import vampyr3d as vp
-from vampyr import advanced3d as adv
 
 epsilon = 1.0e-3
 
@@ -21,20 +20,20 @@ gy = g.differentiate(dir=1)
 gz = g.differentiate(dir=2)
 
 f = vp.FunctionTree(mra)
-adv.build_grid(out=f, inp=g)
-adv.project(prec=epsilon, out=f, inp=g)
+vp.advanced.build_grid(out=f, inp=g)
+vp.advanced.project(prec=epsilon, out=f, inp=g)
 
 fx = vp.FunctionTree(mra)
-adv.build_grid(out=fx, inp=gx)
-adv.project(prec=epsilon, out=fx, inp=gx)
+vp.advanced.build_grid(out=fx, inp=gx)
+vp.advanced.project(prec=epsilon, out=fx, inp=gx)
 
 fy = vp.FunctionTree(mra)
-adv.build_grid(out=fy, inp=gy)
-adv.project(prec=epsilon, out=fy, inp=gy)
+vp.advanced.build_grid(out=fy, inp=gy)
+vp.advanced.project(prec=epsilon, out=fy, inp=gy)
 
 fz = vp.FunctionTree(mra)
-adv.build_grid(out=fz, inp=gz)
-adv.project(prec=epsilon, out=fz, inp=gz)
+vp.advanced.build_grid(out=fz, inp=gz)
+vp.advanced.project(prec=epsilon, out=fz, inp=gz)
 
 
 def test_Gradient():

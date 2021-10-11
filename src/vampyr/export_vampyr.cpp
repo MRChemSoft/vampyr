@@ -40,6 +40,15 @@ void constants(py::module &m) {
         .export_values();
 }
 
+template <int D> void bind_advanced(py::module &mod) noexcept {
+    py::module sub_mod = mod.def_submodule("advanced");
+
+    advanced_applys<D>(sub_mod);
+    advanced_arithmetics<D>(sub_mod);
+    advanced_project<D>(sub_mod);
+    advanced_grids<D>(sub_mod);
+}
+
 template <int D> void bind_vampyr(py::module &mod) noexcept {
     std::string name = "vampyr" + std::to_string(D) + "d";
     py::module sub_mod = mod.def_submodule(name.c_str());
@@ -53,16 +62,8 @@ template <int D> void bind_vampyr(py::module &mod) noexcept {
     convolutions<D>(sub_mod);
     trees<D>(sub_mod);
     world<D>(sub_mod);
-}
 
-template <int D> void bind_advanced(py::module &mod) noexcept {
-    std::string name = "advanced" + std::to_string(D) + "d";
-    py::module sub_mod = mod.def_submodule(name.c_str());
-
-    advanced_applys<D>(sub_mod);
-    advanced_arithmetics<D>(sub_mod);
-    advanced_project<D>(sub_mod);
-    advanced_grids<D>(sub_mod);
+    bind_advanced<D>(sub_mod);
 }
 
 PYBIND11_MODULE(_vampyr, m) {
@@ -89,9 +90,6 @@ PYBIND11_MODULE(_vampyr, m) {
     bind_vampyr<1>(m);
     bind_vampyr<2>(m);
     bind_vampyr<3>(m);
-    bind_advanced<1>(m);
-    bind_advanced<2>(m);
-    bind_advanced<3>(m);
     bases(m);
 }
 } // namespace vampyr
