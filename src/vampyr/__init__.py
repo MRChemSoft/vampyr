@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from .environ import _set_mwfilters_path
 from ._vampyr import *
 
 __version__ = _vampyr.__version__
@@ -19,3 +20,5 @@ _dim_doc = """VAMPyR {dim:d}D
 vampyr1d.__doc__ = _dim_doc.format(dim=1)
 vampyr2d.__doc__ = _dim_doc.format(dim=2)
 vampyr3d.__doc__ = _dim_doc.format(dim=3)
+
+_set_mwfilters_path()

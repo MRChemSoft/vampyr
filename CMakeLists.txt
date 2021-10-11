@@ -1,5 +1,5 @@
 # set minimum cmake version
-cmake_minimum_required(VERSION 3.17 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.17...3.21)
 
 # project name
 project(VAMPyR LANGUAGES CXX)

@@ -17,7 +17,6 @@ norecursedirs = [
   ".eggs",
   ".git",
 ]
-collect_ignore = ["setup.py"]
 
 [build-system]
 requires = [
