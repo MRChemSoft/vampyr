@@ -43,11 +43,6 @@ template <int D> void trees(pybind11::module &m) {
         .def("deleteGenerated", &FunctionTree<D>::deleteGenerated)
         .def("integrate", &FunctionTree<D>::integrate)
         .def("normalize", &FunctionTree<D>::normalize)
-        .def("rescale", &FunctionTree<D>::rescale, "coef"_a)
-        .def("add", &FunctionTree<D>::add, "coef"_a=1.0, "inp"_a)
-        .def("multiply", &FunctionTree<D>::multiply, "coef"_a=1.0, "inp"_a)
-        .def("square", &FunctionTree<D>::square)
-        .def("power", &FunctionTree<D>::power, "pow"_a)
         .def("saveTree", &FunctionTree<D>::saveTree, "filename"_a)
         .def("loadTree", &FunctionTree<D>::loadTree, "filename"_a)
         .def("crop", [](FunctionTree<D> *out, double prec, bool abs_prec) {

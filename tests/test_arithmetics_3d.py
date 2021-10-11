@@ -19,12 +19,12 @@ gauss = vp.GaussFunc(coef=alpha, exp=beta, pos=r0)
 
 def test_Addition():
     tree_1 = vp.FunctionTree(mra)
-    vp.build_grid(out=tree_1, inp=gauss)
-    vp.project(prec=epsilon, out=tree_1, inp=gauss)
+    vp.advanced.build_grid(out=tree_1, inp=gauss)
+    vp.advanced.project(prec=epsilon, out=tree_1, inp=gauss)
 
     tree_2 = vp.FunctionTree(mra)
-    vp.build_grid(out=tree_2, inp=tree_1)
-    vp.add(out=tree_2, inp_a=tree_1, b=-0.5, inp_b=tree_1)
+    vp.advanced.build_grid(out=tree_2, inp=tree_1)
+    vp.advanced.add(out=tree_2, inp_a=tree_1, b=-0.5, inp_b=tree_1)
     assert tree_2.nNodes() == tree_1.nNodes()
     assert tree_2.integrate() == pytest.approx(0.5 * tree_1.integrate(), rel=epsilon)
 
@@ -33,8 +33,8 @@ def test_Addition():
     tree_vec_1.append((-0.5, tree_1))
 
     tree_3 = vp.FunctionTree(mra)
-    vp.build_grid(out=tree_3, inp=tree_vec_1)
-    vp.add(out=tree_3, inp=tree_vec_1)
+    vp.advanced.build_grid(out=tree_3, inp=tree_vec_1)
+    vp.advanced.add(out=tree_3, inp=tree_vec_1)
     assert tree_3.nNodes() == tree_1.nNodes()
     assert tree_3.integrate() == pytest.approx(0.5 * tree_1.integrate(), rel=epsilon)
 
@@ -43,30 +43,30 @@ def test_Addition():
     tree_vec_2.append(tree_1)
 
     tree_4 = vp.FunctionTree(mra)
-    vp.build_grid(out=tree_4, inp=tree_vec_2)
-    vp.add(out=tree_4, inp=tree_vec_2)
+    vp.advanced.build_grid(out=tree_4, inp=tree_vec_2)
+    vp.advanced.add(out=tree_4, inp=tree_vec_2)
     assert tree_4.nNodes() == tree_1.nNodes()
     assert tree_4.integrate() == pytest.approx(2.0 * tree_1.integrate(), rel=epsilon)
 
     tree_5 = vp.FunctionTree(mra)
-    vp.build_grid(out=tree_5, inp=tree_1)
+    vp.advanced.build_grid(out=tree_5, inp=tree_1)
     tree_5.setZero()
-    tree_5.add(inp=tree_1)
-    tree_5.add(coef=1.0, inp=tree_1)
+    tree_5 +=tree_1
+    tree_5 += 1.0*tree_1
     assert tree_5.nNodes() == tree_1.nNodes()
     assert tree_5.integrate() == pytest.approx(2.0 * tree_1.integrate(), rel=epsilon)
 
 
 def test_Multiplication():
     tree_1 = vp.FunctionTree(mra)
-    vp.build_grid(out=tree_1, inp=gauss)
-    vp.project(prec=epsilon, out=tree_1, inp=gauss)
+    vp.advanced.build_grid(out=tree_1, inp=gauss)
+    vp.advanced.project(prec=epsilon, out=tree_1, inp=gauss)
 
     assert vp.dot(tree_1, tree_1) == pytest.approx(tree_1.squaredNorm(), rel=epsilon)
 
     tree_2 = vp.FunctionTree(mra)
-    vp.build_grid(out=tree_2, inp=tree_1)
-    vp.multiply(out=tree_2, inp_a=tree_1, inp_b=tree_1)
+    vp.advanced.build_grid(out=tree_2, inp=tree_1)
+    vp.advanced.multiply(out=tree_2, inp_a=tree_1, inp_b=tree_1)
     assert tree_2.nNodes() == tree_1.nNodes()
     assert tree_2.integrate() == pytest.approx(tree_1.squaredNorm(), rel=epsilon)
 
@@ -75,8 +75,8 @@ def test_Multiplication():
     tree_vec_1.append((1.0, tree_1))
 
     tree_3 = vp.FunctionTree(mra)
-    vp.build_grid(out=tree_3, inp=tree_vec_1)
-    vp.multiply(out=tree_3, inp=tree_vec_1)
+    vp.advanced.build_grid(out=tree_3, inp=tree_vec_1)
+    vp.advanced.multiply(out=tree_3, inp=tree_vec_1)
     assert tree_3.nNodes() == tree_1.nNodes()
     assert tree_3.integrate() == pytest.approx(tree_1.squaredNorm(), rel=epsilon)
 
@@ -85,49 +85,49 @@ def test_Multiplication():
     tree_vec_2.append(tree_1)
 
     tree_4 = vp.FunctionTree(mra)
-    vp.build_grid(out=tree_4, inp=tree_vec_2)
-    vp.multiply(out=tree_4, inp=tree_vec_2)
+    vp.advanced.build_grid(out=tree_4, inp=tree_vec_2)
+    vp.advanced.multiply(out=tree_4, inp=tree_vec_2)
     assert tree_4.nNodes() == tree_1.nNodes()
     assert tree_4.integrate() == pytest.approx(tree_1.squaredNorm(), rel=epsilon)
 
     tree_5 = vp.FunctionTree(mra)
-    vp.build_grid(out=tree_5, inp=tree_1)
-    vp.power(out=tree_5, inp=tree_1, pow=2.0)
+    vp.advanced.build_grid(out=tree_5, inp=tree_1)
+    vp.advanced.power(out=tree_5, inp=tree_1, pow=2.0)
     assert tree_5.nNodes() == tree_1.nNodes()
     assert tree_5.integrate() == pytest.approx(tree_1.squaredNorm(), rel=epsilon)
 
     tree_6 = vp.FunctionTree(mra)
-    vp.build_grid(out=tree_6, inp=tree_1)
-    vp.square(out=tree_6, inp=tree_1)
+    vp.advanced.build_grid(out=tree_6, inp=tree_1)
+    vp.advanced.square(out=tree_6, inp=tree_1)
     assert tree_6.nNodes() == tree_1.nNodes()
     assert tree_6.integrate() == pytest.approx(tree_1.squaredNorm(), rel=epsilon)
 
     tree_7 = vp.FunctionTree(mra)
-    vp.build_grid(out=tree_7, inp=tree_1)
-    vp.copy_func(out=tree_7, inp=tree_1)
-    tree_7.multiply(coef=1.0, inp=tree_1)
-    assert tree_7.nNodes() == tree_1.nNodes()
+    vp.advanced.build_grid(out=tree_7, inp=tree_1)
+    vp.advanced.copy_func(out=tree_7, inp=tree_1)
+    tree_7 *= tree_1
+    assert tree_7.nNodes() > tree_1.nNodes()
     assert tree_7.integrate() == pytest.approx(tree_1.squaredNorm(), rel=epsilon)
 
     tree_8 = vp.FunctionTree(mra)
-    vp.build_grid(out=tree_8, inp=tree_1)
-    vp.copy_func(out=tree_8, inp=tree_1)
-    tree_8.square()
-    assert tree_8.nNodes() == tree_1.nNodes()
+    vp.advanced.build_grid(out=tree_8, inp=tree_1)
+    vp.advanced.copy_func(out=tree_8, inp=tree_1)
+    tree_8 **= 2.0
+    assert tree_8.nNodes() > tree_1.nNodes()
     assert tree_8.integrate() == pytest.approx(tree_1.squaredNorm(), rel=epsilon)
 
     tree_9 = vp.FunctionTree(mra)
-    vp.build_grid(out=tree_9, inp=tree_1)
-    vp.copy_func(out=tree_9, inp=tree_1)
-    tree_9.power(pow=2.0)
-    assert tree_9.nNodes() == tree_1.nNodes()
+    vp.advanced.build_grid(out=tree_9, inp=tree_1)
+    vp.advanced.copy_func(out=tree_9, inp=tree_1)
+    tree_9 **= 2.0
+    assert tree_9.nNodes() > tree_1.nNodes()
     assert tree_9.integrate() == pytest.approx(tree_1.squaredNorm(), rel=epsilon)
 
 
 def test_OverloadedOperators():
     tree_1 = vp.FunctionTree(mra)
-    vp.build_grid(out=tree_1, inp=gauss)
-    vp.project(out=tree_1, inp=gauss)
+    vp.advanced.build_grid(out=tree_1, inp=gauss)
+    vp.advanced.project(out=tree_1, inp=gauss)
     ref_int = tree_1.integrate()
     ref_norm = tree_1.squaredNorm()
     ref_nodes = tree_1.nNodes()

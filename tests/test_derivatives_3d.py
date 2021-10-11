@@ -20,20 +20,20 @@ gy = g.differentiate(dir=1)
 gz = g.differentiate(dir=2)
 
 f = vp.FunctionTree(mra)
-vp.build_grid(out=f, inp=g)
-vp.project(prec=epsilon, out=f, inp=g)
+vp.advanced.build_grid(out=f, inp=g)
+vp.advanced.project(prec=epsilon, out=f, inp=g)
 
 fx = vp.FunctionTree(mra)
-vp.build_grid(out=fx, inp=gx)
-vp.project(prec=epsilon, out=fx, inp=gx)
+vp.advanced.build_grid(out=fx, inp=gx)
+vp.advanced.project(prec=epsilon, out=fx, inp=gx)
 
 fy = vp.FunctionTree(mra)
-vp.build_grid(out=fy, inp=gy)
-vp.project(prec=epsilon, out=fy, inp=gy)
+vp.advanced.build_grid(out=fy, inp=gy)
+vp.advanced.project(prec=epsilon, out=fy, inp=gy)
 
 fz = vp.FunctionTree(mra)
-vp.build_grid(out=fz, inp=gz)
-vp.project(prec=epsilon, out=fz, inp=gz)
+vp.advanced.build_grid(out=fz, inp=gz)
+vp.advanced.project(prec=epsilon, out=fz, inp=gz)
 
 
 def test_Gradient():
@@ -61,9 +61,7 @@ def test_Divergence():
     ref_vec.append(fx)
     ref_vec.append(fy)
     ref_vec.append(fz)
-    ref_lap = vp.FunctionTree(mra)
-    vp.build_grid(out=ref_lap, inp=ref_vec)
-    vp.add(out=ref_lap, inp=ref_vec)
+    ref_lap = vp.sum(ref_vec)
 
     assert lap_f.integrate() == pytest.approx(ref_lap.integrate(), abs=epsilon)
     assert lap_f.norm() == pytest.approx(ref_lap.norm(), rel=epsilon)

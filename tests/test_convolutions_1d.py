@@ -21,11 +21,11 @@ def test_Identity():
     I = vp.IdentityConvolution(mra, prec=epsilon)
 
     ftree = vp.FunctionTree(mra)
-    vp.build_grid(out=ftree, inp=ffunc)
-    vp.project(prec=epsilon, out=ftree, inp=ffunc)
+    vp.advanced.build_grid(out=ftree, inp=ffunc)
+    vp.advanced.project(prec=epsilon, out=ftree, inp=ffunc)
 
     gtree = vp.FunctionTree(mra)
-    vp.apply(prec=epsilon, out=gtree, oper=I, inp=ftree)
+    vp.advanced.apply(prec=epsilon, out=gtree, oper=I, inp=ftree)
     assert gtree.integrate() == pytest.approx(ftree.integrate(), rel=epsilon)
 
     gtree2 = I(ftree)
@@ -38,12 +38,12 @@ def test_PeriodicIdentity():
 
     pfunc = ffunc.periodify([1.0])
     ftree = vp.FunctionTree(mra=pbc)
-    vp.build_grid(out=ftree, inp=pfunc)
-    vp.project(prec=epsilon, out=ftree, inp=pfunc)
+    vp.advanced.build_grid(out=ftree, inp=pfunc)
+    vp.advanced.project(prec=epsilon, out=ftree, inp=pfunc)
 
     I = vp.IdentityConvolution(mra=pbc, prec=epsilon, root=0, reach=5)
     gtree = vp.FunctionTree(mra=pbc)
-    vp.apply(prec=epsilon, out=gtree, oper=I, inp=ftree)
+    vp.advanced.apply(prec=epsilon, out=gtree, oper=I, inp=ftree)
     assert gtree.integrate() == pytest.approx(ftree.integrate(), rel=epsilon)
 
 
@@ -53,15 +53,15 @@ def test_PeriodicIdentity():
 
     pfunc = ffunc.periodify([1.0])
     ftree = vp.FunctionTree(mra=pbc)
-    vp.build_grid(out=ftree, inp=pfunc)
-    vp.project(prec=epsilon, out=ftree, inp=pfunc)
+    vp.advanced.build_grid(out=ftree, inp=pfunc)
+    vp.advanced.project(prec=epsilon, out=ftree, inp=pfunc)
 
     I1 = vp.IdentityConvolution(mra=pbc, prec=epsilon, root=-2)
     gtree1 = vp.FunctionTree(mra=pbc)
-    vp.apply(prec=epsilon, out=gtree1, oper=I1, inp=ftree)
+    vp.advanced.apply(prec=epsilon, out=gtree1, oper=I1, inp=ftree)
     assert gtree1.integrate() == pytest.approx(ftree.integrate(), rel=epsilon)
 
     I2 = vp.IdentityConvolution(mra=pbc, prec=epsilon, reach=5)
     gtree2 = vp.FunctionTree(mra=pbc)
-    vp.apply(prec=epsilon, out=gtree2, oper=I2, inp=ftree)
+    vp.advanced.apply(prec=epsilon, out=gtree2, oper=I2, inp=ftree)
     assert gtree2.integrate() == pytest.approx(ftree.integrate(), rel=epsilon)

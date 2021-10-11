@@ -40,27 +40,37 @@ void constants(py::module &m) {
         .export_values();
 }
 
-template <int D> void bind_mr(py::module &mod) noexcept {
+template <int D> void bind_advanced(py::module &mod) noexcept {
+    py::module sub_mod = mod.def_submodule("advanced");
+
+    advanced_applys<D>(sub_mod);
+    advanced_arithmetics<D>(sub_mod);
+    advanced_project<D>(sub_mod);
+    advanced_grids<D>(sub_mod);
+}
+
+template <int D> void bind_vampyr(py::module &mod) noexcept {
     std::string name = "vampyr" + std::to_string(D) + "d";
     py::module sub_mod = mod.def_submodule(name.c_str());
 
     applys<D>(sub_mod);
     arithmetics<D>(sub_mod);
     project<D>(sub_mod);
-    grids<D>(sub_mod);
 
     functions<D>(sub_mod);
     derivatives<D>(sub_mod);
     convolutions<D>(sub_mod);
     trees<D>(sub_mod);
     world<D>(sub_mod);
+
+    bind_advanced<D>(sub_mod);
 }
 
 PYBIND11_MODULE(_vampyr, m) {
     m.doc() = R"pbdoc(
         VAMPyR
         ------
- 
+
         VAMPyR makes the MRCPP functionality available through a Python interface.
 
         .. currentmodule:: vampyr
@@ -77,9 +87,9 @@ PYBIND11_MODULE(_vampyr, m) {
     constants(m);
 
     // Dimension-dependent bindings go into submodules
-    bind_mr<1>(m);
-    bind_mr<2>(m);
-    bind_mr<3>(m);
+    bind_vampyr<1>(m);
+    bind_vampyr<2>(m);
+    bind_vampyr<3>(m);
     bases(m);
 }
 } // namespace vampyr
