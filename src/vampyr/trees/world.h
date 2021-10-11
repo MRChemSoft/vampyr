@@ -52,14 +52,18 @@ template <int D> void world(pybind11::module &m) {
         });
 
     pybind11::class_<MultiResolutionAnalysis<D>>(m, "MultiResolutionAnalysis")
-        .def(py::init([](const BoundingBox<D> &box,
-                         int order,
-                         int max_depth) {
-                             return MultiResolutionAnalysis<D>(box, InterpolatingBasis(order), max_depth);
-                         }),
-                         "box"_a,
-                         "order"_a,
-                         "max_depth"_a = 30)
+        .def(py::init<std::array<int, 2>,
+                      int,
+                      int>(),
+                      "box"_a,
+                      "order"_a,
+                      "max_depth"_a = 30)
+        .def(py::init<const BoundingBox<D>,
+                      int,
+                      int>(),
+                      "box"_a,
+                      "order"_a,
+                      "max_depth"_a = 30)
         .def(py::init<const BoundingBox<D>,
                       const ScalingBasis,
                       int>(),

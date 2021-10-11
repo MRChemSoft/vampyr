@@ -60,6 +60,9 @@ template <int D> void trees(pybind11::module &m) {
                 copy_func(*out, *inp);
                 return out;
             })
+        .def("__call__", [](FunctionTree<D> &func, const Coord<D> &r) {
+            return func.evalf_precise(r);
+        })
         .def("__pos__", [](FunctionTree<D> *inp) {
                 auto out = std::make_unique<FunctionTree<D>>(inp->getMRA());
                 copy_grid(*out, *inp);
