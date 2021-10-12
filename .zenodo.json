@@ -6,22 +6,22 @@
   },
   "creators": [
     {
-      "affiliation": "Hylleraas Centre for Quantum Molecular Sciences, UiT - The Arctic University of Norway",
-      "name": "Bjorgve, Magnar"
-    }
-  ],
-  "contributors": [
+      "name": "Battistella, Evelin"
+    },
     {
-      "type": "Other",
+      "name": "Bjorgve, Magnar"
+    },
+    {
       "name": "Di Remigio, Roberto"
     },
     {
-      "type": "Other",
-      "name": "Jensen, Stig Rune"
+      "name": "Frediani, Luca"
     },
     {
-      "type": "Other",
-      "name": "Battistella, Evelin"
+      "name": "Gerez, Gabriel"
+    },
+    {
+      "name": "Jensen, Stig Rune"
     }
   ]
 }
