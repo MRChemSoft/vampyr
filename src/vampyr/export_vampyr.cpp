@@ -19,6 +19,7 @@
 #include "treebuilders/applys.h"
 #include "treebuilders/arithmetics.h"
 #include "treebuilders/grids.h"
+#include "treebuilders/maps.h"
 #include "treebuilders/project.h"
 #include "trees/trees.h"
 #include "trees/world.h"
@@ -47,6 +48,7 @@ template <int D> void bind_advanced(py::module &mod) noexcept {
     advanced_arithmetics<D>(sub_mod);
     advanced_project<D>(sub_mod);
     advanced_grids<D>(sub_mod);
+    advanced_map<D>(sub_mod);
 }
 
 template <int D> void bind_vampyr(py::module &mod) noexcept {
@@ -56,6 +58,7 @@ template <int D> void bind_vampyr(py::module &mod) noexcept {
     applys<D>(sub_mod);
     arithmetics<D>(sub_mod);
     project<D>(sub_mod);
+    map<D>(sub_mod);
 
     functions<D>(sub_mod);
     derivatives<D>(sub_mod);
