@@ -20,9 +20,9 @@ target_link_libraries(_vampyr
 
 file(RELATIVE_PATH _rel ${CMAKE_INSTALL_PREFIX}/${PYMOD_INSTALL_FULLDIR} ${CMAKE_INSTALL_PREFIX})
 if(APPLE)
-  set(_RPATH "@loader_path/${_rel}")
+  set(_RPATH "@loader_path/${_rel};@loader_path/${CMAKE_INSTALL_LIBDIR}")
 else()
-  set(_RPATH "\$ORIGIN/${_rel}")
+  set(_RPATH "\$ORIGIN/${_rel};\$ORIGIN/${CMAKE_INSTALL_LIBDIR}")
 endif()
 
 file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR})
