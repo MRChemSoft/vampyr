@@ -26,7 +26,7 @@ def func(r):
 def test_BuildProjectRefineCrop():
     tree = vp.FunctionTree(mra)
     vp.advanced.build_grid(out=tree, scales=s)
-    assert tree.fetchEndNode(0).center()[0] == 0.5
+    assert tree.fetchEndNode(0).center()[0] == pytest.approx(0.5)
     assert tree.depth() == s + 1
     assert tree.nEndNodes() == 2 ** (s * D)
 
