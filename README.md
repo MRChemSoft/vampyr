@@ -11,21 +11,37 @@ level Python interface to the [MRCPP](https://github.com/MRChemSoft/mrcpp) code.
 
 ### From source
 
-To build VAMPyR from source with OpenMP parallelization:
+To build VAMPyR from source with OpenMP parallelization using CMake:
 
 ```sh
 $ git clone https://github.com/MRChemSoft/vampyr.git
 $ cd vampyr
-$ ./setup
+$ mkdir build
 $ cd build
+$ cmake ..
 $ make
 ```
 
-To use the Python module:
+To use the VAMPyR module you need to add it to your `$PYTHONPATH`:
 
 ``` sh
-$ export PYTHONPATH=build/lib/python:$PYTHONPATH
+$ export PYTHONPATH=<path-to-vampyr>/build/lib/python<version>/site-packages:$PYTHONPATH
 ```
+
+### Using pip
+
+To build VAMPyR from source with OpenMP parallelization using `pip`, here in a virtual
+environment called `myenv`:
+
+```sh
+$ git clone https://github.com/MRChemSoft/vampyr.git
+$ cd vampyr
+$ virtualenv myenv
+$ source myenv/bin/activate
+$ python -m pip install .
+```
+
+The VAMPyR module is now available whenever you have activated the `myenv` environment.
 
 ### Using Conda
 
@@ -46,3 +62,5 @@ To list all available versions:
 
 Note that the conda-forge package is _always_ built with OpenMP support enabled
 in the MRCPP backend.
+
+The VAMPyR module is now available whenever you have activated the `myenv` environment.
