@@ -184,6 +184,9 @@ template <int D> void trees(pybind11::module &m) {
         .def("isGenNode", &MWNode<D>::isGenNode)
         .def("hasParent", &MWNode<D>::hasParent)
         .def("hasCoefs", &MWNode<D>::hasCoefs)
+        .def("center", &MWNode<D>::getCenter)
+        .def("upperBounds", &MWNode<D>::getUpperBounds)
+        .def("lowerBounds", &MWNode<D>::getLowerBounds)
         .def("__str__", [](MWNode<D> &node) {
             std::ostringstream os;
             os << node;
