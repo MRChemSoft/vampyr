@@ -20,9 +20,9 @@ target_link_libraries(_vampyr
 
 file(RELATIVE_PATH _rel ${CMAKE_INSTALL_PREFIX}/${PYMOD_INSTALL_FULLDIR} ${CMAKE_INSTALL_PREFIX})
 if(APPLE)
-  set(_RPATH "@loader_path/${_rel};@loader_path/${CMAKE_INSTALL_LIBDIR}")
+  set(_RPATH "@loader_path/${_rel}/lib;@loader_path/${CMAKE_INSTALL_LIBDIR}")
 else()
-  set(_RPATH "\$ORIGIN/${_rel};\$ORIGIN/${CMAKE_INSTALL_LIBDIR}")
+  set(_RPATH "\$ORIGIN/${_rel}/lib;\$ORIGIN/${CMAKE_INSTALL_LIBDIR}")
 endif()
 
 file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR})
@@ -48,7 +48,7 @@ set_target_properties(_vampyr
     MACOSX_RPATH ON
     SKIP_BUILD_RPATH OFF
     BUILD_WITH_INSTALL_RPATH OFF
-    INSTALL_RPATH "${_RPATH}lib"
+    INSTALL_RPATH "${_RPATH}"
     INSTALL_RPATH_USE_LINK_PATH ON
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
