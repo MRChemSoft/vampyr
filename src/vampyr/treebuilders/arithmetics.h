@@ -38,6 +38,29 @@ template <int D> void arithmetics(pybind11::module &m) {
           "bra"_a,
           "ket"_a);
 
+    m.def("dot", [] (std::vector<FunctionTree<D> *> &inp_a, std::vector<FunctionTree<D> *> &inp_b) {
+              auto out = std::unique_ptr<FunctionTree<D>>(nullptr);
+              if ((inp_a.size() > 0) && (inp_b.size() == inp_a.size())) {
+                  auto &mra = inp_a[0]->getMRA();
+                  out = std::make_unique<FunctionTree<D>>(mra);
+                  auto out_vec = FunctionTreeVector<D>();
+                  for (auto i = 0; i < inp_a.size(); ++i ) {
+                      auto *prod = new FunctionTree<D>(mra);
+                      build_grid(*prod, *inp_a[i]);
+                      build_grid(*prod, *inp_b[i]);
+                      build_grid(*prod, 1);
+                      multiply(-1.0, *prod, 1.0, *inp_a[i], *inp_b[i]);
+                      out_vec.push_back({1.0, prod});
+                  }
+                  build_grid(*out, out_vec); // Union grid
+                  add(-1.0, *out, out_vec);
+                  clear(out_vec, true);
+              }
+              return out;
+          },
+          "inp_a"_a,
+          "inp_b"_a);
+
     m.def("prod", [] (std::vector<FunctionTree<D> *> &inp) {
               auto out = std::unique_ptr<FunctionTree<D>>(nullptr);
               if (inp.size() > 0) {
@@ -163,6 +186,20 @@ template <int D> void advanced_arithmetics(pybind11::module &m) {
           "max_iter"_a = -1,
           "abs_prec"_a = false,
           "use_max_norms"_a = false);
+
+    m.def("dot",
+          pybind11::overload_cast<double,
+          FunctionTree<D> &,
+          FunctionTreeVector<D> &,
+          FunctionTreeVector<D> &,
+          int, bool>
+          (&dot<D>),
+          "prec"_a,
+          "out"_a,
+          "inp_a"_a,
+          "inp_b"_a,
+          "maxIter"_a = -1,
+          "abs_prec"_a = false);
 
     m.def("power",
           py::overload_cast<double,
