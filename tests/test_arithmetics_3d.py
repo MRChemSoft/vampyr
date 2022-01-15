@@ -123,6 +123,12 @@ def test_Multiplication():
     assert tree_9.nNodes() > tree_1.nNodes()
     assert tree_9.integrate() == pytest.approx(tree_1.squaredNorm(), rel=epsilon)
 
+    tree_vec_3 = []
+    tree_vec_3.append(tree_1)
+    tree_vec_3.append(tree_1)
+    tree_vec_3.append(tree_1)
+    tree_10 = vp.dot(tree_vec_3, tree_vec_3)
+    assert tree_10.integrate() == pytest.approx(3*tree_1.squaredNorm(), rel=epsilon)
 
 def test_OverloadedOperators():
     tree_1 = vp.FunctionTree(mra)
