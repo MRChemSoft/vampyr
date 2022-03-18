@@ -1,5 +1,6 @@
 ![VAMPyR logo](https://github.com/MRChemSoft/VAMPyR/raw/master/docs/gfx/logo.png)
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4117602.svg)](https://doi.org/10.5281/zenodo.4117602)
 [![License](https://img.shields.io/badge/license-%20LGPLv3-blue.svg)](../master/LICENSE)
 ![Build and test VAMPyR](https://github.com/MRChemSoft/vampyr/workflows/Build%20and%20test%20VAMPyR/badge.svg)
 [![codecov](https://codecov.io/gh/MRChemSoft/vampyr/branch/master/graph/badge.svg)](https://codecov.io/gh/MRChemSoft/vampyr)
