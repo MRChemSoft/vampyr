@@ -1,6 +1,3 @@
-import numpy as np
-import pytest
-
 from vampyr import BottomUp, Hilbert, Lebesgue, TopDown
 from vampyr import vampyr3d as vp
 
@@ -13,7 +10,7 @@ N = -1
 n = 1
 l = [2, 2, 2]
 name = "func"
-two_d = 2 ** D
+two_d = 2**D
 kp1_d = (k + 1) ** D
 
 world = vp.BoundingBox(scale=N)
@@ -49,7 +46,7 @@ def test_FunctionTreeZero():
 
 def test_FunctionTreeSave():
     tree.setZero()
-    tree.saveTree(filename=name)
+    path = tree.saveTree(filename=name)
 
     tree_2 = vp.FunctionTree(mra)
     tree_2.setName("func_2")
@@ -61,6 +58,8 @@ def test_FunctionTreeSave():
     assert tree_2.MRA() == tree.MRA()
     assert tree_2(r0) == 0.0
     assert tree_2(r1) == 0.0
+
+    path.unlink()
 
 
 def test_NodeIndex():
@@ -129,7 +128,7 @@ def test_GenNode():
     assert tree.nEndNodes() == 1
     assert tree.nGenNodes() == 16
 
-    two_d = 2 ** D
+    two_d = 2**D
     kp1_d = (k + 1) ** D
     assert node.hasCoefs()
     assert node.isAllocated()

@@ -1,5 +1,9 @@
 #pragma once
 
+#include <filesystem>
+
+#include <pybind11/stl/filesystem.h>
+
 #include <MRCPP/trees/FunctionNode.h>
 #include <MRCPP/trees/FunctionTree.h>
 #include <MRCPP/trees/MWNode.h>
@@ -50,7 +54,14 @@ template <int D> void trees(pybind11::module &m) {
         .def("deleteGenerated", &FunctionTree<D>::deleteGenerated)
         .def("integrate", &FunctionTree<D>::integrate)
         .def("normalize", &FunctionTree<D>::normalize)
-        .def("saveTree", &FunctionTree<D>::saveTree, "filename"_a)
+        .def(
+            "saveTree",
+            [](FunctionTree<D> &obj, const std::string &filename) {
+                namespace fs = std::filesystem;
+                obj.saveTree(filename);
+                return fs::absolute(fs::path(filename + ".tree"));
+            },
+            "filename"_a)
         .def("loadTree", &FunctionTree<D>::loadTree, "filename"_a)
         .def(
             "crop",
