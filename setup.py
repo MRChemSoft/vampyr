@@ -13,8 +13,6 @@ except ImportError:
     )
     raise
 
-from setuptools import find_packages
-
 
 def version_from_file(rel_path):
     here = Path(__file__).parent
@@ -24,24 +22,10 @@ def version_from_file(rel_path):
 
 
 setup(
-    name="vampyr",
     version=version_from_file("VERSION"),
-    description="The Very Accurate Multiresolution Python Routines (VAMPyR) package is a high level Python interface to the MRCPP code.",
-    author="Magnar Bjørgve",
-    license="LGPL",
-    packages=find_packages(where="src"),
+    packages=["vampyr"],
     package_dir={"": "src"},
     cmake_args=[
-        "-DCMAKE_JOB_POOL_COMPILE:STRING=compile",
-        "-DCMAKE_JOB_POOL_LINK:STRING=link",
-        "-DCMAKE_JOB_POOLS:STRING=compile=4;link=2",
+        "-DPYMOD_INSTALL_FULLDIR:STRING=src/vampyr",
     ],
-    include_package_data=True,
-    extras_require={
-        "test": ["numpy", "pytest"],
-        "docs": [
-            "Sphinx",
-            "sphinx_rtd_theme",
-        ],
-    },
 )

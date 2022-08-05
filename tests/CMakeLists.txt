@@ -43,7 +43,6 @@ foreach(_f IN LISTS _vmp_pytests)
     )
 endforeach()
 
-
 # install the current folder
 install(
   DIRECTORY

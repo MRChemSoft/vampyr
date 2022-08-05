@@ -18,11 +18,23 @@ target_link_libraries(_vampyr
     MRCPP::mrcpp
   )
 
-file(RELATIVE_PATH _rel ${CMAKE_INSTALL_PREFIX}/${PYMOD_INSTALL_FULLDIR} ${CMAKE_INSTALL_PREFIX})
+# handle RPATH
+set(_plat_token "")
 if(APPLE)
-  set(_RPATH "@loader_path/${_rel}/lib;@loader_path/${CMAKE_INSTALL_LIBDIR}")
+  set(_plat_token "@rpath")
 else()
-  set(_RPATH "\$ORIGIN/${_rel}/lib;\$ORIGIN/${CMAKE_INSTALL_LIBDIR}")
+  set(_plat_token "\$ORIGIN")
+endif()
+
+file(RELATIVE_PATH _rel "${CMAKE_INSTALL_PREFIX}/${PYMOD_INSTALL_FULLDIR}" "${CMAKE_INSTALL_PREFIX}")
+set(_RPATH "${_plat_token}/${_rel}/lib;${_plat_token}/${CMAKE_INSTALL_LIBDIR}")
+
+if(SKBUILD AND MRCPP_FETCHED)
+  file(RELATIVE_PATH _rel "${CMAKE_CURRENT_LIST_DIR}" "${CMAKE_INSTALL_PREFIX}")
+  list(APPEND _RPATH
+    "${_plat_token}/${_rel}/${CMAKE_INSTALL_LIBDIR}"  # this is a workaround for *editable* installations with pip
+    "${_plat_token}/../../../../lib"                  # this is a workaround for installations with pip
+    )
 endif()
 
 file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR})
@@ -45,7 +57,6 @@ file(
 
 set_target_properties(_vampyr
   PROPERTIES
-    MACOSX_RPATH ON
     SKIP_BUILD_RPATH OFF
     BUILD_WITH_INSTALL_RPATH OFF
     INSTALL_RPATH "${_RPATH}"

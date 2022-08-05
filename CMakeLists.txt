@@ -53,22 +53,14 @@ include(${PROJECT_SOURCE_DIR}/cmake/downloaded/autocmake_default_build_paths.cma
 include(${PROJECT_SOURCE_DIR}/cmake/downloaded/autocmake_safeguards.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/downloaded/autocmake_code_coverage.cmake)
 
-find_package(Python 3.6 REQUIRED COMPONENTS Interpreter Development)
-if(SKBUILD)
-  # Scikit-Build does not add your site-packages to the search path automatically,
-  # so we need to add it _or_ the pybind11 specific directory here.
-  execute_process(
-    COMMAND
-      "${Python_EXECUTABLE}" -c
-      "import pybind11; print(pybind11.get_cmake_dir())"
-    OUTPUT_VARIABLE _tmp_dir
-    OUTPUT_STRIP_TRAILING_WHITESPACE COMMAND_ECHO STDOUT)
-  list(APPEND CMAKE_PREFIX_PATH "${_tmp_dir}")
-endif()
+find_package(Python 3.7 REQUIRED COMPONENTS Interpreter Development)
 # download pybind11 if not available on the system
 include(${PROJECT_SOURCE_DIR}/cmake/custom/fetch_pybind11.cmake)
 # download MRCPP if not available on the system
 include(${PROJECT_SOURCE_DIR}/cmake/custom/fetch_mrcpp.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/custom/main.cmake)
-include(${PROJECT_SOURCE_DIR}/cmake/custom/tests.cmake)
+# when using pip, tests are handled without CTest
+if(NOT SKBUILD)
+  include(${PROJECT_SOURCE_DIR}/cmake/custom/tests.cmake)
+endif()
 include(${PROJECT_SOURCE_DIR}/cmake/downloaded/autocmake_save_flags.cmake)
