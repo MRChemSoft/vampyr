@@ -1,11 +1,8 @@
 [tool.isort]
-multi_line_output = 3
-include_trailing_comma = true
-force_grid_wrap = 0
-use_parentheses = true
-line_length = 88
+profile = "black"
 
 [tool.pytest.ini_options]
+testpaths = [ "tests" ]
 addopts = "-rws"
 norecursedirs = [
   "env",
@@ -20,11 +17,12 @@ norecursedirs = [
 
 [build-system]
 requires = [
-    "setuptools>=42",
-    "wheel",
-    "pybind11>=2.7.1",
-    "cmake>=3.17",
-    "scikit-build>=0.12",
+  "pybind11[global]>=2.6",
+  "setuptools>=46.4.0",
+  "wheel",
+  "scikit-build>=0.13",
+  "cmake>=3.17",
+  "ninja; platform_system!='Windows'",
 ]
 
 build-backend = "setuptools.build_meta"
