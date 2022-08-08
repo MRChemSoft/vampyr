@@ -59,8 +59,5 @@ include(${PROJECT_SOURCE_DIR}/cmake/custom/fetch_pybind11.cmake)
 # download MRCPP if not available on the system
 include(${PROJECT_SOURCE_DIR}/cmake/custom/fetch_mrcpp.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/custom/main.cmake)
-# when using pip, tests are handled without CTest
-if(NOT SKBUILD)
-  include(${PROJECT_SOURCE_DIR}/cmake/custom/tests.cmake)
-endif()
+include(${PROJECT_SOURCE_DIR}/cmake/custom/tests.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/downloaded/autocmake_save_flags.cmake)

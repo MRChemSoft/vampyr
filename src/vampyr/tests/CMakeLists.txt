@@ -19,19 +19,19 @@ foreach(_f IN LISTS _vmp_pytests)
   file(
      CREATE_LINK
       ${CMAKE_CURRENT_LIST_DIR}/${_f}
-      ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR}/../${_f}
+      ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR}/tests/${_f}
     COPY_ON_ERROR
     SYMBOLIC
     )
 
   # extract the name and label for the test from the file name
   # by removing the "test_" prefix and the ".py" suffix
-  string(REGEX REPLACE "test_(.*).py" "\\1" _name ${_f})
+  string(REGEX REPLACE "^test_(.*).py$" "\\1" _name ${_f})
   add_test(
     NAME
       ${_name}
     COMMAND
-      ${Python_EXECUTABLE} -m pytest -x -rws -vv test_${_name}.py
+      ${Python_EXECUTABLE} -m pytest -vv -s --pyargs vampyr -k test_${_name}
     WORKING_DIRECTORY
       ${PROJECT_BINARY_DIR}/${PYMOD_INSTALL_FULLDIR}/..
     )
