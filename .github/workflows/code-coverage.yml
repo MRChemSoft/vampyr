@@ -26,7 +26,7 @@ jobs:
           activate-environment: vampyr-gha
           environment-file: .github/vampyr-gha.yml
           channel-priority: true
-          python-version: 3.6
+          python-version: 3.9
 
     - name: Configure
       shell: bash -l {0}
@@ -43,7 +43,7 @@ jobs:
     - name: Test VAMPyR and generate coverage report
       shell: bash -l {0}
       run: |
-        cd build/lib/python3.6/site-packages
+        cd build/lib/python3.9/site-packages
         python -m pytest --cov=vampyr --cov-report=xml --doctest-modules
 
     - name: Upload coverage to Codecov
