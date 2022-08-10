@@ -1,5 +1,5 @@
 # Turn on testing
-enable_testing()
+include(CTest)
 
 # This must come last!!
-add_subdirectory(tests)
+add_subdirectory(src/vampyr/tests)

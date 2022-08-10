@@ -4,6 +4,7 @@ channels:
 dependencies:
   - cmake
   - cxx-compiler
+  - eigen
   - ninja
   - numpy
   - pybind11

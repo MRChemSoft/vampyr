@@ -1,19 +1,16 @@
-import numpy as np
-import pytest
-
 from vampyr import BottomUp, Hilbert, Lebesgue, TopDown
-from vampyr import vampyr1d as vp
+from vampyr import vampyr3d as vp
 
-r0 = [0.1]
-r1 = [-0.1]
+r0 = [0.1, 0.1, 0.1]
+r1 = [-0.1, -0.1, -0.1]
 
-D = 1
+D = 3
 k = 5
 N = -1
 n = 1
-l = [2]
+l = [2, 2, 2]
 name = "func"
-two_d = 2 ** D
+two_d = 2**D
 kp1_d = (k + 1) ** D
 
 world = vp.BoundingBox(scale=N)
@@ -24,7 +21,6 @@ tree = vp.FunctionTree(mra, name)
 
 
 def test_FunctionTree():
-    assert tree.norm() < 0.0
     assert tree.squaredNorm() < 0.0
     assert tree.nNodes() == 1
     assert tree.nEndNodes() == 1
@@ -38,7 +34,6 @@ def test_FunctionTree():
 def test_FunctionTreeZero():
     tree.setZero()
 
-    assert tree.norm() == 0.0
     assert tree.squaredNorm() == 0.0
     assert tree.integrate() == 0.0
     assert tree(r0) == 0.0
@@ -46,25 +41,25 @@ def test_FunctionTreeZero():
 
     tree.clear()
 
-    assert tree.norm() < 0.0
     assert tree.squaredNorm() < 0.0
 
 
 def test_FunctionTreeSave():
     tree.setZero()
-    tree.saveTree(filename=name)
+    path = tree.saveTree(filename=name)
 
     tree_2 = vp.FunctionTree(mra)
     tree_2.setName("func_2")
     tree_2.loadTree(filename=name)
 
     assert tree_2.name() == "func_2"
-    assert tree_2.norm() == 0.0
     assert tree_2.squaredNorm() == 0.0
     assert tree_2.integrate() == 0.0
     assert tree_2.MRA() == tree.MRA()
     assert tree_2(r0) == 0.0
     assert tree_2(r1) == 0.0
+
+    path.unlink()
 
 
 def test_NodeIndex():
@@ -73,13 +68,13 @@ def test_NodeIndex():
     child_1 = root.child(1)
 
     assert root.scale() == N
-    assert root.translation() == [0]
+    assert root.translation() == [0, 0, 0]
     assert parent.scale() == N - 1
     assert child_0.scale() == N + 1
     assert child_1.scale() == N + 1
-    assert parent.translation() == [0]
-    assert child_0.translation() == [0]
-    assert child_1.translation() == [1]
+    assert parent.translation() == [0, 0, 0]
+    assert child_0.translation() == [0, 0, 0]
+    assert child_1.translation() == [1, 0, 0]
     assert child_0 != root
     assert child_0 != parent
     assert child_0 != child_1
@@ -89,7 +84,7 @@ def test_NodeIndex():
     assert parent.child(1) != root
 
     parent.setScale(N)
-    child_1.setTranslation([0])
+    child_1.setTranslation([0, 0, 0])
 
     assert parent == root
     assert child_1 == child_0
@@ -131,9 +126,9 @@ def test_GenNode():
 
     assert tree.nNodes() == 1
     assert tree.nEndNodes() == 1
-    assert tree.nGenNodes() == 4
+    assert tree.nGenNodes() == 16
 
-    two_d = 2 ** D
+    two_d = 2**D
     kp1_d = (k + 1) ** D
     assert node.hasCoefs()
     assert node.isAllocated()
