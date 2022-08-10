@@ -5,19 +5,17 @@
 
 namespace mrcpp {
 
-template <int D>
-class PyScalingProjector final {
+template <int D> class PyScalingProjector final {
 public:
     PyScalingProjector(const MultiResolutionAnalysis<D> &mra, double prec)
-        : min_scale(mra.getRootScale())
-        , precision(prec)
-        , MRA(mra) {
-    }
+            : min_scale(mra.getRootScale())
+            , precision(prec)
+            , MRA(mra) {}
     PyScalingProjector(const MultiResolutionAnalysis<D> &mra, int scale)
-        : min_scale(scale)
-        , precision(-1.0)
-        , MRA(mra) {
-            if (this->min_scale < this->MRA.getRootScale()) MSG_ERROR("Invalid scale");
+            : min_scale(scale)
+            , precision(-1.0)
+            , MRA(mra) {
+        if (this->min_scale < this->MRA.getRootScale()) MSG_ERROR("Invalid scale");
     }
 
     std::unique_ptr<FunctionTree<D>> operator()(RepresentableFunction<D> &func) {
@@ -36,9 +34,7 @@ public:
             for (int n = 0; n < out->getNEndNodes(); n++) {
                 int two_d = out->getTDim();
                 int kp1_d = out->getKp1_d();
-                for (int i = 1; i < two_d; i++) {
-                    out->getEndMWNode(n).zeroCoefBlock(i, kp1_d);
-                }
+                for (int i = 1; i < two_d; i++) { out->getEndMWNode(n).zeroCoefBlock(i, kp1_d); }
             }
             // Propagate result to root scale
             out->mwTransform(BottomUp);
@@ -61,9 +57,7 @@ public:
             for (int n = 0; n < out->getNEndNodes(); n++) {
                 int two_d = out->getTDim();
                 int kp1_d = out->getKp1_d();
-                for (int i = 1; i < two_d; i++) {
-                    out->getEndMWNode(n).zeroCoefBlock(i, kp1_d);
-                }
+                for (int i = 1; i < two_d; i++) { out->getEndMWNode(n).zeroCoefBlock(i, kp1_d); }
             }
             // Propagate result to root scale
             out->mwTransform(BottomUp);
@@ -77,13 +71,12 @@ private:
     MultiResolutionAnalysis<D> MRA;
 };
 
-template <int D>
-class PyWaveletProjector final {
+template <int D> class PyWaveletProjector final {
 public:
     PyWaveletProjector(const MultiResolutionAnalysis<D> &mra, int scale)
-        : min_scale(scale)
-        , MRA(mra) {
-            if (this->min_scale < this->MRA.getRootScale()) MSG_ERROR("Invalid scale");
+            : min_scale(scale)
+            , MRA(mra) {
+        if (this->min_scale < this->MRA.getRootScale()) MSG_ERROR("Invalid scale");
     }
 
     std::unique_ptr<FunctionTree<D>> operator()(RepresentableFunction<D> &func) {

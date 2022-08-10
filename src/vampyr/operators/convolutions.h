@@ -20,23 +20,23 @@ template <int D> void convolutions(pybind11::module &m) {
     py::class_<ConvolutionOperator<D>>(m, "ConvolutionOperator");
 
     py::class_<IdentityConvolution<D>, ConvolutionOperator<D>>(m, "IdentityConvolution")
-        .def(py::init<const MultiResolutionAnalysis<D> &, double>(),
-             "mra"_a,
-             "prec"_a)
+        .def(py::init<const MultiResolutionAnalysis<D> &, double>(), "mra"_a, "prec"_a)
         .def(py::init<const MultiResolutionAnalysis<D> &, double, int, int>(),
              "mra"_a,
              "prec"_a,
-             "root"_a=0,
-             "reach"_a=1)
-        .def("__call__", [] (IdentityConvolution<D> &I, FunctionTree<D> *inp) {
+             "root"_a = 0,
+             "reach"_a = 1)
+        .def(
+            "__call__",
+            [](IdentityConvolution<D> &I, FunctionTree<D> *inp) {
                 auto out = std::make_unique<FunctionTree<D>>(inp->getMRA());
                 apply<D>(I.getBuildPrec(), *out, I, *inp);
                 return out;
             },
             "inp"_a);
 
-    if constexpr (D==3) helmholtz_operator(m);
-    if constexpr (D==3) poisson_operator(m);
+    if constexpr (D == 3) helmholtz_operator(m);
+    if constexpr (D == 3) poisson_operator(m);
 }
 
 void poisson_operator(pybind11::module &m) {
@@ -45,18 +45,18 @@ void poisson_operator(pybind11::module &m) {
     using namespace pybind11::literals;
 
     py::class_<PoissonOperator, ConvolutionOperator<3>>(m, "PoissonOperator")
-        .def(py::init<const MultiResolutionAnalysis<3> &, double>(),
-             "mra"_a,
-             "prec"_a)
+        .def(py::init<const MultiResolutionAnalysis<3> &, double>(), "mra"_a, "prec"_a)
         .def(py::init<const MultiResolutionAnalysis<3> &, double, int, int>(),
              "mra"_a,
              "prec"_a,
-             "root"_a=0,
-             "reach"_a=1)
-        .def("__call__", [] (PoissonOperator &P, FunctionTree<3> *inp) {
+             "root"_a = 0,
+             "reach"_a = 1)
+        .def(
+            "__call__",
+            [](PoissonOperator &P, FunctionTree<3> *inp) {
                 auto out = std::make_unique<FunctionTree<3>>(inp->getMRA());
                 apply<3>(P.getBuildPrec(), *out, P, *inp);
-                out->rescale(1.0/(4.0*mrcpp::pi));
+                out->rescale(1.0 / (4.0 * mrcpp::pi));
                 return out;
             },
             "inp"_a);
@@ -68,20 +68,19 @@ void helmholtz_operator(pybind11::module &m) {
     using namespace pybind11::literals;
 
     py::class_<HelmholtzOperator, ConvolutionOperator<3>>(m, "HelmholtzOperator")
-        .def(py::init<const MultiResolutionAnalysis<3> &, double, double>(),
-             "mra"_a,
-             "exp"_a,
-             "prec"_a)
+        .def(py::init<const MultiResolutionAnalysis<3> &, double, double>(), "mra"_a, "exp"_a, "prec"_a)
         .def(py::init<const MultiResolutionAnalysis<3> &, double, double, int, int>(),
              "mra"_a,
              "exp"_a,
              "prec"_a,
-             "root"_a=0,
-             "reach"_a=1)
-        .def("__call__", [] (HelmholtzOperator &H, FunctionTree<3> *inp) {
+             "root"_a = 0,
+             "reach"_a = 1)
+        .def(
+            "__call__",
+            [](HelmholtzOperator &H, FunctionTree<3> *inp) {
                 auto out = std::make_unique<FunctionTree<3>>(inp->getMRA());
                 apply<3>(H.getBuildPrec(), *out, H, *inp);
-                out->rescale(1.0/(4.0*mrcpp::pi));
+                out->rescale(1.0 / (4.0 * mrcpp::pi));
                 return out;
             },
             "inp"_a);
