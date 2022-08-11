@@ -8,7 +8,7 @@
       flake = false;
     };
     mach-nix = {
-      url = "mach-nix/3.4.0";
+      url = "mach-nix/3.5.0";
       inputs.pypi-deps-db.follows = "pypi-deps-db";
     };
   };
@@ -19,8 +19,8 @@
         pkgs = nixpkgs.legacyPackages.${system};
         pythonEnv = mach-nix.lib."${system}".mkPython {
           requirements = builtins.readFile ./requirements.txt + ''
-                  # additional dependencies for local work
-                  #jupyterlab
+            # additional dependencies for local work
+            #jupyterlab
             pre-commit
           '';
         };
