@@ -19,9 +19,9 @@
         pkgs = nixpkgs.legacyPackages.${system};
         pythonEnv = mach-nix.lib."${system}".mkPython {
           requirements = builtins.readFile ./requirements.txt + ''
-            # additional dependencies for local work
-            #jupyterlab
-	    pre-commit
+                  # additional dependencies for local work
+                  #jupyterlab
+            pre-commit
           '';
         };
       in
