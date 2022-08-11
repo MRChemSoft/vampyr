@@ -1,7 +1,7 @@
 #pragma once
 
-#include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
+#include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
 #include <array>
@@ -19,16 +19,12 @@ template <int D> void world(pybind11::module &m) {
     using namespace pybind11::literals;
 
     pybind11::class_<BoundingBox<D>>(m, "BoundingBox")
-        .def(py::init<int,
-                      std::array<int, D> &,
-                      std::array<int, D> &,
-                      std::array<double, D> &,
-                      bool>(),
-                      "scale"_a = 0,
-                      "corner"_a = std::array<int, D>{},
-                      "nboxes"_a = std::array<int, D>{},
-                      "scaling"_a = std::array<double, D>{},
-                      "pbc"_a = false)
+        .def(py::init<int, std::array<int, D> &, std::array<int, D> &, std::array<double, D> &, bool>(),
+             "scale"_a = 0,
+             "corner"_a = std::array<int, D>{},
+             "nboxes"_a = std::array<int, D>{},
+             "scaling"_a = std::array<double, D>{},
+             "pbc"_a = false)
         .def("boxLengths", &BoundingBox<D>::getBoxLengths)
         .def("boxLength", &BoundingBox<D>::getBoxLength, "dim"_a)
         .def("upperBounds", &BoundingBox<D>::getUpperBounds)
@@ -52,24 +48,9 @@ template <int D> void world(pybind11::module &m) {
         });
 
     pybind11::class_<MultiResolutionAnalysis<D>>(m, "MultiResolutionAnalysis")
-        .def(py::init<std::array<int, 2>,
-                      int,
-                      int>(),
-                      "box"_a,
-                      "order"_a,
-                      "max_depth"_a = 30)
-        .def(py::init<const BoundingBox<D>,
-                      int,
-                      int>(),
-                      "box"_a,
-                      "order"_a,
-                      "max_depth"_a = 30)
-        .def(py::init<const BoundingBox<D>,
-                      const ScalingBasis,
-                      int>(),
-                      "box"_a,
-                      "basis"_a,
-                      "max_depth"_a = 30)
+        .def(py::init<std::array<int, 2>, int, int>(), "box"_a, "order"_a, "max_depth"_a = 30)
+        .def(py::init<const BoundingBox<D>, int, int>(), "box"_a, "order"_a, "max_depth"_a = 30)
+        .def(py::init<const BoundingBox<D>, const ScalingBasis, int>(), "box"_a, "basis"_a, "max_depth"_a = 30)
         .def("basis", &MultiResolutionAnalysis<D>::getScalingBasis)
         .def("world", &MultiResolutionAnalysis<D>::getWorldBox)
         .def("maxDepth", &MultiResolutionAnalysis<D>::getMaxDepth)
@@ -81,9 +62,9 @@ template <int D> void world(pybind11::module &m) {
             os << "================================================================" << std::endl;
             os << "                    MultiResolution Analysis                    " << std::endl;
             os << "----------------------------------------------------------------" << std::endl;
-            os << mra.getScalingBasis()                                              << std::endl;
+            os << mra.getScalingBasis() << std::endl;
             os << "----------------------------------------------------------------" << std::endl;
-            os << mra.getWorldBox()                                                  << std::endl;
+            os << mra.getWorldBox() << std::endl;
             os << "================================================================" << std::endl;
             return os.str();
         });

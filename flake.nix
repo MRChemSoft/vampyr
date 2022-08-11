@@ -21,6 +21,7 @@
           requirements = builtins.readFile ./requirements.txt + ''
             # additional dependencies for local work
             #jupyterlab
+	    pre-commit
           '';
         };
       in

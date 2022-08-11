@@ -51,8 +51,8 @@ def test_Addition():
     tree_5 = vp.FunctionTree(mra)
     vp.advanced.build_grid(out=tree_5, inp=tree_1)
     tree_5.setZero()
-    tree_5 +=tree_1
-    tree_5 += 1.0*tree_1
+    tree_5 += tree_1
+    tree_5 += 1.0 * tree_1
     assert tree_5.nNodes() == tree_1.nNodes()
     assert tree_5.integrate() == pytest.approx(2.0 * tree_1.integrate(), rel=epsilon)
 
@@ -128,7 +128,8 @@ def test_Multiplication():
     tree_vec_3.append(tree_1)
     tree_vec_3.append(tree_1)
     tree_10 = vp.dot(tree_vec_3, tree_vec_3)
-    assert tree_10.integrate() == pytest.approx(3*tree_1.squaredNorm(), rel=epsilon)
+    assert tree_10.integrate() == pytest.approx(3 * tree_1.squaredNorm(), rel=epsilon)
+
 
 def test_OverloadedOperators():
     tree_1 = vp.FunctionTree(mra)
@@ -186,7 +187,7 @@ def test_OverloadedOperators():
     assert tree_7.nNodes() == ref_nodes
     assert tree_7.integrate() == pytest.approx(3.0 * ref_int, rel=epsilon)
 
-    tree_8 = tree_1 ** 2.0
+    tree_8 = tree_1**2.0
     assert tree_8.nNodes() > ref_nodes
     assert tree_8.integrate() == pytest.approx(ref_norm, rel=epsilon)
 
@@ -194,7 +195,7 @@ def test_OverloadedOperators():
     assert tree_9.nNodes() > ref_nodes
     assert tree_9.integrate() == pytest.approx(ref_norm, rel=epsilon)
 
-    tree_10 = (tree_1 * tree_1).crop(epsilon) + (tree_1 ** 2).crop(epsilon)
+    tree_10 = (tree_1 * tree_1).crop(epsilon) + (tree_1**2).crop(epsilon)
     assert tree_10.nNodes() > tree_1.nNodes()
     assert tree_10.nNodes() < tree_9.nNodes()
     assert tree_10.integrate() == pytest.approx(2.0 * ref_norm, rel=epsilon)

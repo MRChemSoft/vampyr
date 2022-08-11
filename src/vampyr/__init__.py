@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from .environ import _set_mwfilters_path
 from ._vampyr import *
+from .environ import _set_mwfilters_path
 
 __version__ = _vampyr.__version__
 __doc__ = _vampyr.__doc__

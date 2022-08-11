@@ -5,8 +5,8 @@
  *          UiT - The Arctic University of Norway
  */
 
-#include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
+#include <pybind11/pybind11.h>
 
 #include <MRCPP/core/InterpolatingBasis.h>
 #include <MRCPP/core/LegendreBasis.h>
@@ -23,7 +23,6 @@ void bases(pybind11::module &m) {
     namespace py = pybind11;
     using namespace pybind11::literals;
 
-
     py::class_<Polynomial, PyRepresentableFunction<1, Polynomial>, RepresentableFunction<1>>(m, "Polynomial");
 
     py::class_<PyScalingFunction, Polynomial>(m, "ScalingFunction");
@@ -35,12 +34,18 @@ void bases(pybind11::module &m) {
         .def("scalingType", &ScalingBasis::getScalingType)
         .def("scalingOrder", &ScalingBasis::getScalingOrder)
         .def("quadratureOrder", &ScalingBasis::getQuadratureOrder)
-        .def("scaling", [](const ScalingBasis &basis, int i, int l, int n) {
-            return PyScalingFunction(basis, i, l, n);
-        }, "i"_a, "l"_a=0, "n"_a=0)
-        .def("wavelet", [](const ScalingBasis &basis, int i, int l, int n) {
-            return PyWaveletFunction(basis, i, l, n);
-        }, "i"_a, "l"_a=0, "n"_a=0)
+        .def(
+            "scaling",
+            [](const ScalingBasis &basis, int i, int l, int n) { return PyScalingFunction(basis, i, l, n); },
+            "i"_a,
+            "l"_a = 0,
+            "n"_a = 0)
+        .def(
+            "wavelet",
+            [](const ScalingBasis &basis, int i, int l, int n) { return PyWaveletFunction(basis, i, l, n); },
+            "i"_a,
+            "l"_a = 0,
+            "n"_a = 0)
         .def(py::self == py::self)
         .def(py::self != py::self)
         .def("__str__", [](const ScalingBasis &basis) {
@@ -49,11 +54,9 @@ void bases(pybind11::module &m) {
             return os.str();
         });
 
-    py::class_<InterpolatingBasis, ScalingBasis>(m, "InterpolatingBasis")
-        .def(py::init<int>(), "order"_a);
+    py::class_<InterpolatingBasis, ScalingBasis>(m, "InterpolatingBasis").def(py::init<int>(), "order"_a);
 
-    py::class_<LegendreBasis, ScalingBasis>(m, "LegendreBasis")
-        .def(py::init<int>(), "order"_a);
+    py::class_<LegendreBasis, ScalingBasis>(m, "LegendreBasis").def(py::init<int>(), "order"_a);
 }
 
 } // namespace vampyr
