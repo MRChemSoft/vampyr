@@ -27,16 +27,15 @@
       in
       {
         devShell = pkgs.mkShell {
-          nativeBuildInputs = with pkgs; [
+          buildInputs = with pkgs; [
             cmake
             eigen
             gcc
-            openmpi
             ninja
-          ];
-          buildInputs = [
+            openmpi
             pythonEnv
           ];
+          hardeningDisable = [ "all" ];
           NINJA_STATUS = "[Built edge %f of %t in %e sec] ";
         };
       });

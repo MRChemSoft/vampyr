@@ -5,6 +5,12 @@
  *          UiT - The Arctic University of Norway
  */
 
+#include <mpi.h>
+// see here: https://github.com/mpi4py/mpi4py/issues/19#issuecomment-768143143
+#ifdef MSMPI_VER
+#define PyMPI_HAVE_MPI_Message 1
+#endif
+#include <mpi4py/mpi4py.h>
 #include <pybind11/pybind11.h>
 
 #include <string>
@@ -27,6 +33,45 @@
 namespace py = pybind11;
 using namespace mrcpp;
 using namespace pybind11::literals;
+
+struct mpi4py_comm {
+    mpi4py_comm() = default;
+    mpi4py_comm(MPI_Comm value)
+            : value(value) {}
+    operator MPI_Comm() { return value; }
+
+    MPI_Comm value;
+};
+
+namespace pybind11 {
+namespace detail {
+template <> struct type_caster<mpi4py_comm> {
+public:
+    PYBIND11_TYPE_CASTER(mpi4py_comm, _("mpi4py_comm"));
+
+    // Python -> C++
+    bool load(handle src, bool) {
+        PyObject *py_src = src.ptr();
+
+        // Check that we have been passed an mpi4py communicator
+        if (PyObject_TypeCheck(py_src, &PyMPIComm_Type)) {
+            // Convert to regular MPI communicator
+            value.value = *PyMPIComm_Get(py_src);
+        } else {
+            return false;
+        }
+
+        return !PyErr_Occurred();
+    }
+
+    // C++ -> Python
+    static handle cast(mpi4py_comm src, return_value_policy /* policy */, handle /* parent */) {
+        // Create an mpi4py handle
+        return PyMPIComm_New(src.value);
+    }
+};
+} // namespace detail
+} // namespace pybind11
 
 namespace vampyr {
 
@@ -69,7 +114,32 @@ template <int D> void bind_vampyr(py::module &mod) noexcept {
     bind_advanced<D>(sub_mod);
 }
 
+// recieve a communicator and check if it equals MPI_COMM_WORLD
+void print_comm(mpi4py_comm comm) {
+    if (comm == MPI_COMM_WORLD) {
+        std::cout << "Received the world." << std::endl;
+    } else {
+        std::cout << "Received something else." << std::endl;
+    }
+}
+
+mpi4py_comm get_comm() {
+    return MPI_COMM_WORLD; // Just return MPI_COMM_WORLD for demonstration
+}
+
 PYBIND11_MODULE(_vampyr, m) {
+
+    // initialize mpi4py's C-API
+    if (import_mpi4py() < 0) {
+        // mpi4py calls the Python C API
+        // we let pybind11 give us the detailed traceback
+        throw py::error_already_set();
+    }
+
+    // register the test functions
+    m.def("print_comm", &print_comm, "Do something with the mpi4py communicator.");
+    m.def("get_comm", &get_comm, "Return some communicator.");
+
     m.doc() = R"pbdoc(
         VAMPyR
         ------

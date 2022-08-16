@@ -11,11 +11,14 @@ target_compile_definitions(_vampyr
 target_include_directories(_vampyr
   PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}
+  SYSTEM PRIVATE
+    ${mpi4py_INCLUDE_DIRS}
   )
 
 target_link_libraries(_vampyr
   PUBLIC
     MRCPP::mrcpp
+    $<BUILD_INTERFACE:$<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>>
   )
 
 # handle RPATH
