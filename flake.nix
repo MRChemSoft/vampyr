@@ -8,7 +8,7 @@
       flake = false;
     };
     mach-nix = {
-      url = "mach-nix/3.4.0";
+      url = "mach-nix/3.5.0";
       inputs.pypi-deps-db.follows = "pypi-deps-db";
     };
   };
@@ -21,22 +21,21 @@
           requirements = builtins.readFile ./requirements.txt + ''
             # additional dependencies for local work
             #jupyterlab
-	    pre-commit
+            pre-commit
           '';
         };
       in
       {
         devShell = pkgs.mkShell {
-          nativeBuildInputs = with pkgs; [
+          buildInputs = with pkgs; [
             cmake
             eigen
             gcc
-            openmpi
             ninja
-          ];
-          buildInputs = [
+            openmpi
             pythonEnv
           ];
+          hardeningDisable = [ "all" ];
           NINJA_STATUS = "[Built edge %f of %t in %e sec] ";
         };
       });

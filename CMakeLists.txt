@@ -54,6 +54,8 @@ include(${PROJECT_SOURCE_DIR}/cmake/downloaded/autocmake_safeguards.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/downloaded/autocmake_code_coverage.cmake)
 
 find_package(Python 3.7 REQUIRED COMPONENTS Interpreter Development)
+# find MPI and mpi4py
+include(${PROJECT_SOURCE_DIR}/cmake/custom/mpi.cmake)
 # download pybind11 if not available on the system
 include(${PROJECT_SOURCE_DIR}/cmake/custom/fetch_pybind11.cmake)
 # download MRCPP if not available on the system
