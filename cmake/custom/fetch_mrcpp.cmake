@@ -16,7 +16,7 @@ else()
   FetchContent_Declare(mrcpp
     QUIET
     GIT_REPOSITORY
-      https://github.com/MRChemSoft/mrcpp.git
+      https://github.com/stigrj/mrcpp.git
     GIT_TAG
       e2f0e7e897261dbf
     )

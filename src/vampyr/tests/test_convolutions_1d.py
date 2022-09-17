@@ -17,6 +17,26 @@ alpha = (beta / np.pi) ** (D / 2.0)
 ffunc = vp.GaussFunc(alpha=alpha, beta=beta, position=r0)
 
 
+def test_GaussKernel():
+    beta = 1.0e5
+    alpha = (beta / np.pi) ** (1.0 / 2.0)
+    ifunc = vp.GaussFunc(alpha=alpha, beta=beta)
+    iexp = vp.GaussExp()
+    iexp.append(ifunc)
+    I = vp.ConvolutionOperator(mra, iexp, prec=epsilon)
+
+    ftree = vp.FunctionTree(mra)
+    vp.advanced.build_grid(out=ftree, inp=ffunc)
+    vp.advanced.project(prec=epsilon, out=ftree, inp=ffunc)
+
+    gtree = vp.FunctionTree(mra)
+    vp.advanced.apply(prec=epsilon, out=gtree, oper=I, inp=ftree)
+    assert gtree.integrate() == pytest.approx(ftree.integrate(), rel=epsilon)
+
+    gtree2 = I(ftree)
+    assert gtree2.integrate() == pytest.approx(ftree.integrate(), rel=epsilon)
+
+
 def test_Identity():
     I = vp.IdentityConvolution(mra, prec=epsilon)
 
