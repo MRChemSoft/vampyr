@@ -2,6 +2,7 @@ import numpy as np
 import pytest
 
 from vampyr import vampyr3d as vp
+from vampyr import vampyr1d as vp1
 
 epsilon = 1.0e-3
 mu = epsilon / 10
@@ -21,6 +22,46 @@ ref_energy = ffunc.calcCoulombEnergy(ffunc)
 ftree = vp.FunctionTree(mra)
 vp.advanced.build_grid(out=ftree, inp=ffunc)
 vp.advanced.project(prec=epsilon, out=ftree, inp=ffunc)
+
+def test_GaussKernel():
+    b = 1.0e4
+    a = (b / np.pi) ** (D / 2.0)
+    ifunc = vp1.GaussFunc(alpha=a, beta=b)
+    iexp = vp1.GaussExp()
+    iexp.append(ifunc)
+    I = vp.ConvolutionOperator(mra, iexp, prec=epsilon)
+
+    ftree = vp.FunctionTree(mra)
+    vp.advanced.build_grid(out=ftree, inp=ffunc)
+    vp.advanced.project(prec=epsilon, out=ftree, inp=ffunc)
+
+    gtree = vp.FunctionTree(mra)
+    vp.advanced.apply(prec=epsilon, out=gtree, oper=I, inp=ftree)
+    assert gtree.integrate() == pytest.approx(ftree.integrate(), rel=epsilon)
+
+    gtree2 = I(ftree)
+    assert gtree2.integrate() == pytest.approx(ftree.integrate(), rel=epsilon)
+
+
+def test_CartesianConvolution():
+    b = 1.0e4
+    a = (b / np.pi) ** (D / 2.0)
+    ifunc = vp1.GaussFunc(alpha=a, beta=b)
+    iexp = vp1.GaussExp()
+    iexp.append(ifunc)
+    O = vp.CartesianConvolution(mra, iexp, prec=epsilon)
+    O.setCartesianComponents(0, 0, 0)
+
+    ftree = vp.FunctionTree(mra)
+    vp.advanced.build_grid(out=ftree, inp=ffunc)
+    vp.advanced.project(prec=epsilon, out=ftree, inp=ffunc)
+
+    gtree = vp.FunctionTree(mra)
+    vp.advanced.apply(prec=epsilon, out=gtree, oper=O, inp=ftree)
+    assert gtree.integrate() == pytest.approx(ftree.integrate(), rel=epsilon)
+
+    gtree2 = O(ftree)
+    assert gtree2.integrate() == pytest.approx(ftree.integrate(), rel=epsilon)
 
 
 def test_Identity():
