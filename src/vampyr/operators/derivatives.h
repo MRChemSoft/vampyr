@@ -13,7 +13,10 @@ template <int D> void derivatives(pybind11::module &m) {
     namespace py = pybind11;
     using namespace pybind11::literals;
 
-    py::class_<DerivativeOperator<D>>(m, "DerivativeOperator")
+    py::class_<DerivativeOperator<D>>(m, "DerivativeOperator",
+    R"mydelimiter(
+        An abstract base class for derivative operators
+    )mydelimiter")
         .def(py::init<const MultiResolutionAnalysis<D> &>(), "mra"_a)
         .def("getOrder", &DerivativeOperator<D>::getOrder)
         .def(

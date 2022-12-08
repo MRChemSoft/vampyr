@@ -15,7 +15,16 @@ template <int D> void gaussians(pybind11::module &m) {
     using namespace pybind11::literals;
 
     // Gaussian class
-    py::class_<Gaussian<D>, PyGaussian<D>, RepresentableFunction<D>>(m, "Gaussian")
+    py::class_<Gaussian<D>, PyGaussian<D>, RepresentableFunction<D>>(m, "Gaussian",
+    R"mydelimiter(
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+    )mydelimiter")
         .def(py::init<double, double, const Coord<D> &, const std::array<int, D> &>())
         .def("pow", py::overload_cast<int>(&Gaussian<D>::getPower, py::const_), "dim"_a)
         .def("exp", py::overload_cast<int>(&Gaussian<D>::getExp, py::const_), "dim"_a = 0)
@@ -30,30 +39,67 @@ template <int D> void gaussians(pybind11::module &m) {
         });
 
     // GaussFunc class
-    py::class_<GaussFunc<D>, PyGaussian<D, GaussFunc<D>>, Gaussian<D>>(m, "GaussFunc")
+    py::class_<GaussFunc<D>, PyGaussian<D, GaussFunc<D>>, Gaussian<D>>(m, "GaussFunc",
+    R"mydelimiter(
+        An analytic Gaussian function in d dimensions:
+
+        .. math::
+
+           g(x) = \prod_i^d (x[i] - x_0[i])^{p[i]} \alpha \exp(- \beta \sum_i^d (x[i] - x_0[i])^2 )
+
+        This is a alternative to using a general function definition to project onto the MRA.
+
+        Parameters
+        ----------
+        beta : scalar
+            Exponent of the Gaussian. :math:`\beta`
+        alpha : scalar, optional
+            Coefficient of Gaussian. :math:`\alpha`
+        position : D-dimensional array_like, optional
+            Coordinate of the center of Gaussian. :math:`[x_0[0], ..., x_0[d]]`
+        poly_exponent: D-dimensional array_like, optional
+            Power of the polynomial in front of the Gaussian. :math:`[p[0], ..., p[d]]`
+
+        Returns
+        -------
+        gaussian : GaussFunc object
+
+    )mydelimiter")
         .def(py::init<double, double, const Coord<D> &, const std::array<int, D> &>(),
-             "exp"_a,
-             "coef"_a = 1.0,
-             "pos"_a = Coord<D>{},
-             "pow"_a = std::array<int, D>{})
+             "beta"_a,
+             "alpha"_a = 1.0,
+             "position"_a = Coord<D>{},
+             "poly_exponent"_a = std::array<int, D>{})
         .def(
             "differentiate",
             [](const GaussFunc<D> &gauss, int dir) { return gauss.differentiate(dir).asGaussExp(); },
-            "dir"_a)
+            "dir"_a, "Differentiates the Gaussian along the specified axis.")
         .def("squaredNorm", &GaussFunc<D>::calcSquareNorm)
-        .def("calcCoulombEnergy", &GaussFunc<D>::calcCoulombEnergy);
+        .def("calcCoulombEnergy", &GaussFunc<D>::calcCoulombEnergy,
+             R"mydelimiter(
+             Calculate energy interaction between this Gaussian and an input Gaussian.
+             Warning: power has to be a zero vector)mydelimiter");
 
     // GaussExp class
     py::class_<GaussExp<D>, RepresentableFunction<D>>(m, "GaussExp")
         .def(py::init())
-        .def("size", py::overload_cast<>(&GaussExp<D>::size, py::const_))
+        .def("size",
+            py::overload_cast<>(&GaussExp<D>::size, py::const_),
+            "Number of Gaussians in the GaussExp")
         .def("func",
-             py::overload_cast<int>(&GaussExp<D>::getFunc),
-             "term"_a,
-             py::return_value_policy::reference_internal)
-        .def("append", py::overload_cast<const Gaussian<D> &>(&GaussExp<D>::append))
-        .def("periodify", &GaussExp<D>::periodify, "period"_a, "std_dev"_a = 4.0)
-        .def("differentiate", &GaussExp<D>::differentiate, "dir"_a)
+            py::overload_cast<int>(&GaussExp<D>::getFunc),
+            "term"_a,
+            py::return_value_policy::reference_internal)
+        .def("append",
+            py::overload_cast<const Gaussian<D> &>(&GaussExp<D>::append),
+            "Append Gaussians to the end of the GaussExp")
+        .def("periodify", &GaussExp<D>::periodify,
+            "period"_a,
+            "std_dev"_a = 4.0,
+            "Make copies of the Gaussian to simulate periodicity, then append it to the GaussExp")
+        .def("differentiate",
+            &GaussExp<D>::differentiate,
+            "dir"_a, "Differentiate all Gaussians in GaussExp along the specified axis")
         .def("squaredNorm", &GaussExp<D>::calcSquareNorm)
         .def("calcCoulombEnergy", &GaussExp<D>::calcCoulombEnergy)
         .def("__str__", [](const GaussExp<D> &func) {
