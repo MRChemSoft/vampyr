@@ -17,7 +17,6 @@ author = "TO BE FILLED"
 github_user = "MRChemSoft"
 github_repo_name = "vampyr"  # auto-detected from dirname if blank
 github_version = "master"
-conf_py_path = "/docs/source/"  # with leading and trailing slash
 
 version_file = Path(__file__).absolute().parents[1] / "VERSION"
 release = version_from_file(version_file)
@@ -90,7 +89,7 @@ html_theme_options = {
     "use_issues_button": True,
     "use_edit_page_button": True,
     "repository_branch": f"{github_version}",
-    "path_to_docs": "content",
+    "path_to_docs": "docs",
     "use_download_button": True,
     "home_page_in_toc": True,
     "launch_buttons": {
