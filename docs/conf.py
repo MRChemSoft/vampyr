@@ -89,7 +89,7 @@ html_theme_options = {
     "use_repository_button": True,
     "use_issues_button": True,
     "use_edit_page_button": True,
-    "repository_branch": "master",
+    "repository_branch": f"{github_version}",
     "path_to_docs": "content",
     "use_download_button": True,
     "home_page_in_toc": True,
