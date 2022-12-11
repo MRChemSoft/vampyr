@@ -1,10 +1,12 @@
 channels:
   - conda-forge
-  - defaults
 dependencies:
   - cmake
+  - cxx-compiler
   - mrcpp
   - ninja
   - numpy
+  - pip
   - pybind11
   - pytest
+  - pytest-cov

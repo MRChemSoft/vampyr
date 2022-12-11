@@ -1,9 +1,0 @@
-name: vampyr-docs
-channels:
-  - conda-forge
-dependencies:
-  - cxx-compiler
-  - eigen
-  - mrcpp
-  - numpy
-  - python

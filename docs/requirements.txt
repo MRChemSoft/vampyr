@@ -1,6 +1,5 @@
-sphinx
-sphinx-book-theme
-sphinx-thebe
-sphinxcontrib-bibtex
-matplotlib
 myst_nb
+sphinx
+sphinx_book_theme
+sphinx_thebe
+sphinxcontrib_bibtex
