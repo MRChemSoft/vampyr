@@ -1,13 +1,11 @@
 version: 2
 
-conda:
-  environment: vampyr-docs.yml
-
-# build platform
 build:
   os: ubuntu-22.04
 
-# Python environment
+conda:
+  environment: vampyr-docs.yml
+
 python:
  install:
    - method: pip
@@ -15,7 +13,6 @@ python:
      extra_requirements:
        - docs
 
-# how to run sphinx
 sphinx:
   configuration: docs/source/conf.py
   builder: html

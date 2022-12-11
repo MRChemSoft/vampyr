@@ -8,8 +8,7 @@ Welcome to VAMPyR documentation!
 **VAMPyR**, the general-purpose mathematical tools of MRCPP are then
 available for simple scripting and code prototyping.
 
-Check out the :doc:`usage` section for further information, including
-how to :ref:`installation` the project.
+Check out the :doc:`usage` section for further information, including how to :ref:`installation` the project.
 
 .. note::
 
@@ -19,8 +18,9 @@ how to :ref:`installation` the project.
    :maxdepth: 2
    :caption: Contents
 
-   vampyr
    usage
+   vampyr
+   notebooks/vampyr_intro
 
 
 Indices and tables
