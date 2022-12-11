@@ -19,8 +19,13 @@ Check out the :doc:`usage` section for further information, including how to :re
    :caption: Contents
 
    usage
-   vampyr
    notebooks/vampyr_intro
+
+.. toctree::
+   :maxdepth: 2
+   :caption: API
+
+   vampyr
 
 
 Indices and tables
