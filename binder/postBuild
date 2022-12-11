@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -euxo
+
+type -P python
+
+python -m pip install -vvv .
