@@ -2,6 +2,7 @@
 
 set -euxo
 
-type -P python
-
+# install current version of VAMPyR
 python -m pip install -vvv .
+
+python -c "import vampyr; print(vampyr.__file__)"
