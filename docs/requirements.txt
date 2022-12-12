@@ -1,2 +1,5 @@
-Sphinx
-sphinx_rtd_theme
+myst_nb
+sphinx
+sphinx_book_theme
+sphinx_thebe
+sphinxcontrib_bibtex

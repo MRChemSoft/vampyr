@@ -13,31 +13,37 @@
     };
   };
 
-  outputs = { self, nixpkgs, flake-utils, pypi-deps-db, mach-nix }:
-    flake-utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = nixpkgs.legacyPackages.${system};
-        pythonEnv = mach-nix.lib."${system}".mkPython {
-          requirements = builtins.readFile ./requirements.txt + ''
-            # additional dependencies for local work
-            #jupyterlab
-	    pre-commit
+  outputs = {
+    self,
+    nixpkgs,
+    flake-utils,
+    pypi-deps-db,
+    mach-nix,
+  }:
+    flake-utils.lib.eachDefaultSystem (system: let
+      pkgs = nixpkgs.legacyPackages.${system};
+      pythonEnv = mach-nix.lib."${system}".mkPython {
+        requirements =
+          builtins.readFile ./requirements.txt
+          + ''
+                   # additional dependencies for local work
+                   #jupyterlab
+            pre-commit
           '';
-        };
-      in
-      {
-        devShell = pkgs.mkShell {
-          nativeBuildInputs = with pkgs; [
-            cmake
-            eigen
-            gcc
-            openmpi
-            ninja
-          ];
-          buildInputs = [
-            pythonEnv
-          ];
-          NINJA_STATUS = "[Built edge %f of %t in %e sec] ";
-        };
-      });
+      };
+    in {
+      devShell = pkgs.mkShell {
+        nativeBuildInputs = with pkgs; [
+          cmake
+          eigen
+          gcc
+          openmpi
+          ninja
+        ];
+        buildInputs = [
+          pythonEnv
+        ];
+        NINJA_STATUS = "[Built edge %f of %t in %e sec] ";
+      };
+    });
 }

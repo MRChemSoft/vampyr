@@ -12,7 +12,10 @@ template <int D> void functions(pybind11::module &m) {
     using namespace pybind11::literals;
 
     // RepresentableFunction class
-    py::class_<RepresentableFunction<D>, PyRepresentableFunction<D>>(m, "RepresentableFunction")
+    py::class_<RepresentableFunction<D>, PyRepresentableFunction<D>>(m, "RepresentableFunction",
+    R"mydelimiter(
+       Filler text
+    )mydelimiter")
         .def(py::init<const std::vector<double> &, const std::vector<double> &>())
         .def("__call__", [](const RepresentableFunction<D> &func, const Coord<D> &r) { return func.evalf(r); });
 
