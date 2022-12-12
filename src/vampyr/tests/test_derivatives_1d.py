@@ -14,7 +14,7 @@ mra = vp.MultiResolutionAnalysis(box=world, order=k)
 r0 = [0.4]
 beta = 100.0
 alpha = (beta / np.pi) ** (D / 2.0)
-g = vp.GaussFunc(coef=alpha, exp=beta, pos=r0)
+g = vp.GaussFunc(alpha=alpha, beta=beta, position=r0)
 dg = g.differentiate(dir=0)
 ddg = dg.differentiate(dir=0)
 
