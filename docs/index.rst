@@ -20,6 +20,7 @@ Check out the :doc:`usage` section for further information, including how to :re
 
    usage
    notebooks/vampyr_intro
+   notebooks/PCMSolvent
 
 .. toctree::
    :maxdepth: 2
