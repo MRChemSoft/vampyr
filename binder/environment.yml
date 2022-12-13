@@ -1,1 +1,13 @@
-../environment.yml
+channels:
+  - conda-forge
+dependencies:
+  - cmake
+  - cxx-compiler
+  #- mrcpp
+  - matplotlib
+  - ninja
+  - numpy
+  - pip
+  - pybind11
+  - pytest
+  - pytest-cov
