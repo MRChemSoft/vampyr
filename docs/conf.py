@@ -47,6 +47,16 @@ bibtex_bibfiles = ["bibliography.bib"]
 nb_execution_mode = "off"
 nb_execution_show_tb = True
 
+# settings for myst_parser
+myst_enable_extensions = [
+    "amsmath",
+    "colon_fence",
+    "deflist",
+    "dollarmath",
+    "html_image",
+]
+myst_url_schemes = ("http", "https", "mailto")
+
 autosummary_generate = True
 
 autodoc_default_options = {
