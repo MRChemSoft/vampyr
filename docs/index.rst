@@ -19,7 +19,12 @@ Check out the :doc:`usage` section for further information, including how to :re
    :caption: Contents
 
    usage
-   notebooks/vampyr_intro
+   notebooks/introduction
+   notebooks/function_representations
+   notebooks/multiwavelets
+   notebooks/poisson_equation
+   notebooks/helmholtz_equation
+   notebooks/multiwavelets
    notebooks/PCMSolvent
 
 .. toctree::
