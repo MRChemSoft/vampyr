@@ -17,12 +17,9 @@ template <int D> void gaussians(pybind11::module &m) {
     // Gaussian class
     py::class_<Gaussian<D>, PyGaussian<D>, RepresentableFunction<D>>(m, "Gaussian",
     R"mydelimiter(
+        Parent class to the GaussFunc class.
 
-        Parameters
-        ----------
-
-        Returns
-        -------
+        Note: This is only a template. Do not use it directly.
 
     )mydelimiter")
         .def(py::init<double, double, const Coord<D> &, const std::array<int, D> &>())
@@ -81,7 +78,10 @@ template <int D> void gaussians(pybind11::module &m) {
              Warning: power has to be a zero vector)mydelimiter");
 
     // GaussExp class
-    py::class_<GaussExp<D>, RepresentableFunction<D>>(m, "GaussExp")
+    py::class_<GaussExp<D>, RepresentableFunction<D>>(m, "GaussExp",
+        R"mydelimiter(
+       test
+        )mydelimiter")
         .def(py::init())
         .def("size",
             py::overload_cast<>(&GaussExp<D>::size, py::const_),
