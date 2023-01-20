@@ -23,11 +23,6 @@ target_link_libraries(_vampyr
     # need to link against c++fs for LLVM<9.0
     "$<$<AND:$<CXX_COMPILER_ID:Clang>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,9.0>>:-lc++fs>"
   )
-  
-target_link_options(_vampyr
-  PRIVATE
-    "LINKER:--as-needed"
-  )
 
 # handle RPATH
 set(_plat_token "")
