@@ -16,6 +16,13 @@ target_include_directories(_vampyr
 target_link_libraries(_vampyr
   PUBLIC
     MRCPP::mrcpp
+  PRIVATE
+    "$<$<AND:$<CXX_COMPILER_ID:GNU>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,9.0>>:-lstdc++fs>"    
+  )
+  
+target_link_options(_vampyr
+  PRIVATE
+    "LINKER:--as-needed"
   )
 
 # handle RPATH
