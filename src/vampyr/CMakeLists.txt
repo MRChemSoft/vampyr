@@ -16,6 +16,12 @@ target_include_directories(_vampyr
 target_link_libraries(_vampyr
   PUBLIC
     MRCPP::mrcpp
+  PRIVATE
+    # extra linking needed to use std::filesystem: https://en.cppreference.com/w/cpp/filesystem
+    # need to link against stdc++fs for GNU<9.1
+    "$<$<AND:$<CXX_COMPILER_ID:GNU>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,9.1>>:-lstdc++fs>"
+    # need to link against c++fs for LLVM<9.0
+    "$<$<AND:$<CXX_COMPILER_ID:Clang>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,9.0>>:-lc++fs>"
   )
 
 # handle RPATH
