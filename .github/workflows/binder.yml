@@ -18,6 +18,10 @@ jobs:
     - name: checkout files in repo
       uses: actions/checkout@v3
 
+    - name: downcase repository name
+      run: |
+        echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+
     - name: update jupyter dependencies with repo2docker
       uses: jupyterhub/repo2docker-action@master
       with:
@@ -25,5 +29,5 @@ jobs:
         DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
         DOCKER_REGISTRY: ghcr.io
         MYBINDERORG_TAG: ${{ github.event.ref }}
-        IMAGE_NAME: ${{ github.repository }}
+        IMAGE_NAME: $REPO
         PUBLIC_REGISTRY_CHECK: true
