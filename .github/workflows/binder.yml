@@ -2,6 +2,9 @@ name: Build Notebook Container
 
 on:
   push:
+    branches:
+      - master
+      - release/*
   workflow_dispatch:
   pull_request:
 
