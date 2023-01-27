@@ -20,6 +20,8 @@ target_link_libraries(_vampyr
     # extra linking needed to use std::filesystem: https://en.cppreference.com/w/cpp/filesystem
     # need to link against stdc++fs for GNU<9.1
     "$<$<AND:$<CXX_COMPILER_ID:GNU>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,9.1>>:-lstdc++fs>"
+    # same for Intel compiler because it uses whatever GNU standard C++ is around
+    "$<$<OR:$<CXX_COMPILER_ID:Intel>,$<CXX_COMPILER_ID:IntelLLVM>>:-lstdc++fs>"
     # need to link against c++fs for LLVM<9.0
     "$<$<AND:$<CXX_COMPILER_ID:Clang>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,9.0>>:-lc++fs>"
   )
