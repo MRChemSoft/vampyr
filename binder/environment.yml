@@ -4,7 +4,7 @@ dependencies:
   - cmake
   - cxx-compiler
   - eigen
-  #- mrcpp
+  - mrcpp >1.4.1
   - matplotlib
   - ninja
   - numpy
