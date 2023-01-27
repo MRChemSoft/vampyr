@@ -29,5 +29,5 @@ jobs:
         DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
         DOCKER_REGISTRY: ghcr.io
         MYBINDERORG_TAG: ${{ github.event.ref }}
-        IMAGE_NAME: $REPO
+        IMAGE_NAME: ${{ env.REPO }}
         PUBLIC_REGISTRY_CHECK: true
