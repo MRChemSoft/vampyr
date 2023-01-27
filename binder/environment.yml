@@ -11,3 +11,4 @@ dependencies:
   - pybind11
   - pytest
   - pytest-cov
+  - python >=3.8
