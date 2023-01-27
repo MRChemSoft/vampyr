@@ -4,6 +4,7 @@
 [![License](https://img.shields.io/badge/license-%20LGPLv3-blue.svg)](../master/LICENSE)
 ![Build and test VAMPyR](https://github.com/MRChemSoft/vampyr/workflows/Build%20and%20test%20VAMPyR/badge.svg)
 [![codecov](https://codecov.io/gh/MRChemSoft/vampyr/branch/master/graph/badge.svg)](https://codecov.io/gh/MRChemSoft/vampyr)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/MRChemSoft/vampyr/master?urlpath=lab%2Ftree%2Fdocs%2Fnotebooks)
 
 The Very Accurate Multiresolution Python Routines (VAMPyR) package is a high
 level Python interface to the [MRCPP](https://github.com/MRChemSoft/mrcpp) code.
