@@ -3,6 +3,7 @@ channels:
 dependencies:
   - cmake
   - cxx-compiler
+  - eigen
   #- mrcpp
   - matplotlib
   - ninja
