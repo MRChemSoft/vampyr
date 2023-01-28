@@ -25,6 +25,7 @@ Check out the :doc:`usage` section for further information, including how to :re
    notebooks/poisson_equation
    notebooks/helmholtz_equation
    notebooks/hydrogen_atom
+   notebooks/helium_atom
    notebooks/multiwavelets
    notebooks/PCMSolvent
 
