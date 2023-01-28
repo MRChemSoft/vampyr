@@ -24,6 +24,7 @@ Check out the :doc:`usage` section for further information, including how to :re
    notebooks/multiwavelets
    notebooks/poisson_equation
    notebooks/helmholtz_equation
+   notebooks/hydrogen_atom
    notebooks/multiwavelets
    notebooks/PCMSolvent
 

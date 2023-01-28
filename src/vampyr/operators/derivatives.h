@@ -20,7 +20,7 @@ template <int D> void derivatives(pybind11::module &m) {
         An abstract base class for derivative operators
     )mydelimiter")
         // clang-format on
-        .def(py::init<const MultiResolutionAnalysis<D> &>(), "mra"_a)
+        .def(py::init<const MultiResolutionAnalysis<D> &, int, int>(), "mra"_a, "root"_a, "reach"_a)
         .def("getOrder", &DerivativeOperator<D>::getOrder)
         .def(
             "__call__",
