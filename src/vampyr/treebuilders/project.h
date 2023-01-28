@@ -1,7 +1,8 @@
 #pragma once
 
-#include <pybind11/functional.h>
+#include <typeinfo>
 
+#include <pybind11/functional.h>
 #include "PyProjectors.h"
 
 namespace vampyr {
@@ -28,6 +29,15 @@ template <int D> void project(pybind11::module &m) {
         .def(
             "__call__",
             [](PyScalingProjector<D> &P, std::function<double(const Coord<D> &r)> func) {
+
+                try {
+                    auto arr = std::array<double, D>();
+                    arr.fill(111111.111); // A number which hopefully does not divide by zero
+                    func(arr);
+                } catch (py::cast_error &e) {
+                    py::print("Error: Invalid definition of analytic function");
+                    throw;
+                }
                 auto old_threads = mrcpp_get_num_threads();
                 set_max_threads(1);
                 auto out = P(func);
@@ -43,6 +53,16 @@ template <int D> void project(pybind11::module &m) {
         .def(
             "__call__",
             [](PyWaveletProjector<D> &P, std::function<double(const Coord<D> &r)> func) {
+
+                try {
+                    auto arr = std::array<double, D>();
+                    arr.fill(111111.111); // A number which hopefully does not divide by zero
+                    func(arr);
+                } catch (py::cast_error &e) {
+                    py::print("Error: Invalid definition of analytic function");
+                    throw;
+                }
+
                 auto old_threads = mrcpp_get_num_threads();
                 set_max_threads(1);
                 auto out = P(func);
