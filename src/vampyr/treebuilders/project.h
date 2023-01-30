@@ -1,7 +1,5 @@
 #pragma once
 
-#include <typeinfo>
-
 #include <pybind11/functional.h>
 #include "PyProjectors.h"
 
@@ -31,6 +29,9 @@ template <int D> void project(pybind11::module &m) {
             [](PyScalingProjector<D> &P, std::function<double(const Coord<D> &r)> func) {
 
                 try {
+                    // When the analytic function func is badly defined, it kills the kernel
+                    // of Notebooks. This evaluates func in a point, and if it is not successful
+                    // it throws an error instead of killing the kernel.
                     auto arr = std::array<double, D>();
                     arr.fill(111111.111); // A number which hopefully does not divide by zero
                     func(arr);
