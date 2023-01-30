@@ -17,7 +17,17 @@ template <int D> void convolutions(pybind11::module &m) {
     using namespace mrcpp;
     using namespace pybind11::literals;
 
-    py::class_<ConvolutionOperator<D>>(m, "ConvolutionOperator");
+    py::class_<ConvolutionOperator<D>>(m, "ConvolutionOperator")
+    .def(py::init<const MultiResolutionAnalysis<D> &, GaussExp<1> &, double>())
+    .def(py::init<const MultiResolutionAnalysis<D> &, GaussExp<1> &, double, int, int>())
+    .def(
+        "__call__",
+        [](ConvolutionOperator<D> &C, FunctionTree<D> *inp) {
+            auto out = std::make_unique<FunctionTree<D>>(inp->getMRA());
+            apply<D>(C.getBuildPrec(), *out, C, *inp);
+            return out;
+            },
+            "inp"_a);
 
     py::class_<IdentityConvolution<D>, ConvolutionOperator<D>>(m, "IdentityConvolution")
         .def(py::init<const MultiResolutionAnalysis<D> &, double>(), "mra"_a, "prec"_a)
