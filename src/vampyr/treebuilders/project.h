@@ -1,7 +1,8 @@
 #pragma once
 
-#include "PyProjectors.h"
 #include <pybind11/functional.h>
+
+#include "PyProjectors.h"
 
 namespace vampyr {
 template <int D> void project(pybind11::module &m) {
