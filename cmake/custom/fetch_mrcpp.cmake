@@ -18,7 +18,7 @@ else()
     GIT_REPOSITORY
       https://github.com/MRChemSoft/mrcpp.git
     GIT_TAG
-      1a6d450ac356feffba5c5cb2d02b92a875dbb9aa
+      e2f0e7e897261dbf
     )
 
   set(CMAKE_CXX_COMPILER ${CMAKE_CXX_COMPILER})
