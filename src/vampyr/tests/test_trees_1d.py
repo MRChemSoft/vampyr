@@ -18,6 +18,7 @@ root = vp.NodeIndex(scale=N)
 idx = vp.NodeIndex(scale=n, translation=l)
 mra = vp.MultiResolutionAnalysis(box=world, order=k)
 tree = vp.FunctionTree(mra, name)
+zero = vp.ZeroTree(mra, "zero")
 
 
 def test_FunctionTree():
@@ -33,23 +34,20 @@ def test_FunctionTree():
 
 
 def test_FunctionTreeZero():
-    tree.setZero()
+    assert zero.norm() == 0.0
+    assert zero.squaredNorm() == 0.0
+    assert zero.integrate() == 0.0
+    assert zero(r0) == 0.0
+    assert zero(r1) == 0.0
 
-    assert tree.norm() == 0.0
-    assert tree.squaredNorm() == 0.0
-    assert tree.integrate() == 0.0
-    assert tree(r0) == 0.0
-    assert tree(r1) == 0.0
+    zero.clear()
 
-    tree.clear()
-
-    assert tree.norm() < 0.0
-    assert tree.squaredNorm() < 0.0
+    assert zero.norm() < 0.0
+    assert zero.squaredNorm() < 0.0
 
 
 def test_FunctionTreeSave():
-    tree.setZero()
-    path = tree.saveTree(filename=name)
+    path = tree.setZero().saveTree(filename=name)
 
     tree_2 = vp.FunctionTree(mra)
     tree_2.setName("func_2")
