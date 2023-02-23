@@ -29,7 +29,12 @@ template <int D> void trees(pybind11::module &m) {
              py::return_value_policy::reference_internal)
         .def("rootScale", &MWTree<D>::getRootScale)
         .def("depth", &MWTree<D>::getDepth)
-        .def("setZero", &MWTree<D>::setZero)
+        .def(
+            "setZero",
+            [](MWTree<D> *out) {
+                out->setZero();
+                return out;
+            })
         .def("clear", &MWTree<D>::clear)
         .def("setName", &MWTree<D>::setName)
         .def("name", &MWTree<D>::getName)
@@ -53,7 +58,12 @@ template <int D> void trees(pybind11::module &m) {
         .def("nGenNodes", &FunctionTree<D>::getNGenNodes)
         .def("deleteGenerated", &FunctionTree<D>::deleteGenerated)
         .def("integrate", &FunctionTree<D>::integrate)
-        .def("normalize", &FunctionTree<D>::normalize)
+        .def(
+            "normalize",
+            [](FunctionTree<D> *out) {
+                out->normalize();
+                return out;
+            })
         .def(
             "saveTree",
             [](FunctionTree<D> &obj, const std::string &filename) {
