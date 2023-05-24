@@ -2,7 +2,7 @@
 set(_build_type ${CMAKE_BUILD_TYPE})
 set(CMAKE_BUILD_TYPE Release)
 
-find_package(MRCPP 1.4 CONFIG QUIET)
+find_package(MRCPP 1.5 CONFIG QUIET)
 
 # whether MRCPP was fetched and built locally
 set(MRCPP_FETCHED FALSE)
@@ -16,9 +16,9 @@ else()
   FetchContent_Declare(mrcpp
     QUIET
     GIT_REPOSITORY
-      https://github.com/stigrj/mrcpp.git
+      https://github.com/MRChemSoft/mrcpp.git
     GIT_TAG
-      gauge
+      v1.5.0
     )
 
   set(CMAKE_CXX_COMPILER ${CMAKE_CXX_COMPILER})
