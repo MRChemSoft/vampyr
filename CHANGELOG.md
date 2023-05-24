@@ -16,6 +16,10 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## [Unreleased]
 
+## [1.0rc0]
+
+Third release candidate, closing in on major version.
+
 ## [0.2rc0]
 
 Second release candidate, major reVAMP of the API.
@@ -24,10 +28,11 @@ Second release candidate, major reVAMP of the API.
 
 First release candidate of VAMPyR.
 
-[Unreleased]: https://github.com/MRChemSoft/vampyr/compare/v0.2rc0...HEAD
+[Unreleased]: https://github.com/MRChemSoft/vampyr/compare/v1.0rc0...HEAD
 
 [0.1.0rc0]: https://github.com/MRChemSoft/vampyr/releases/tag/v0.1.0rc0
 [0.2rc0]: https://github.com/MRChemSoft/vampyr/releases/tag/v0.2rc0
+[1.0rc0]: https://github.com/MRChemSoft/vampyr/releases/tag/v1.0rc0
 
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
