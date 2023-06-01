@@ -6,7 +6,6 @@ on:
       - master
       - release/*
   workflow_dispatch:
-  pull_request:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
