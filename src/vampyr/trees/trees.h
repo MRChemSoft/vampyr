@@ -3,7 +3,7 @@
 #include <filesystem>
 
 #include <pybind11/stl/filesystem.h>
-#include <pybind11/Eigen.h>
+#include <pybind11/eigen.h>
 
 #include <MRCPP/trees/FunctionNode.h>
 #include <MRCPP/trees/FunctionTree.h>
