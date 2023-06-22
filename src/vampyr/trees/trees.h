@@ -62,6 +62,10 @@ template <int D> void trees(pybind11::module &m) {
         .def("quadrature",
              [](FunctionTree<D> *tree) {
 
+                if constexpr (D != 1) {
+                    throw std::runtime_error("quadrature only implemented for 1D");
+                }
+
                 // Current implementation only makes sense in 1D
 
                 std::vector<double> vec_pts;
