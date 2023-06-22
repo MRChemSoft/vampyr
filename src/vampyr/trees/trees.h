@@ -3,6 +3,7 @@
 #include <filesystem>
 
 #include <pybind11/stl/filesystem.h>
+#include <pybind11/eigen.h>
 
 #include <MRCPP/trees/FunctionNode.h>
 #include <MRCPP/trees/FunctionTree.h>
@@ -58,6 +59,33 @@ template <int D> void trees(pybind11::module &m) {
         .def("nGenNodes", &FunctionTree<D>::getNGenNodes)
         .def("deleteGenerated", &FunctionTree<D>::deleteGenerated)
         .def("integrate", &FunctionTree<D>::integrate)
+        .def("quadrature",
+             [](FunctionTree<D> *tree) {
+
+                if constexpr (D != 1) {
+                    throw std::runtime_error("quadrature only implemented for 1D");
+                }
+
+                // Current implementation only makes sense in 1D
+
+                std::vector<double> vec_pts;
+                // Iterate over all end nodes
+                for (int i = 0; i < tree->getNEndNodes(); i++) {
+                    MWNode<D> &node = tree->getEndMWNode(i);
+
+                    Eigen::MatrixXd pts;
+                    node.getPrimitiveQuadPts(pts);
+
+                    // Flatten the MatrixXd and add the points from this node to the vector
+                    vec_pts.insert(vec_pts.end(), pts.data(), pts.data() + pts.size());
+                }
+
+                // Now we need to create an Eigen vector from our std::vector
+                Eigen::VectorXd final_pts = Eigen::Map<Eigen::VectorXd, Eigen::Unaligned>(vec_pts.data(), vec_pts.size());
+
+                // Now final_pts holds all the points from all nodes
+                return final_pts;
+             })
         .def(
             "normalize",
             [](FunctionTree<D> *out) {
@@ -263,6 +291,12 @@ template <int D> void trees(pybind11::module &m) {
         .def("isGenNode", &MWNode<D>::isGenNode)
         .def("hasParent", &MWNode<D>::hasParent)
         .def("hasCoefs", &MWNode<D>::hasCoefs)
+        .def("quadrature",
+            [](MWNode<D> &node) {
+                Eigen::MatrixXd pts;
+                node.getPrimitiveQuadPts(pts);
+                return pts;
+            })
         .def("center", &MWNode<D>::getCenter)
         .def("upperBounds", &MWNode<D>::getUpperBounds)
         .def("lowerBounds", &MWNode<D>::getLowerBounds)
