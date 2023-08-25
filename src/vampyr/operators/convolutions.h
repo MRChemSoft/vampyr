@@ -20,17 +20,14 @@ template <int D> void convolutions(pybind11::module &m) {
     using namespace pybind11::literals;
 
     py::class_<ConvolutionOperator<D>>(m, "ConvolutionOperator")
-        .def(py::init<const MultiResolutionAnalysis<D> &, GaussExp<1> &, double>(),
-             "mra"_a,
-             "kernel"_a,
-             "prec"_a)
-    .def(py::init<const MultiResolutionAnalysis<D> &, GaussExp<1> &, double, int, int>())
-    .def(
-        "__call__",
-        [](ConvolutionOperator<D> &C, FunctionTree<D> *inp) {
-            auto out = std::make_unique<FunctionTree<D>>(inp->getMRA());
-            apply<D>(C.getBuildPrec(), *out, C, *inp);
-            return out;
+        .def(py::init<const MultiResolutionAnalysis<D> &, GaussExp<1> &, double>(), "mra"_a, "kernel"_a, "prec"_a)
+        .def(py::init<const MultiResolutionAnalysis<D> &, GaussExp<1> &, double, int, int>())
+        .def(
+            "__call__",
+            [](ConvolutionOperator<D> &C, FunctionTree<D> *inp) {
+                auto out = std::make_unique<FunctionTree<D>>(inp->getMRA());
+                apply<D>(C.getBuildPrec(), *out, C, *inp);
+                return out;
             },
             "inp"_a);
 
@@ -61,10 +58,7 @@ void cartesian_convolution(pybind11::module &m) {
     using namespace pybind11::literals;
 
     py::class_<CartesianConvolution, ConvolutionOperator<3>>(m, "CartesianConvolution")
-        .def(py::init<const MultiResolutionAnalysis<3> &, GaussExp<1> &, double>(),
-             "mra"_a,
-             "kernel"_a,
-             "prec"_a)
+        .def(py::init<const MultiResolutionAnalysis<3> &, GaussExp<1> &, double>(), "mra"_a, "kernel"_a, "prec"_a)
         .def(
             "__call__",
             [](CartesianConvolution &O, FunctionTree<3> *inp) {

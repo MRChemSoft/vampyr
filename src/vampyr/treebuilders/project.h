@@ -1,7 +1,7 @@
 #pragma once
 
-#include <pybind11/functional.h>
 #include "PyProjectors.h"
+#include <pybind11/functional.h>
 
 namespace vampyr {
 template <int D> void project(pybind11::module &m) {
@@ -27,7 +27,6 @@ template <int D> void project(pybind11::module &m) {
         .def(
             "__call__",
             [](PyScalingProjector<D> &P, std::function<double(const Coord<D> &r)> func) {
-
                 try {
                     // When the analytic function func is badly defined, it kills the kernel
                     // of Notebooks. This evaluates func in a point, and if it is not successful
@@ -54,7 +53,6 @@ template <int D> void project(pybind11::module &m) {
         .def(
             "__call__",
             [](PyWaveletProjector<D> &P, std::function<double(const Coord<D> &r)> func) {
-
                 try {
                     auto arr = std::array<double, D>();
                     arr.fill(111111.111); // A number which hopefully does not divide by zero
