@@ -108,9 +108,3 @@ html_theme_options = {
         "notebook_interface": "jupyterlab",
     },
 }
-html_sidebars = {
-    "**": [
-        "sidebar-logo.html",
-        "sbt-sidebar-nav.html",
-    ]
-}
