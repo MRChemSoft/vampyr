@@ -4,6 +4,7 @@
 [![License](https://img.shields.io/badge/license-%20LGPLv3-blue.svg)](../master/LICENSE)
 ![Build and test VAMPyR](https://github.com/MRChemSoft/vampyr/workflows/Build%20and%20test%20VAMPyR/badge.svg)
 [![codecov](https://codecov.io/gh/MRChemSoft/vampyr/branch/master/graph/badge.svg)](https://codecov.io/gh/MRChemSoft/vampyr)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/MRChemSoft/vampyr/master?urlpath=lab%2Ftree%2Fdocs%2Fnotebooks)
 
 The Very Accurate Multiresolution Python Routines (VAMPyR) package is a high
 level Python interface to the [MRCPP](https://github.com/MRChemSoft/mrcpp) code.
@@ -65,3 +66,34 @@ Note that the conda-forge package is _always_ built with OpenMP support enabled
 in the MRCPP backend.
 
 The VAMPyR module is now available whenever you have activated the `myenv` environment.
+
+### Creating a Conda environment from a .yml file
+
+You can also create a Conda environment from a .yml file that already specifies VAMPyR and
+other useful packages such as numpy, and matplotlib. Here's how:
+
+1. Write an `environment.yml` file, for example:
+
+    ```yaml
+    name: myenv
+    channels:
+      - conda-forge
+    dependencies:
+      - vampyr
+      - numpy
+      - matplotlib
+      - jupyterlab
+    ```
+
+2. Create the environment from the `environment.yml` file:
+
+    ```sh
+    $ conda env create -f environment.yml
+    ```
+3. Activate the environment:
+
+    ```sh
+    $ conda activate myenv
+    ```
+The VAMPyR module, along with numpy and matplotlib, is now available whenever
+you have activated the myenv environment.

@@ -3,10 +3,12 @@ channels:
 dependencies:
   - cmake
   - cxx-compiler
-  - mrcpp
+  - eigen
+  #- mrcpp
   - ninja
   - numpy
   - pip
   - pybind11
   - pytest
   - pytest-cov
+  - python >=3.8

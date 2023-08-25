@@ -5,10 +5,12 @@
 #include <MRCPP/operators/HelmholtzOperator.h>
 #include <MRCPP/operators/IdentityConvolution.h>
 #include <MRCPP/operators/PoissonOperator.h>
+#include <MRCPP/operators/CartesianConvolution.h>
 #include <MRCPP/treebuilders/apply.h>
 
 namespace vampyr {
 
+void cartesian_convolution(pybind11::module &);
 void helmholtz_operator(pybind11::module &);
 void poisson_operator(pybind11::module &);
 
@@ -17,7 +19,19 @@ template <int D> void convolutions(pybind11::module &m) {
     using namespace mrcpp;
     using namespace pybind11::literals;
 
-    py::class_<ConvolutionOperator<D>>(m, "ConvolutionOperator");
+    py::class_<ConvolutionOperator<D>>(m, "ConvolutionOperator")
+        .def(py::init<const MultiResolutionAnalysis<D> &, GaussExp<1> &, double>(),
+             "mra"_a,
+             "kernel"_a,
+             "prec"_a)
+        .def(
+            "__call__",
+            [](ConvolutionOperator<D> &O, FunctionTree<D> *inp) {
+                auto out = std::make_unique<FunctionTree<D>>(inp->getMRA());
+                apply<D>(O.getBuildPrec(), *out, O, *inp);
+                return out;
+            },
+            "inp"_a);
 
     py::class_<IdentityConvolution<D>, ConvolutionOperator<D>>(m, "IdentityConvolution")
         .def(py::init<const MultiResolutionAnalysis<D> &, double>(), "mra"_a, "prec"_a)
@@ -35,8 +49,30 @@ template <int D> void convolutions(pybind11::module &m) {
             },
             "inp"_a);
 
+    if constexpr (D == 3) cartesian_convolution(m);
     if constexpr (D == 3) helmholtz_operator(m);
     if constexpr (D == 3) poisson_operator(m);
+}
+
+void cartesian_convolution(pybind11::module &m) {
+    namespace py = pybind11;
+    using namespace mrcpp;
+    using namespace pybind11::literals;
+
+    py::class_<CartesianConvolution, ConvolutionOperator<3>>(m, "CartesianConvolution")
+        .def(py::init<const MultiResolutionAnalysis<3> &, GaussExp<1> &, double>(),
+             "mra"_a,
+             "kernel"_a,
+             "prec"_a)
+        .def(
+            "__call__",
+            [](CartesianConvolution &O, FunctionTree<3> *inp) {
+                auto out = std::make_unique<FunctionTree<3>>(inp->getMRA());
+                apply<3>(O.getBuildPrec(), *out, O, *inp);
+                return out;
+            },
+            "inp"_a)
+        .def("setCartesianComponents", &CartesianConvolution::setCartesianComponents);
 }
 
 void poisson_operator(pybind11::module &m) {
