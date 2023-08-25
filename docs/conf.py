@@ -111,7 +111,6 @@ html_theme_options = {
 
 html_sidebars = {
     "**": [
-        "logo.html",
         "searchbox.html",
         "sbt-sidebar-nav.html",
     ]
