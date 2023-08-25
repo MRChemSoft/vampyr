@@ -3,7 +3,7 @@ channels:
 dependencies:
   - cmake
   - cxx-compiler
-  #- mrcpp
+  - mrcpp
   - ninja
   - numpy
   - pip
