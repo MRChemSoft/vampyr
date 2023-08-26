@@ -29,8 +29,9 @@ void bases(pybind11::module &m) {
 
     py::class_<PyWaveletFunction, RepresentableFunction<1>>(m, "WaveletFunction");
 
-    py::class_<ScalingBasis>(m, "ScalingBasis",
-    R"mydelimiter(
+    py::class_<ScalingBasis>(m,
+                             "ScalingBasis",
+                             R"mydelimiter(
         Filler text
     )mydelimiter")
         .def(py::init<int, int>(), "order"_a, "type"_a)

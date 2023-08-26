@@ -13,7 +13,8 @@
 
 namespace vampyr {
 template <int D>
-auto impl__add__(mrcpp::FunctionTree<D> *inp_a, mrcpp::FunctionTree<D> *inp_b) -> std::unique_ptr<mrcpp::FunctionTree<D>> {
+auto impl__add__(mrcpp::FunctionTree<D> *inp_a, mrcpp::FunctionTree<D> *inp_b)
+    -> std::unique_ptr<mrcpp::FunctionTree<D>> {
     using namespace mrcpp;
     auto out = std::make_unique<FunctionTree<D>>(inp_a->getMRA());
     FunctionTreeVector<D> vec;
@@ -25,7 +26,8 @@ auto impl__add__(mrcpp::FunctionTree<D> *inp_a, mrcpp::FunctionTree<D> *inp_b) -
 };
 
 template <int D>
-auto impl__sub__(mrcpp::FunctionTree<D> *inp_a, mrcpp::FunctionTree<D> *inp_b) -> std::unique_ptr<mrcpp::FunctionTree<D>> {
+auto impl__sub__(mrcpp::FunctionTree<D> *inp_a, mrcpp::FunctionTree<D> *inp_b)
+    -> std::unique_ptr<mrcpp::FunctionTree<D>> {
     using namespace mrcpp;
     auto out = std::make_unique<FunctionTree<D>>(inp_a->getMRA());
     FunctionTreeVector<D> vec;
@@ -37,7 +39,8 @@ auto impl__sub__(mrcpp::FunctionTree<D> *inp_a, mrcpp::FunctionTree<D> *inp_b) -
 };
 
 template <int D>
-auto impl__mul__(mrcpp::FunctionTree<D> *inp_a, mrcpp::FunctionTree<D> *inp_b) -> std::unique_ptr<mrcpp::FunctionTree<D>> {
+auto impl__mul__(mrcpp::FunctionTree<D> *inp_a, mrcpp::FunctionTree<D> *inp_b)
+    -> std::unique_ptr<mrcpp::FunctionTree<D>> {
     using namespace mrcpp;
     auto out = std::make_unique<FunctionTree<D>>(inp_a->getMRA());
     FunctionTreeVector<D> vec;
@@ -49,8 +52,7 @@ auto impl__mul__(mrcpp::FunctionTree<D> *inp_a, mrcpp::FunctionTree<D> *inp_b) -
     return out;
 };
 
-template <int D>
-auto impl__mul__(mrcpp::FunctionTree<D> *inp_a, double c) -> std::unique_ptr<mrcpp::FunctionTree<D>> {
+template <int D> auto impl__mul__(mrcpp::FunctionTree<D> *inp_a, double c) -> std::unique_ptr<mrcpp::FunctionTree<D>> {
     using namespace mrcpp;
     auto out = std::make_unique<FunctionTree<D>>(inp_a->getMRA());
     FunctionTreeVector<D> vec;
@@ -60,8 +62,7 @@ auto impl__mul__(mrcpp::FunctionTree<D> *inp_a, double c) -> std::unique_ptr<mrc
     return out;
 };
 
-template <int D>
-auto impl__pos__(mrcpp::FunctionTree<D> *inp) -> std::unique_ptr<mrcpp::FunctionTree<D>> {
+template <int D> auto impl__pos__(mrcpp::FunctionTree<D> *inp) -> std::unique_ptr<mrcpp::FunctionTree<D>> {
     using namespace mrcpp;
     auto out = std::make_unique<FunctionTree<D>>(inp->getMRA());
     copy_grid(*out, *inp);
@@ -69,8 +70,7 @@ auto impl__pos__(mrcpp::FunctionTree<D> *inp) -> std::unique_ptr<mrcpp::Function
     return out;
 };
 
-template <int D>
-auto impl__neg__(mrcpp::FunctionTree<D> *inp) -> std::unique_ptr<mrcpp::FunctionTree<D>> {
+template <int D> auto impl__neg__(mrcpp::FunctionTree<D> *inp) -> std::unique_ptr<mrcpp::FunctionTree<D>> {
     using namespace mrcpp;
     auto out = std::make_unique<FunctionTree<D>>(inp->getMRA());
     FunctionTreeVector<D> vec;
@@ -91,8 +91,7 @@ auto impl__truediv__(mrcpp::FunctionTree<D> *inp, double c) -> std::unique_ptr<m
     return out;
 };
 
-template <int D>
-auto impl__pow__(mrcpp::FunctionTree<D> *inp, double c) -> std::unique_ptr<mrcpp::FunctionTree<D>> {
+template <int D> auto impl__pow__(mrcpp::FunctionTree<D> *inp, double c) -> std::unique_ptr<mrcpp::FunctionTree<D>> {
     using namespace mrcpp;
     auto out = std::make_unique<FunctionTree<D>>(inp->getMRA());
     copy_grid(*out, *inp);
@@ -205,7 +204,7 @@ template <int D> void trees(pybind11::module &m) {
         .def("__call__", [](FunctionTree<D> &func, const Coord<D> &r) { return func.evalf_precise(r); })
         .def("__pos__", &impl__pos__<D>, py::is_operator())
         .def("__neg__", &impl__neg__<D>, py::is_operator())
-        .def("__add__",  &impl__add__<D>, py::is_operator())
+        .def("__add__", &impl__add__<D>, py::is_operator())
         .def("__iadd__", &impl__add__<D>, py::is_operator())
         .def("__sub__", &impl__sub__<D>, py::is_operator())
         .def("__isub__", &impl__sub__<D>, py::is_operator())
@@ -213,7 +212,7 @@ template <int D> void trees(pybind11::module &m) {
         .def("__mul__", py::overload_cast<FunctionTree<D> *, double>(&impl__mul__<D>), py::is_operator())
         .def("__imul__", py::overload_cast<FunctionTree<D> *, FunctionTree<D> *>(&impl__mul__<D>), py::is_operator())
         .def("__imul__", py::overload_cast<FunctionTree<D> *, double>(&impl__mul__<D>), py::is_operator())
-        .def("__rmul__", &impl__mul__<D>, py::is_operator())
+        .def("__rmul__", py::overload_cast<FunctionTree<D> *, double>(&impl__mul__<D>), py::is_operator())
         .def("__truediv__", &impl__truediv__<D>, py::is_operator())
         .def("__itruediv__", &impl__truediv__<D>, py::is_operator())
         .def("__pow__", &impl__pow__<D>, py::is_operator())
