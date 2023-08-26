@@ -2,6 +2,7 @@ import pytest
 
 from vampyr import vampyr3d as vp
 
+
 def test_ScalingProjector():
     def f(x):
         return x
