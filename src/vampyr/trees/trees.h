@@ -13,7 +13,8 @@
 
 namespace vampyr {
 template <int D>
-auto impl__add__(mrcpp::FunctionTree<D> *inp_a, mrcpp::FunctionTree<D> *inp_b) -> std::unique_ptr<mrcpp::FunctionTree<D>> {
+auto impl__add__(mrcpp::FunctionTree<D> *inp_a, mrcpp::FunctionTree<D> *inp_b)
+    -> std::unique_ptr<mrcpp::FunctionTree<D>> {
     using namespace mrcpp;
     auto out = std::make_unique<FunctionTree<D>>(inp_a->getMRA());
     FunctionTreeVector<D> vec;
@@ -21,6 +22,82 @@ auto impl__add__(mrcpp::FunctionTree<D> *inp_a, mrcpp::FunctionTree<D> *inp_b) -
     vec.push_back({1.0, inp_b});
     build_grid(*out, vec);
     add(-1.0, *out, vec);
+    return out;
+};
+
+template <int D>
+auto impl__sub__(mrcpp::FunctionTree<D> *inp_a, mrcpp::FunctionTree<D> *inp_b)
+    -> std::unique_ptr<mrcpp::FunctionTree<D>> {
+    using namespace mrcpp;
+    auto out = std::make_unique<FunctionTree<D>>(inp_a->getMRA());
+    FunctionTreeVector<D> vec;
+    vec.push_back({1.0, inp_a});
+    vec.push_back({-1.0, inp_b});
+    build_grid(*out, vec);
+    add(-1.0, *out, vec);
+    return out;
+};
+
+template <int D>
+auto impl__mul__(mrcpp::FunctionTree<D> *inp_a, mrcpp::FunctionTree<D> *inp_b)
+    -> std::unique_ptr<mrcpp::FunctionTree<D>> {
+    using namespace mrcpp;
+    auto out = std::make_unique<FunctionTree<D>>(inp_a->getMRA());
+    FunctionTreeVector<D> vec;
+    vec.push_back({1.0, inp_a});
+    vec.push_back({1.0, inp_b});
+    build_grid(*out, vec);
+    build_grid(*out, 1);
+    multiply(-1, *out, vec);
+    return out;
+};
+
+template <int D> auto impl__mul__(mrcpp::FunctionTree<D> *inp_a, double c) -> std::unique_ptr<mrcpp::FunctionTree<D>> {
+    using namespace mrcpp;
+    auto out = std::make_unique<FunctionTree<D>>(inp_a->getMRA());
+    FunctionTreeVector<D> vec;
+    vec.push_back({c, inp_a});
+    build_grid(*out, vec);
+    add(-1.0, *out, vec);
+    return out;
+};
+
+template <int D> auto impl__pos__(mrcpp::FunctionTree<D> *inp) -> std::unique_ptr<mrcpp::FunctionTree<D>> {
+    using namespace mrcpp;
+    auto out = std::make_unique<FunctionTree<D>>(inp->getMRA());
+    copy_grid(*out, *inp);
+    copy_func(*out, *inp);
+    return out;
+};
+
+template <int D> auto impl__neg__(mrcpp::FunctionTree<D> *inp) -> std::unique_ptr<mrcpp::FunctionTree<D>> {
+    using namespace mrcpp;
+    auto out = std::make_unique<FunctionTree<D>>(inp->getMRA());
+    FunctionTreeVector<D> vec;
+    vec.push_back({-1.0, inp});
+    build_grid(*out, vec);
+    add(-1.0, *out, vec);
+    return out;
+};
+
+template <int D>
+auto impl__truediv__(mrcpp::FunctionTree<D> *inp, double c) -> std::unique_ptr<mrcpp::FunctionTree<D>> {
+    using namespace mrcpp;
+    auto out = std::make_unique<FunctionTree<D>>(inp->getMRA());
+    FunctionTreeVector<D> vec;
+    vec.push_back({1.0 / c, inp});
+    build_grid(*out, vec);
+    add(-1.0, *out, vec);
+    return out;
+};
+
+template <int D> auto impl__pow__(mrcpp::FunctionTree<D> *inp, double c) -> std::unique_ptr<mrcpp::FunctionTree<D>> {
+    using namespace mrcpp;
+    auto out = std::make_unique<FunctionTree<D>>(inp->getMRA());
+    copy_grid(*out, *inp);
+    copy_func(*out, *inp);
+    refine_grid(*out, 1);
+    out->power(c);
     return out;
 };
 
@@ -70,31 +147,6 @@ template <int D> void trees(pybind11::module &m) {
         .def("nGenNodes", &FunctionTree<D>::getNGenNodes)
         .def("deleteGenerated", &FunctionTree<D>::deleteGenerated)
         .def("integrate", &FunctionTree<D>::integrate)
-        .def("quadrature",
-             [](FunctionTree<D> *tree) {
-                 if constexpr (D != 1) { throw std::runtime_error("quadrature only implemented for 1D"); }
-
-                 // Current implementation only makes sense in 1D
-
-                 std::vector<double> vec_pts;
-                 // Iterate over all end nodes
-                 for (int i = 0; i < tree->getNEndNodes(); i++) {
-                     MWNode<D> &node = tree->getEndMWNode(i);
-
-                     Eigen::MatrixXd pts;
-                     node.getPrimitiveQuadPts(pts);
-
-                     // Flatten the MatrixXd and add the points from this node to the vector
-                     vec_pts.insert(vec_pts.end(), pts.data(), pts.data() + pts.size());
-                 }
-
-                 // Now we need to create an Eigen vector from our std::vector
-                 Eigen::VectorXd final_pts =
-                     Eigen::Map<Eigen::VectorXd, Eigen::Unaligned>(vec_pts.data(), vec_pts.size());
-
-                 // Now final_pts holds all the points from all nodes
-                 return final_pts;
-             })
         .def("normalize",
              [](FunctionTree<D> *out) {
                  out->normalize();
@@ -124,140 +176,47 @@ template <int D> void trees(pybind11::module &m) {
                  copy_func(*out, *inp);
                  return out;
              })
+        .def("quadrature",
+             [](FunctionTree<D> *tree) {
+                 if constexpr (D != 1) { throw std::runtime_error("quadrature only implemented for 1D"); }
+
+                 // Current implementation only makes sense in 1D
+
+                 std::vector<double> vec_pts;
+                 // Iterate over all end nodes
+                 for (int i = 0; i < tree->getNEndNodes(); i++) {
+                     MWNode<D> &node = tree->getEndMWNode(i);
+
+                     Eigen::MatrixXd pts;
+                     node.getPrimitiveQuadPts(pts);
+
+                     // Flatten the MatrixXd and add the points from this node to the vector
+                     vec_pts.insert(vec_pts.end(), pts.data(), pts.data() + pts.size());
+                 }
+
+                 // Now we need to create an Eigen vector from our std::vector
+                 Eigen::VectorXd final_pts =
+                     Eigen::Map<Eigen::VectorXd, Eigen::Unaligned>(vec_pts.data(), vec_pts.size());
+
+                 // Now final_pts holds all the points from all nodes
+                 return final_pts;
+             })
         .def("__call__", [](FunctionTree<D> &func, const Coord<D> &r) { return func.evalf_precise(r); })
-        .def(
-            "__pos__",
-            [](FunctionTree<D> *inp) {
-                auto out = std::make_unique<FunctionTree<D>>(inp->getMRA());
-                copy_grid(*out, *inp);
-                copy_func(*out, *inp);
-                return out;
-            },
-            py::is_operator())
-        .def(
-            "__neg__",
-            [](FunctionTree<D> *inp) {
-                auto out = std::make_unique<FunctionTree<D>>(inp->getMRA());
-                FunctionTreeVector<D> vec;
-                vec.push_back({-1.0, inp});
-                build_grid(*out, vec);
-                add(-1.0, *out, vec);
-                return out;
-            },
-            py::is_operator())
+        .def("__pos__", &impl__pos__<D>, py::is_operator())
+        .def("__neg__", &impl__neg__<D>, py::is_operator())
         .def("__add__", &impl__add__<D>, py::is_operator())
-        .def(
-            "__iadd__",
-            [](FunctionTree<D> *out, FunctionTree<D> *inp) { return impl__add__<D>(out, inp); },
-            py::is_operator())
-        .def(
-            "__sub__",
-            [](FunctionTree<D> *inp_a, FunctionTree<D> *inp_b) {
-                auto out = std::make_unique<FunctionTree<D>>(inp_a->getMRA());
-                FunctionTreeVector<D> vec;
-                vec.push_back({1.0, inp_a});
-                vec.push_back({-1.0, inp_b});
-                build_grid(*out, vec);
-                add(-1.0, *out, vec);
-                return out;
-            },
-            py::is_operator())
-        .def(
-            "__isub__",
-            [](FunctionTree<D> *out, FunctionTree<D> *inp) {
-                refine_grid(*out, *inp);
-                out->add(-1.0, *inp);
-                return out;
-            },
-            py::is_operator())
-        .def(
-            "__mul__",
-            [](FunctionTree<D> *inp, double c) {
-                auto out = std::make_unique<FunctionTree<D>>(inp->getMRA());
-                FunctionTreeVector<D> vec;
-                vec.push_back({c, inp});
-                build_grid(*out, vec);
-                add(-1.0, *out, vec);
-                return out;
-            },
-            py::is_operator())
-        .def(
-            "__rmul__",
-            [](FunctionTree<D> *inp, double c) {
-                auto out = std::make_unique<FunctionTree<D>>(inp->getMRA());
-                FunctionTreeVector<D> vec;
-                vec.push_back({c, inp});
-                build_grid(*out, vec);
-                add(-1.0, *out, vec);
-                return out;
-            },
-            py::is_operator())
-        .def(
-            "__imul__",
-            [](FunctionTree<D> *out, double c) {
-                out->rescale(c);
-                return out;
-            },
-            py::is_operator())
-        .def(
-            "__mul__",
-            [](FunctionTree<D> *inp_a, FunctionTree<D> *inp_b) {
-                auto out = std::make_unique<FunctionTree<D>>(inp_a->getMRA());
-                FunctionTreeVector<D> vec;
-                vec.push_back({1.0, inp_a});
-                vec.push_back({1.0, inp_b});
-                build_grid(*out, vec);
-                build_grid(*out, 1);
-                multiply(-1.0, *out, vec);
-                return out;
-            },
-            py::is_operator())
-        .def(
-            "__imul__",
-            [](FunctionTree<D> *out, FunctionTree<D> *inp) {
-                refine_grid(*out, *inp);
-                refine_grid(*out, 1);
-                out->multiply(1.0, *inp);
-                return out;
-            },
-            py::is_operator())
-        .def(
-            "__truediv__",
-            [](FunctionTree<D> *inp, double c) {
-                auto out = std::make_unique<FunctionTree<D>>(inp->getMRA());
-                FunctionTreeVector<D> vec;
-                vec.push_back({1.0 / c, inp});
-                build_grid(*out, vec);
-                add(-1.0, *out, vec);
-                return out;
-            },
-            py::is_operator())
-        .def(
-            "__itruediv__",
-            [](FunctionTree<D> *out, double c) {
-                out->rescale(1.0 / c);
-                return out;
-            },
-            py::is_operator())
-        .def(
-            "__pow__",
-            [](FunctionTree<D> *inp, double c) {
-                auto out = std::make_unique<FunctionTree<D>>(inp->getMRA());
-                copy_grid(*out, *inp);
-                copy_func(*out, *inp);
-                refine_grid(*out, 1);
-                out->power(c);
-                return out;
-            },
-            py::is_operator())
-        .def(
-            "__ipow__",
-            [](FunctionTree<D> *out, double c) {
-                refine_grid(*out, 1);
-                out->power(c);
-                return out;
-            },
-            py::is_operator());
+        .def("__iadd__", &impl__add__<D>, py::is_operator())
+        .def("__sub__", &impl__sub__<D>, py::is_operator())
+        .def("__isub__", &impl__sub__<D>, py::is_operator())
+        .def("__mul__", py::overload_cast<FunctionTree<D> *, FunctionTree<D> *>(&impl__mul__<D>), py::is_operator())
+        .def("__mul__", py::overload_cast<FunctionTree<D> *, double>(&impl__mul__<D>), py::is_operator())
+        .def("__imul__", py::overload_cast<FunctionTree<D> *, FunctionTree<D> *>(&impl__mul__<D>), py::is_operator())
+        .def("__imul__", py::overload_cast<FunctionTree<D> *, double>(&impl__mul__<D>), py::is_operator())
+        .def("__rmul__", py::overload_cast<FunctionTree<D> *, double>(&impl__mul__<D>), py::is_operator())
+        .def("__truediv__", &impl__truediv__<D>, py::is_operator())
+        .def("__itruediv__", &impl__truediv__<D>, py::is_operator())
+        .def("__pow__", &impl__pow__<D>, py::is_operator())
+        .def("__ipow__", &impl__pow__<D>, py::is_operator());
 
     py::class_<MWNode<D>>(m, "MWNode")
         .def("depth", &MWNode<D>::getDepth)

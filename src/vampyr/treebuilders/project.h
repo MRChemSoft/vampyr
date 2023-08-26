@@ -10,9 +10,9 @@ template <int D> void project(pybind11::module &m) {
     namespace py = pybind11;
     using namespace pybind11::literals;
 
-    m.def("ZeroTree",
-        [](const MultiResolutionAnalysis<D> &mra,
-           const std::string &name) {
+    m.def(
+        "ZeroTree",
+        [](const MultiResolutionAnalysis<D> &mra, const std::string &name) {
             auto out = std::make_unique<FunctionTree<D>>(mra, name);
             out->setZero();
             return out;

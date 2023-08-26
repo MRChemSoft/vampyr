@@ -15,8 +15,9 @@ template <int D> void gaussians(pybind11::module &m) {
     using namespace pybind11::literals;
 
     // Gaussian class
-    py::class_<Gaussian<D>, PyGaussian<D>, RepresentableFunction<D>>(m, "Gaussian",
-    R"mydelimiter(
+    py::class_<Gaussian<D>, PyGaussian<D>, RepresentableFunction<D>>(m,
+                                                                     "Gaussian",
+                                                                     R"mydelimiter(
 
         Parameters
         ----------
@@ -39,8 +40,9 @@ template <int D> void gaussians(pybind11::module &m) {
         });
 
     // GaussFunc class
-    py::class_<GaussFunc<D>, PyGaussian<D, GaussFunc<D>>, Gaussian<D>>(m, "GaussFunc",
-    R"mydelimiter(
+    py::class_<GaussFunc<D>, PyGaussian<D, GaussFunc<D>>, Gaussian<D>>(m,
+                                                                       "GaussFunc",
+                                                                       R"mydelimiter(
         An analytic Gaussian function in d dimensions:
 
         .. math::
@@ -73,9 +75,11 @@ template <int D> void gaussians(pybind11::module &m) {
         .def(
             "differentiate",
             [](const GaussFunc<D> &gauss, int dir) { return gauss.differentiate(dir).asGaussExp(); },
-            "dir"_a, "Differentiates the Gaussian along the specified axis.")
+            "dir"_a,
+            "Differentiates the Gaussian along the specified axis.")
         .def("squaredNorm", &GaussFunc<D>::calcSquareNorm)
-        .def("calcCoulombEnergy", &GaussFunc<D>::calcCoulombEnergy,
+        .def("calcCoulombEnergy",
+             &GaussFunc<D>::calcCoulombEnergy,
              R"mydelimiter(
              Calculate energy interaction between this Gaussian and an input Gaussian.
              Warning: power has to be a zero vector)mydelimiter");
@@ -83,23 +87,23 @@ template <int D> void gaussians(pybind11::module &m) {
     // GaussExp class
     py::class_<GaussExp<D>, RepresentableFunction<D>>(m, "GaussExp")
         .def(py::init())
-        .def("size",
-            py::overload_cast<>(&GaussExp<D>::size, py::const_),
-            "Number of Gaussians in the GaussExp")
+        .def("size", py::overload_cast<>(&GaussExp<D>::size, py::const_), "Number of Gaussians in the GaussExp")
         .def("func",
-            py::overload_cast<int>(&GaussExp<D>::getFunc),
-            "term"_a,
-            py::return_value_policy::reference_internal)
+             py::overload_cast<int>(&GaussExp<D>::getFunc),
+             "term"_a,
+             py::return_value_policy::reference_internal)
         .def("append",
-            py::overload_cast<const Gaussian<D> &>(&GaussExp<D>::append),
-            "Append Gaussians to the end of the GaussExp")
-        .def("periodify", &GaussExp<D>::periodify,
-            "period"_a,
-            "std_dev"_a = 4.0,
-            "Make copies of the Gaussian to simulate periodicity, then append it to the GaussExp")
+             py::overload_cast<const Gaussian<D> &>(&GaussExp<D>::append),
+             "Append Gaussians to the end of the GaussExp")
+        .def("periodify",
+             &GaussExp<D>::periodify,
+             "period"_a,
+             "std_dev"_a = 4.0,
+             "Make copies of the Gaussian to simulate periodicity, then append it to the GaussExp")
         .def("differentiate",
-            &GaussExp<D>::differentiate,
-            "dir"_a, "Differentiate all Gaussians in GaussExp along the specified axis")
+             &GaussExp<D>::differentiate,
+             "dir"_a,
+             "Differentiate all Gaussians in GaussExp along the specified axis")
         .def("squaredNorm", &GaussExp<D>::calcSquareNorm)
         .def("calcCoulombEnergy", &GaussExp<D>::calcCoulombEnergy)
         .def("__str__", [](const GaussExp<D> &func) {

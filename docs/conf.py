@@ -108,3 +108,10 @@ html_theme_options = {
         "notebook_interface": "jupyterlab",
     },
 }
+
+html_sidebars = {
+    "**": [
+        "searchbox.html",
+        "sbt-sidebar-nav.html",
+    ]
+}

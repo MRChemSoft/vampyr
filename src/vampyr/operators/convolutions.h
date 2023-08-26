@@ -2,10 +2,10 @@
 
 #include <pybind11/pybind11.h>
 
+#include <MRCPP/operators/CartesianConvolution.h>
 #include <MRCPP/operators/HelmholtzOperator.h>
 #include <MRCPP/operators/IdentityConvolution.h>
 #include <MRCPP/operators/PoissonOperator.h>
-#include <MRCPP/operators/CartesianConvolution.h>
 #include <MRCPP/treebuilders/apply.h>
 
 namespace vampyr {
@@ -20,10 +20,7 @@ template <int D> void convolutions(pybind11::module &m) {
     using namespace pybind11::literals;
 
     py::class_<ConvolutionOperator<D>>(m, "ConvolutionOperator")
-        .def(py::init<const MultiResolutionAnalysis<D> &, GaussExp<1> &, double>(),
-             "mra"_a,
-             "kernel"_a,
-             "prec"_a)
+        .def(py::init<const MultiResolutionAnalysis<D> &, GaussExp<1> &, double>(), "mra"_a, "kernel"_a, "prec"_a)
         .def(
             "__call__",
             [](ConvolutionOperator<D> &O, FunctionTree<D> *inp) {
@@ -60,10 +57,7 @@ void cartesian_convolution(pybind11::module &m) {
     using namespace pybind11::literals;
 
     py::class_<CartesianConvolution, ConvolutionOperator<3>>(m, "CartesianConvolution")
-        .def(py::init<const MultiResolutionAnalysis<3> &, GaussExp<1> &, double>(),
-             "mra"_a,
-             "kernel"_a,
-             "prec"_a)
+        .def(py::init<const MultiResolutionAnalysis<3> &, GaussExp<1> &, double>(), "mra"_a, "kernel"_a, "prec"_a)
         .def(
             "__call__",
             [](CartesianConvolution &O, FunctionTree<3> *inp) {
