@@ -121,4 +121,3 @@ def representation_vs_basis(tree, type="scaling"):
             ax[1].plot(x, y)
 
     return fig, ax
-
