@@ -109,9 +109,3 @@ html_theme_options = {
     },
 }
 
-html_sidebars = {
-    "**": [
-        "searchbox.html",
-        "sbt-sidebar-nav.html",
-    ]
-}
