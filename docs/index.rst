@@ -27,7 +27,6 @@ Check out the :doc:`usage` section for further information, including how to :re
    notebooks/hydrogen_atom
    notebooks/helium_atom
    notebooks/beryllium_atom
-   notebooks/multiwavelets
    notebooks/PCMSolvent
 
 .. toctree::
