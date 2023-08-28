@@ -18,12 +18,9 @@ template <int D> void gaussians(pybind11::module &m) {
     py::class_<Gaussian<D>, PyGaussian<D>, RepresentableFunction<D>>(m,
                                                                      "Gaussian",
                                                                      R"mydelimiter(
+        Parent class to the GaussFunc class.
 
-        Parameters
-        ----------
-
-        Returns
-        -------
+        Note: This is only a template. Do not use it directly.
 
     )mydelimiter")
         .def(py::init<double, double, const Coord<D> &, const std::array<int, D> &>())

@@ -28,6 +28,17 @@ template <int D> void project(pybind11::module &m) {
         .def(
             "__call__",
             [](PyScalingProjector<D> &P, std::function<double(const Coord<D> &r)> func) {
+                try {
+                    // When the analytic function func is badly defined, it kills the kernel
+                    // of Notebooks. This evaluates func in a point, and if it is not successful
+                    // it throws an error instead of killing the kernel.
+                    auto arr = std::array<double, D>();
+                    arr.fill(111111.111); // A number which hopefully does not divide by zero
+                    func(arr);
+                } catch (py::cast_error &e) {
+                    py::print("Error: Invalid definition of analytic function");
+                    throw;
+                }
                 auto old_threads = mrcpp_get_num_threads();
                 set_max_threads(1);
                 auto out = P(func);
@@ -43,6 +54,15 @@ template <int D> void project(pybind11::module &m) {
         .def(
             "__call__",
             [](PyWaveletProjector<D> &P, std::function<double(const Coord<D> &r)> func) {
+                try {
+                    auto arr = std::array<double, D>();
+                    arr.fill(111111.111); // A number which hopefully does not divide by zero
+                    func(arr);
+                } catch (py::cast_error &e) {
+                    py::print("Error: Invalid definition of analytic function");
+                    throw;
+                }
+
                 auto old_threads = mrcpp_get_num_threads();
                 set_max_threads(1);
                 auto out = P(func);
