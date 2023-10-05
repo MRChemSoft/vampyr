@@ -133,3 +133,6 @@ GTAGS
 # Validated input files produced during testing
 validated*.json
 .ccls-cache
+
+
+_skbuild/
