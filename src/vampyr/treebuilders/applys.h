@@ -3,6 +3,7 @@
 #include <pybind11/pybind11.h>
 
 #include <MRCPP/treebuilders/apply.h>
+#include <MRCPP/treebuilders/complex_apply.h>
 
 namespace vampyr {
 template <int D> void applys(pybind11::module &m) {
@@ -61,6 +62,18 @@ template <int D> void advanced_applys(pybind11::module &m) {
           "oper"_a,
           "inp"_a,
           "dir"_a = -1);
+
+    m.def
+    (
+        "apply",
+        py::overload_cast<double, ComplexObject< FunctionTree<D> > &, ComplexObject< ConvolutionOperator<D> > &, ComplexObject< FunctionTree<D> > &, int, bool>(&apply<D>),
+        "prec"_a,
+        "out"_a,
+        "oper"_a,
+        "inp"_a,
+        "max_iter"_a = -1,
+        "abs_prec"_a = false
+    );
 }
 
 } // namespace vampyr
