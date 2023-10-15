@@ -6,6 +6,7 @@
 #include <MRCPP/operators/HelmholtzOperator.h>
 #include <MRCPP/operators/IdentityConvolution.h>
 #include <MRCPP/operators/PoissonOperator.h>
+#include <MRCPP/operators/TimeEvolutionOperator.h>
 #include <MRCPP/treebuilders/apply.h>
 
 namespace vampyr {
@@ -112,6 +113,36 @@ void helmholtz_operator(pybind11::module &m) {
                 auto out = std::make_unique<FunctionTree<3>>(inp->getMRA());
                 apply<3>(H.getBuildPrec(), *out, H, *inp);
                 out->rescale(1.0 / (4.0 * mrcpp::pi));
+                return out;
+            },
+            "inp"_a);
+}
+
+//    TimeEvolutionOperator(
+    //const MultiResolutionAnalysis<D> &mra, double prec,
+    //double time,
+    //int finest_scale,
+    //bool imaginary,
+    //int max_Jpower = 20);
+void time_evolution_operator(pybind11::module &m)
+{
+    namespace py = pybind11;
+    using namespace mrcpp;
+    using namespace pybind11::literals;
+
+    py::class_<TimeEvolutionOperator<1>, ConvolutionOperator<1>>(m, "TimeEvolutionOperator")
+        .def(py::init<const MultiResolutionAnalysis<1> &, double, double, int, bool, int>(),
+             "mra"_a,
+             "prec"_a,
+             "time"_a,
+             "finest_scale"_a,
+             "imaginary"_a,
+             "max_Jpower"_a = 20)
+        .def(
+            "__call__",
+            [](TimeEvolutionOperator<1> &T, FunctionTree<1> *inp) {
+                auto out = std::make_unique<FunctionTree<1>>(inp->getMRA());
+                apply<1>(T.getBuildPrec(), *out, T, *inp);
                 return out;
             },
             "inp"_a);
