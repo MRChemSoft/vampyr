@@ -14,6 +14,7 @@ namespace vampyr {
 void cartesian_convolution(pybind11::module &);
 void helmholtz_operator(pybind11::module &);
 void poisson_operator(pybind11::module &);
+void time_evolution_operator(pybind11::module &m);
 
 template <int D> void convolutions(pybind11::module &m) {
     namespace py = pybind11;
@@ -118,12 +119,7 @@ void helmholtz_operator(pybind11::module &m) {
             "inp"_a);
 }
 
-//    TimeEvolutionOperator(
-    //const MultiResolutionAnalysis<D> &mra, double prec,
-    //double time,
-    //int finest_scale,
-    //bool imaginary,
-    //int max_Jpower = 20);
+
 void time_evolution_operator(pybind11::module &m)
 {
     namespace py = pybind11;
