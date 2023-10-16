@@ -52,6 +52,7 @@ template <int D> void convolutions(pybind11::module &m) {
     if constexpr (D == 3) cartesian_convolution(m);
     if constexpr (D == 3) helmholtz_operator(m);
     if constexpr (D == 3) poisson_operator(m);
+    if constexpr (D == 1) time_evolution_operator(m);
 }
 
 void cartesian_convolution(pybind11::module &m) {

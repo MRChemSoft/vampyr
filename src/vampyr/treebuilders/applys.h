@@ -3,7 +3,7 @@
 #include <pybind11/pybind11.h>
 
 #include <MRCPP/treebuilders/apply.h>
-#include <MRCPP/treebuilders/complex_apply.h>
+//#include <MRCPP/treebuilders/complex_apply.h>
 
 namespace vampyr {
 template <int D> void applys(pybind11::module &m) {
@@ -62,7 +62,7 @@ template <int D> void advanced_applys(pybind11::module &m) {
           "oper"_a,
           "inp"_a,
           "dir"_a = -1);
-
+/*
     m.def
     (
         "apply",
@@ -74,6 +74,7 @@ template <int D> void advanced_applys(pybind11::module &m) {
         "max_iter"_a = -1,
         "abs_prec"_a = false
     );
+*/
 }
 
 } // namespace vampyr
