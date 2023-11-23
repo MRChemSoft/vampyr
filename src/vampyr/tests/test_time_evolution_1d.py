@@ -60,5 +60,6 @@ Im_difference = Im_out - Im_g           #2.2e-14
 
 epsilon = 2.5e-14
 
-assert Re_difference.squaredNorm() == pytest.approx(0.0, abs = epsilon)
-assert Im_difference.squaredNorm() == pytest.approx(0.0, abs = epsilon)
+def test_time_evolution():
+    assert Re_difference.squaredNorm() == pytest.approx(0.0, abs = epsilon)
+    assert Im_difference.squaredNorm() == pytest.approx(0.0, abs = epsilon)
