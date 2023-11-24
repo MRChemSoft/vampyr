@@ -28,6 +28,7 @@ Check out the :doc:`usage` section for further information, including how to :re
    notebooks/helium_atom
    notebooks/beryllium_atom
    notebooks/PCMSolvent
+   notebooks/harmonic_oscillator_evolution
 
 .. toctree::
    :maxdepth: 2
