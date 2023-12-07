@@ -6,7 +6,6 @@ on:
       - master
       - release/*
   workflow_dispatch:
-  pull_request:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -16,21 +15,26 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: Run repo2docker
+
+    permissions:
+      contents: read
+      packages: write
+      
     steps:
 
-    - name: checkout files in repo
-      uses: actions/checkout@v3
+      - name: checkout files in repo
+        uses: actions/checkout@v3
 
-    - name: downcase repository name
-      run: |
-        echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+      - name: downcase repository name
+        run: |
+          echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
 
-    - name: update jupyter dependencies with repo2docker
-      uses: jupyterhub/repo2docker-action@master
-      with:
-        DOCKER_USERNAME: ${{ github.repository_owner }}
-        DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-        DOCKER_REGISTRY: ghcr.io
-        MYBINDERORG_TAG: ${{ github.event.ref }}
-        IMAGE_NAME: ${{ env.REPO }}
-        PUBLIC_REGISTRY_CHECK: true
+      - name: update jupyter dependencies with repo2docker
+        uses: jupyterhub/repo2docker-action@master
+        with:
+          DOCKER_USERNAME: ${{ github.repository_owner }}
+          DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          DOCKER_REGISTRY: ghcr.io
+          MYBINDERORG_TAG: ${{ github.event.ref }}
+          IMAGE_NAME: ${{ env.REPO }}
+          PUBLIC_REGISTRY_CHECK: true

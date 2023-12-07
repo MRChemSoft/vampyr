@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
 
-from vampyr import vampyr3d as vp
 from vampyr import vampyr1d as vp1
+from vampyr import vampyr3d as vp
 
 epsilon = 1.0e-3
 mu = epsilon / 10
@@ -22,6 +22,7 @@ ref_energy = ffunc.calcCoulombEnergy(ffunc)
 ftree = vp.FunctionTree(mra)
 vp.advanced.build_grid(out=ftree, inp=ffunc)
 vp.advanced.project(prec=epsilon, out=ftree, inp=ffunc)
+
 
 def test_GaussKernel():
     b = 1.0e4

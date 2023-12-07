@@ -3,11 +3,13 @@ install*
 debug*
 .idea
 .ipynb_checkpoints
-*.ipynb
 *.swp
 cmake-build-debug
 .direnv
 .pytest_cache
+
+# Editor junk
+.vscode
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -131,3 +133,6 @@ GTAGS
 # Validated input files produced during testing
 validated*.json
 .ccls-cache
+
+
+_skbuild/

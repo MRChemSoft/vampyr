@@ -2,10 +2,11 @@
 
 #include <pybind11/pybind11.h>
 
+#include <MRCPP/operators/CartesianConvolution.h>
 #include <MRCPP/operators/HelmholtzOperator.h>
 #include <MRCPP/operators/IdentityConvolution.h>
 #include <MRCPP/operators/PoissonOperator.h>
-#include <MRCPP/operators/CartesianConvolution.h>
+#include <MRCPP/operators/TimeEvolutionOperator.h>
 #include <MRCPP/treebuilders/apply.h>
 
 namespace vampyr {
@@ -13,6 +14,7 @@ namespace vampyr {
 void cartesian_convolution(pybind11::module &);
 void helmholtz_operator(pybind11::module &);
 void poisson_operator(pybind11::module &);
+void time_evolution_operator(pybind11::module &m);
 
 template <int D> void convolutions(pybind11::module &m) {
     namespace py = pybind11;
@@ -20,15 +22,13 @@ template <int D> void convolutions(pybind11::module &m) {
     using namespace pybind11::literals;
 
     py::class_<ConvolutionOperator<D>>(m, "ConvolutionOperator")
-        .def(py::init<const MultiResolutionAnalysis<D> &, GaussExp<1> &, double>(),
-             "mra"_a,
-             "kernel"_a,
-             "prec"_a)
+        .def(py::init<const MultiResolutionAnalysis<D> &, GaussExp<1> &, double>(), "mra"_a, "kernel"_a, "prec"_a)
+        .def(py::init<const MultiResolutionAnalysis<D> &, GaussExp<1> &, double, int, int>())
         .def(
             "__call__",
-            [](ConvolutionOperator<D> &O, FunctionTree<D> *inp) {
+            [](ConvolutionOperator<D> &C, FunctionTree<D> *inp) {
                 auto out = std::make_unique<FunctionTree<D>>(inp->getMRA());
-                apply<D>(O.getBuildPrec(), *out, O, *inp);
+                apply<D>(C.getBuildPrec(), *out, C, *inp);
                 return out;
             },
             "inp"_a);
@@ -52,6 +52,7 @@ template <int D> void convolutions(pybind11::module &m) {
     if constexpr (D == 3) cartesian_convolution(m);
     if constexpr (D == 3) helmholtz_operator(m);
     if constexpr (D == 3) poisson_operator(m);
+    if constexpr (D == 1) time_evolution_operator(m);
 }
 
 void cartesian_convolution(pybind11::module &m) {
@@ -60,10 +61,7 @@ void cartesian_convolution(pybind11::module &m) {
     using namespace pybind11::literals;
 
     py::class_<CartesianConvolution, ConvolutionOperator<3>>(m, "CartesianConvolution")
-        .def(py::init<const MultiResolutionAnalysis<3> &, GaussExp<1> &, double>(),
-             "mra"_a,
-             "kernel"_a,
-             "prec"_a)
+        .def(py::init<const MultiResolutionAnalysis<3> &, GaussExp<1> &, double>(), "mra"_a, "kernel"_a, "prec"_a)
         .def(
             "__call__",
             [](CartesianConvolution &O, FunctionTree<3> *inp) {
@@ -117,6 +115,31 @@ void helmholtz_operator(pybind11::module &m) {
                 auto out = std::make_unique<FunctionTree<3>>(inp->getMRA());
                 apply<3>(H.getBuildPrec(), *out, H, *inp);
                 out->rescale(1.0 / (4.0 * mrcpp::pi));
+                return out;
+            },
+            "inp"_a);
+}
+
+
+void time_evolution_operator(pybind11::module &m)
+{
+    namespace py = pybind11;
+    using namespace mrcpp;
+    using namespace pybind11::literals;
+
+    py::class_<TimeEvolutionOperator<1>, ConvolutionOperator<1>>(m, "TimeEvolutionOperator")
+        .def(py::init<const MultiResolutionAnalysis<1> &, double, double, int, bool, int>(),
+             "mra"_a,
+             "prec"_a,
+             "time"_a,
+             "finest_scale"_a,
+             "imaginary"_a,
+             "max_Jpower"_a = 20)
+        .def(
+            "__call__",
+            [](TimeEvolutionOperator<1> &T, FunctionTree<1> *inp) {
+                auto out = std::make_unique<FunctionTree<1>>(inp->getMRA());
+                apply<1>(T.getBuildPrec(), *out, T, *inp);
                 return out;
             },
             "inp"_a);

@@ -19,8 +19,16 @@ Check out the :doc:`usage` section for further information, including how to :re
    :caption: Contents
 
    usage
-   notebooks/vampyr_intro
+   notebooks/introduction
+   notebooks/function_representations
+   notebooks/multiwavelets
+   notebooks/poisson_equation
+   notebooks/helmholtz_equation
+   notebooks/hydrogen_atom
+   notebooks/helium_atom
+   notebooks/beryllium_atom
    notebooks/PCMSolvent
+   notebooks/harmonic_oscillator_evolution
 
 .. toctree::
    :maxdepth: 2
