@@ -66,3 +66,34 @@ Note that the conda-forge package is _always_ built with OpenMP support enabled
 in the MRCPP backend.
 
 The VAMPyR module is now available whenever you have activated the `myenv` environment.
+
+### Creating a Conda environment from a .yml file
+
+You can also create a Conda environment from a .yml file that already specifies VAMPyR and
+other useful packages such as numpy, and matplotlib. Here's how:
+
+1. Write an `environment.yml` file, for example:
+
+    ```yaml
+    name: myenv
+    channels:
+      - conda-forge
+    dependencies:
+      - vampyr
+      - numpy
+      - matplotlib
+      - jupyterlab
+    ```
+
+2. Create the environment from the `environment.yml` file:
+
+    ```sh
+    $ conda env create -f environment.yml
+    ```
+3. Activate the environment:
+
+    ```sh
+    $ conda activate myenv
+    ```
+The VAMPyR module, along with numpy and matplotlib, is now available whenever
+you have activated the myenv environment.

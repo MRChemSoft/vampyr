@@ -13,6 +13,7 @@
 #include <MRCPP/version.h>
 
 #include "core/bases.h"
+#include "core/filter.h"
 #include "functions/functions.h"
 #include "operators/convolutions.h"
 #include "operators/derivatives.h"
@@ -94,5 +95,6 @@ PYBIND11_MODULE(_vampyr, m) {
     bind_vampyr<2>(m);
     bind_vampyr<3>(m);
     bases(m);
+    filter(m);
 }
 } // namespace vampyr

@@ -22,7 +22,7 @@ requires = [
   "wheel",
   "scikit-build>=0.13",
   "cmake>=3.17",
-  "ninja; platform_system!='Windows'",
+  "ninja",
 ]
 
 build-backend = "setuptools.build_meta"
