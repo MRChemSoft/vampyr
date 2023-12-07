@@ -16,6 +16,10 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## [Unreleased]
 
+## [1.0rc1]
+
+Release candidate, added time evolution operator and docs.
+
 ## [1.0rc0]
 
 Third release candidate, closing in on major version.
