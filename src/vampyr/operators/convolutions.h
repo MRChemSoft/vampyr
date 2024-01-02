@@ -135,6 +135,12 @@ void time_evolution_operator(pybind11::module &m)
              "finest_scale"_a,
              "imaginary"_a,
              "max_Jpower"_a = 20)
+        .def(py::init<const MultiResolutionAnalysis<1> &, double, double, bool, int>(),
+             "mra"_a,
+             "prec"_a,
+             "time"_a,
+             "imaginary"_a,
+             "max_Jpower"_a = 40)
         .def(
             "__call__",
             [](TimeEvolutionOperator<1> &T, FunctionTree<1> *inp) {
