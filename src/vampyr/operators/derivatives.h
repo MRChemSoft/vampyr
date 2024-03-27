@@ -55,7 +55,7 @@ template <int D> void derivatives(pybind11::module &m) {
 
 
     // Factory function to create derivative operators based on type
-    m.def("Derivative", [](const MultiResolutionAnalysis<D> &mra, const std::string &type, int order = 1) -> std::unique_ptr<DerivativeOperator<D>> {
+    m.def("Derivative", [](const MultiResolutionAnalysis<D> &mra, const std::string &type = "center", int order = 1) -> std::unique_ptr<DerivativeOperator<D>> {
         if (type == "center") {
             return std::make_unique<ABGVOperator<D>>(mra, 0.5, 0.5);
         } else if (type == "simple") {
