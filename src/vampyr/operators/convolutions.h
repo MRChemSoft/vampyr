@@ -53,6 +53,7 @@ template <int D> void convolutions(pybind11::module &m) {
     if constexpr (D == 3) helmholtz_operator(m);
     if constexpr (D == 3) poisson_operator(m);
     if constexpr (D == 1) time_evolution_operator(m);
+    if constexpr (D == 1) heat_operator(m);
 }
 
 void cartesian_convolution(pybind11::module &m) {
@@ -144,6 +145,28 @@ void time_evolution_operator(pybind11::module &m)
         .def(
             "__call__",
             [](TimeEvolutionOperator<1> &T, FunctionTree<1> *inp) {
+                auto out = std::make_unique<FunctionTree<1>>(inp->getMRA());
+                apply<1>(T.getBuildPrec(), *out, T, *inp);
+                return out;
+            },
+            "inp"_a);
+}
+
+
+void heat_operator(pybind11::module &m)
+{
+    namespace py = pybind11;
+    using namespace mrcpp;
+    using namespace pybind11::literals;
+
+    py::class_<HeatOperator<1>, ConvolutionOperator<1>>(m, "HeatOperator")
+        .def(py::init<const MultiResolutionAnalysis<1> &, double, double>(),
+             "mra"_a,
+             "time"_a,
+             "prec"_a)
+        .def(
+            "__call__",
+            [](HeatOperator<1> &T, FunctionTree<1> *inp) {
                 auto out = std::make_unique<FunctionTree<1>>(inp->getMRA());
                 apply<1>(T.getBuildPrec(), *out, T, *inp);
                 return out;
