@@ -7,6 +7,7 @@
 #include <MRCPP/operators/IdentityConvolution.h>
 #include <MRCPP/operators/PoissonOperator.h>
 #include <MRCPP/operators/TimeEvolutionOperator.h>
+#include <MRCPP/operators/HeatOperator.h>
 #include <MRCPP/treebuilders/apply.h>
 
 namespace vampyr {
@@ -15,6 +16,7 @@ void cartesian_convolution(pybind11::module &);
 void helmholtz_operator(pybind11::module &);
 void poisson_operator(pybind11::module &);
 void time_evolution_operator(pybind11::module &m);
+void heat_operator(pybind11::module &m);
 
 template <int D> void convolutions(pybind11::module &m) {
     namespace py = pybind11;
