@@ -16,9 +16,9 @@ else()
   FetchContent_Declare(mrcpp
     QUIET
     GIT_REPOSITORY
-      https://github.com/MRChemSoft/mrcpp.git
+      https://github.com/edinvay/mrcpp.git
     GIT_TAG
-      f9e50bae7c28ece70fa0c909e4be7170d406543a
+      d77ca248294aba6c968154ef429070064d4ca4bb
     )
 
   set(CMAKE_CXX_COMPILER ${CMAKE_CXX_COMPILER})
