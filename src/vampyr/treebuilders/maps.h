@@ -3,6 +3,7 @@
 #include <pybind11/functional.h>
 
 #include "PyFunctionMap.h"
+#include <MRCPP/treebuilders/map.h>
 
 namespace vampyr {
 template <int D> void map(pybind11::module &m) {
@@ -14,7 +15,7 @@ template <int D> void map(pybind11::module &m) {
         .def(py::init<std::function<double(double)>, double>(), "fmap"_a, "prec"_a)
         .def(
             "__call__",
-            [](PyFunctionMap<D> &F, FunctionTree<D> &inp) {
+            [](PyFunctionMap<D> &F, FunctionTree<D, double> &inp) {
                 auto old_threads = mrcpp_get_num_threads();
                 set_max_threads(1);
                 auto out = F(inp);
@@ -32,8 +33,8 @@ template <int D> void advanced_map(pybind11::module &m) {
     m.def(
         "map",
         [](double prec,
-           FunctionTree<D> &out,
-           FunctionTree<D> &inp,
+           FunctionTree<D, double> &out,
+           FunctionTree<D, double> &inp,
            std::function<double(double)> fmap,
            int max_iter,
            bool abs_prec) {

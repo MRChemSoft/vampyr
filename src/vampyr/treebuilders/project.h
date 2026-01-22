@@ -13,7 +13,7 @@ template <int D> void project(pybind11::module &m) {
     m.def(
         "ZeroTree",
         [](const MultiResolutionAnalysis<D> &mra, const std::string &name) {
-            auto out = std::make_unique<FunctionTree<D>>(mra, name);
+            auto out = std::make_unique<FunctionTree<D, double>>(mra, name);
             out->setZero();
             return out;
         },
@@ -24,7 +24,7 @@ template <int D> void project(pybind11::module &m) {
         .def(py::init<const MultiResolutionAnalysis<D> &, double>(), "mra"_a, "prec"_a)
         .def(py::init<const MultiResolutionAnalysis<D> &, int>(), "mra"_a, "scale"_a)
         .def(
-            "__call__", [](PyScalingProjector<D> &P, RepresentableFunction<D> &func) { return P(func); }, "func"_a)
+            "__call__", [](PyScalingProjector<D> &P, RepresentableFunction<D, double> &func) { return P(func); }, "func"_a)
         .def(
             "__call__",
             [](PyScalingProjector<D> &P, std::function<double(const Coord<D> &r)> func) {
@@ -50,7 +50,7 @@ template <int D> void project(pybind11::module &m) {
     py::class_<PyWaveletProjector<D>>(m, "WaveletProjector")
         .def(py::init<const MultiResolutionAnalysis<D> &, int>(), "mra"_a, "scale"_a)
         .def(
-            "__call__", [](PyWaveletProjector<D> &P, RepresentableFunction<D> &func) { return P(func); }, "func"_a)
+            "__call__", [](PyWaveletProjector<D> &P, RepresentableFunction<D, double> &func) { return P(func); }, "func"_a)
         .def(
             "__call__",
             [](PyWaveletProjector<D> &P, std::function<double(const Coord<D> &r)> func) {
@@ -78,7 +78,9 @@ template <int D> void advanced_project(pybind11::module &m) {
     using namespace pybind11::literals;
 
     m.def("project",
-          py::overload_cast<double, FunctionTree<D> &, RepresentableFunction<D> &, int, bool>(&mrcpp::project<D>),
+          [](double prec, FunctionTree<D, double> &out, RepresentableFunction<D, double> &inp, int max_iter, bool abs_prec) {
+              mrcpp::project<D, double>(prec, out, inp, max_iter, abs_prec);
+          },
           "prec"_a = -1.0,
           "out"_a,
           "inp"_a,
@@ -88,7 +90,7 @@ template <int D> void advanced_project(pybind11::module &m) {
     m.def(
         "project",
         [](double prec,
-           FunctionTree<D> &out,
+           FunctionTree<D, double> &out,
            std::function<double(const Coord<D> &r)> inp,
            int max_iter,
            bool abs_prec) {
