@@ -18,17 +18,17 @@ public:
         if (this->min_scale < this->MRA.getRootScale()) MSG_ERROR("Invalid scale");
     }
 
-    std::unique_ptr<FunctionTree<D>> operator()(RepresentableFunction<D> &func) {
-        auto out = std::make_unique<FunctionTree<D>>(this->MRA);
+    std::unique_ptr<FunctionTree<D, double>> operator()(RepresentableFunction<D, double> &func) {
+        auto out = std::make_unique<FunctionTree<D, double>>(this->MRA);
         if (this->precision > 0.0) {
             // With the adaptive projection we want s+w repr at finest scale
-            build_grid<D>(*out, func);
-            project<D>(this->precision, *out, func);
+            build_grid<D, double>(*out, func);
+            project<D, double>(this->precision, *out, func);
         } else {
             // With the fixed scale projection we want pure s repr at finest scale
             int depth = this->min_scale - this->MRA.getRootScale();
-            build_grid<D>(*out, depth);
-            project<D>(-1.0, *out, func);
+            build_grid<D, double>(*out, depth);
+            project<D, double>(-1.0, *out, func);
 
             // Need to explicitly clear w coefs after projection to get only s coefs
             for (int n = 0; n < out->getNEndNodes(); n++) {
@@ -42,15 +42,15 @@ public:
         return out;
     }
 
-    std::unique_ptr<FunctionTree<D>> operator()(std::function<double(const Coord<D> &r)> func) {
-        auto out = std::make_unique<FunctionTree<D>>(this->MRA);
+    std::unique_ptr<FunctionTree<D, double>> operator()(std::function<double(const Coord<D> &r)> func) {
+        auto out = std::make_unique<FunctionTree<D, double>>(this->MRA);
         if (this->precision > 0.0) {
             // With the adaptive projection we want s+w repr at finest scale
             project<D>(this->precision, *out, func);
         } else {
             // With the fixed scale projection we want pure s repr at finest scale
             int depth = this->min_scale - this->MRA.getRootScale();
-            build_grid<D>(*out, depth);
+            build_grid<D, double>(*out, depth);
             project<D>(-1.0, *out, func);
 
             // Need to explicitly clear w coefs after projection to get only s coefs
@@ -79,14 +79,14 @@ public:
         if (this->min_scale < this->MRA.getRootScale()) MSG_ERROR("Invalid scale");
     }
 
-    std::unique_ptr<FunctionTree<D>> operator()(RepresentableFunction<D> &func) {
+    std::unique_ptr<FunctionTree<D, double>> operator()(RepresentableFunction<D, double> &func) {
         // With the fixed scale projection we want pure w repr at finest scale
-        auto out = std::make_unique<FunctionTree<D>>(this->MRA);
+        auto out = std::make_unique<FunctionTree<D, double>>(this->MRA);
 
         // Project uniformly at scale n
         int depth = this->min_scale - this->MRA.getRootScale();
-        build_grid<D>(*out, depth);
-        project<D>(-1.0, *out, func);
+        build_grid<D, double>(*out, depth);
+        project<D, double>(-1.0, *out, func);
 
         // Need to explicitly clear s coefs after projection to get only w coefs
         for (int n = 0; n < out->getNEndNodes(); n++) {
@@ -99,13 +99,13 @@ public:
         return out;
     }
 
-    std::unique_ptr<FunctionTree<D>> operator()(std::function<double(const Coord<D> &r)> func) {
+    std::unique_ptr<FunctionTree<D, double>> operator()(std::function<double(const Coord<D> &r)> func) {
         // With the fixed scale projection we want pure w repr at finest scale
-        auto out = std::make_unique<FunctionTree<D>>(this->MRA);
+        auto out = std::make_unique<FunctionTree<D, double>>(this->MRA);
 
         // Project uniformly at scale n
         int depth = this->min_scale - this->MRA.getRootScale();
-        build_grid<D>(*out, depth);
+        build_grid<D, double>(*out, depth);
         project<D>(-1.0, *out, func);
 
         // Need to explicitly clear s coefs after projection to get only w coefs

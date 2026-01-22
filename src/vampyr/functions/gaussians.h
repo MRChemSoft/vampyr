@@ -15,7 +15,7 @@ template <int D> void gaussians(pybind11::module &m) {
     using namespace pybind11::literals;
 
     // Gaussian class
-    py::class_<Gaussian<D>, PyGaussian<D>, RepresentableFunction<D>>(m,
+    py::class_<Gaussian<D>, PyGaussian<D>, RepresentableFunction<D, double>>(m,
                                                                      "Gaussian",
                                                                      R"mydelimiter(
         Parent class to the GaussFunc class.
@@ -82,7 +82,7 @@ template <int D> void gaussians(pybind11::module &m) {
              Warning: power has to be a zero vector)mydelimiter");
 
     // GaussExp class
-    py::class_<GaussExp<D>, RepresentableFunction<D>>(m, "GaussExp")
+    py::class_<GaussExp<D>, RepresentableFunction<D, double>>(m, "GaussExp")
         .def(py::init())
         .def("size", py::overload_cast<>(&GaussExp<D>::size, py::const_), "Number of Gaussians in the GaussExp")
         .def("func",
