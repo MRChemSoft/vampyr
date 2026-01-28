@@ -3,6 +3,10 @@ import pytest
 
 import vampyr as vp
 
+try:
+    trapz = np.trapezoid
+except AttributeError:
+    trapz = np.trapz
 
 def test_LegendreBasis():
     basis = vp.LegendreBasis(order=5)
