@@ -1,4 +1,4 @@
-dimport numpy as np
+import numpy as np
 import pytest
 
 import vampyr as vp
