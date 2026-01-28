@@ -1,4 +1,10 @@
 import numpy as np
+
+if hasattr(np, "trapezoid"):
+    trapz = np.trapezoid
+else:
+    trapz = np.trapz
+    
 import pytest
 
 import vampyr as vp
