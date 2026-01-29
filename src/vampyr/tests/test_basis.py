@@ -30,7 +30,7 @@ def test_InterpolatingScalingBasis():
     dx = 0.0001
     x = np.arange(0, 0.51, dx)
     f_squared = [f([x]) * f([x]) for x in x]
-    assert 1.0 == pytest.approx(np.trapz(f_squared, dx=dx), 0.001)
+    assert 1.0 == pytest.approx(np.trapezoid(f_squared, dx=dx), 0.001)
 
 
 def test_InterpolatingWaveletBasis():
@@ -39,7 +39,7 @@ def test_InterpolatingWaveletBasis():
     dx = 0.0001
     x = np.arange(0, 0.51, dx)
     f_squared = [f([x]) * f([x]) for x in x]
-    assert 1.0 == pytest.approx(np.trapz(f_squared, dx=dx), 0.001)
+    assert 1.0 == pytest.approx(np.trapezoid(f_squared, dx=dx), 0.001)
 
 
 def test_LegendreScalingBasis():
@@ -48,7 +48,7 @@ def test_LegendreScalingBasis():
     dx = 0.0001
     x = np.arange(0, 0.51, dx)
     f_squared = [f([x]) * f([x]) for x in x]
-    assert 1.0 == pytest.approx(np.trapz(f_squared, dx=dx), 0.001)
+    assert 1.0 == pytest.approx(np.trapezoid(f_squared, dx=dx), 0.001)
 
 
 def test_LegendreWaveletBasis():
@@ -57,4 +57,4 @@ def test_LegendreWaveletBasis():
     dx = 0.0001
     x = np.arange(0, 0.51, dx)
     f_squared = [f([x]) * f([x]) for x in x]
-    assert 1.0 == pytest.approx(np.trapz(f_squared, dx=dx), 0.001)
+    assert 1.0 == pytest.approx(np.trapezoid(f_squared, dx=dx), 0.001)
