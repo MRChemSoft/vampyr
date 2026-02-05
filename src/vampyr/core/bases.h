@@ -23,11 +23,11 @@ void bases(pybind11::module &m) {
     namespace py = pybind11;
     using namespace pybind11::literals;
 
-    py::class_<Polynomial, PyRepresentableFunction<1, Polynomial>, RepresentableFunction<1>>(m, "Polynomial");
+    py::class_<Polynomial, PyRepresentableFunction<1, Polynomial>, RepresentableFunction<1, double>>(m, "Polynomial");
 
     py::class_<PyScalingFunction, Polynomial>(m, "ScalingFunction");
 
-    py::class_<PyWaveletFunction, RepresentableFunction<1>>(m, "WaveletFunction");
+    py::class_<PyWaveletFunction, RepresentableFunction<1, double>>(m, "WaveletFunction");
 
     py::class_<ScalingBasis>(m,
                              "ScalingBasis",

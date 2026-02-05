@@ -13,11 +13,11 @@
 
 namespace vampyr {
 template <int D>
-auto impl__add__(mrcpp::FunctionTree<D> *inp_a, mrcpp::FunctionTree<D> *inp_b)
-    -> std::unique_ptr<mrcpp::FunctionTree<D>> {
+auto impl__add__(mrcpp::FunctionTree<D, double> *inp_a, mrcpp::FunctionTree<D, double> *inp_b)
+    -> std::unique_ptr<mrcpp::FunctionTree<D, double>> {
     using namespace mrcpp;
-    auto out = std::make_unique<FunctionTree<D>>(inp_a->getMRA());
-    FunctionTreeVector<D> vec;
+    auto out = std::make_unique<FunctionTree<D, double>>(inp_a->getMRA());
+    FunctionTreeVector<D, double> vec;
     vec.push_back({1.0, inp_a});
     vec.push_back({1.0, inp_b});
     build_grid(*out, vec);
@@ -26,11 +26,11 @@ auto impl__add__(mrcpp::FunctionTree<D> *inp_a, mrcpp::FunctionTree<D> *inp_b)
 };
 
 template <int D>
-auto impl__sub__(mrcpp::FunctionTree<D> *inp_a, mrcpp::FunctionTree<D> *inp_b)
-    -> std::unique_ptr<mrcpp::FunctionTree<D>> {
+auto impl__sub__(mrcpp::FunctionTree<D, double> *inp_a, mrcpp::FunctionTree<D, double> *inp_b)
+    -> std::unique_ptr<mrcpp::FunctionTree<D, double>> {
     using namespace mrcpp;
-    auto out = std::make_unique<FunctionTree<D>>(inp_a->getMRA());
-    FunctionTreeVector<D> vec;
+    auto out = std::make_unique<FunctionTree<D, double>>(inp_a->getMRA());
+    FunctionTreeVector<D, double> vec;
     vec.push_back({1.0, inp_a});
     vec.push_back({-1.0, inp_b});
     build_grid(*out, vec);
@@ -39,11 +39,11 @@ auto impl__sub__(mrcpp::FunctionTree<D> *inp_a, mrcpp::FunctionTree<D> *inp_b)
 };
 
 template <int D>
-auto impl__mul__(mrcpp::FunctionTree<D> *inp_a, mrcpp::FunctionTree<D> *inp_b)
-    -> std::unique_ptr<mrcpp::FunctionTree<D>> {
+auto impl__mul__(mrcpp::FunctionTree<D, double> *inp_a, mrcpp::FunctionTree<D, double> *inp_b)
+    -> std::unique_ptr<mrcpp::FunctionTree<D, double>> {
     using namespace mrcpp;
-    auto out = std::make_unique<FunctionTree<D>>(inp_a->getMRA());
-    FunctionTreeVector<D> vec;
+    auto out = std::make_unique<FunctionTree<D, double>>(inp_a->getMRA());
+    FunctionTreeVector<D, double> vec;
     vec.push_back({1.0, inp_a});
     vec.push_back({1.0, inp_b});
     build_grid(*out, vec);
@@ -52,28 +52,29 @@ auto impl__mul__(mrcpp::FunctionTree<D> *inp_a, mrcpp::FunctionTree<D> *inp_b)
     return out;
 };
 
-template <int D> auto impl__mul__(mrcpp::FunctionTree<D> *inp_a, double c) -> std::unique_ptr<mrcpp::FunctionTree<D>> {
+template <int D>
+auto impl__mul__(mrcpp::FunctionTree<D, double> *inp_a, double c) -> std::unique_ptr<mrcpp::FunctionTree<D, double>> {
     using namespace mrcpp;
-    auto out = std::make_unique<FunctionTree<D>>(inp_a->getMRA());
-    FunctionTreeVector<D> vec;
+    auto out = std::make_unique<FunctionTree<D, double>>(inp_a->getMRA());
+    FunctionTreeVector<D, double> vec;
     vec.push_back({c, inp_a});
     build_grid(*out, vec);
     add(-1.0, *out, vec);
     return out;
 };
 
-template <int D> auto impl__pos__(mrcpp::FunctionTree<D> *inp) -> std::unique_ptr<mrcpp::FunctionTree<D>> {
+template <int D> auto impl__pos__(mrcpp::FunctionTree<D, double> *inp) -> std::unique_ptr<mrcpp::FunctionTree<D, double>> {
     using namespace mrcpp;
-    auto out = std::make_unique<FunctionTree<D>>(inp->getMRA());
+    auto out = std::make_unique<FunctionTree<D, double>>(inp->getMRA());
     copy_grid(*out, *inp);
     copy_func(*out, *inp);
     return out;
 };
 
-template <int D> auto impl__neg__(mrcpp::FunctionTree<D> *inp) -> std::unique_ptr<mrcpp::FunctionTree<D>> {
+template <int D> auto impl__neg__(mrcpp::FunctionTree<D, double> *inp) -> std::unique_ptr<mrcpp::FunctionTree<D, double>> {
     using namespace mrcpp;
-    auto out = std::make_unique<FunctionTree<D>>(inp->getMRA());
-    FunctionTreeVector<D> vec;
+    auto out = std::make_unique<FunctionTree<D, double>>(inp->getMRA());
+    FunctionTreeVector<D, double> vec;
     vec.push_back({-1.0, inp});
     build_grid(*out, vec);
     add(-1.0, *out, vec);
@@ -81,19 +82,19 @@ template <int D> auto impl__neg__(mrcpp::FunctionTree<D> *inp) -> std::unique_pt
 };
 
 template <int D>
-auto impl__truediv__(mrcpp::FunctionTree<D> *inp, double c) -> std::unique_ptr<mrcpp::FunctionTree<D>> {
+auto impl__truediv__(mrcpp::FunctionTree<D, double> *inp, double c) -> std::unique_ptr<mrcpp::FunctionTree<D, double>> {
     using namespace mrcpp;
-    auto out = std::make_unique<FunctionTree<D>>(inp->getMRA());
-    FunctionTreeVector<D> vec;
+    auto out = std::make_unique<FunctionTree<D, double>>(inp->getMRA());
+    FunctionTreeVector<D, double> vec;
     vec.push_back({1.0 / c, inp});
     build_grid(*out, vec);
     add(-1.0, *out, vec);
     return out;
 };
 
-template <int D> auto impl__pow__(mrcpp::FunctionTree<D> *inp, double c) -> std::unique_ptr<mrcpp::FunctionTree<D>> {
+template <int D> auto impl__pow__(mrcpp::FunctionTree<D, double> *inp, double c) -> std::unique_ptr<mrcpp::FunctionTree<D, double>> {
     using namespace mrcpp;
-    auto out = std::make_unique<FunctionTree<D>>(inp->getMRA());
+    auto out = std::make_unique<FunctionTree<D, double>>(inp->getMRA());
     copy_grid(*out, *inp);
     copy_func(*out, *inp);
     refine_grid(*out, 1);
@@ -106,160 +107,129 @@ template <int D> void trees(pybind11::module &m) {
     namespace py = pybind11;
     using namespace pybind11::literals;
 
-    py::class_<MWTree<D>>(m, "MWTree")
-        .def("MRA", &MWTree<D>::getMRA, py::return_value_policy::reference_internal)
-        .def("nNodes", &MWTree<D>::getNNodes)
-        .def("nEndNodes", &MWTree<D>::getNEndNodes)
-        .def("nRootNodes", &MWTree<D>::getNRootNodes)
+    py::class_<MWTree<D, double>>(m, "MWTree")
+        .def("MRA", &MWTree<D, double>::getMRA, py::return_value_policy::reference_internal)
+        .def("nNodes", &MWTree<D, double>::getNNodes)
+        .def("nEndNodes", &MWTree<D, double>::getNEndNodes)
+        .def("nRootNodes", &MWTree<D, double>::getNRootNodes)
         .def("fetchEndNode",
-             py::overload_cast<int>(&MWTree<D>::getEndMWNode, py::const_),
+             [](MWTree<D, double>& tree, int i) -> MWNode<D, double>& { return tree.getEndMWNode(i); },
              py::return_value_policy::reference_internal)
         .def("fetchRootNode",
-             py::overload_cast<int>(&MWTree<D>::getRootMWNode, py::const_),
+             [](MWTree<D, double>& tree, int i) -> MWNode<D, double>& { return tree.getRootMWNode(i); },
              py::return_value_policy::reference_internal)
-        .def("rootScale", &MWTree<D>::getRootScale)
-        .def("depth", &MWTree<D>::getDepth)
+        .def("rootScale", &MWTree<D, double>::getRootScale)
+        .def("depth", &MWTree<D, double>::getDepth)
         .def("setZero",
-             [](MWTree<D> *out) {
+             [](MWTree<D, double> *out) {
                  out->setZero();
                  return out;
              })
-        .def("clear", &MWTree<D>::clear)
-        .def("setName", &MWTree<D>::setName)
-        .def("name", &MWTree<D>::getName)
+        .def("clear", &MWTree<D, double>::clear)
+        .def("setName", &MWTree<D, double>::setName)
+        .def("name", &MWTree<D, double>::getName)
         .def("fetchNode",
-             py::overload_cast<NodeIndex<D>>(&MWTree<D>::getNode),
+             [](MWTree<D, double>& tree, NodeIndex<D> idx) -> MWNode<D, double>& { return tree.getNode(idx); },
              py::return_value_policy::reference_internal)
-        .def("squaredNorm", &MWTree<D>::getSquareNorm)
+        .def("squaredNorm", &MWTree<D, double>::getSquareNorm)
         .def("norm",
-             [](MWTree<D> &tree) {
+             [](MWTree<D, double> &tree) {
                  auto sqNorm = tree.getSquareNorm();
                  return (sqNorm >= 0.0) ? std::sqrt(sqNorm) : -1.0;
              })
-        .def("__str__", [](MWTree<D> &tree) {
+        .def("__str__", [](MWTree<D, double> &tree) {
             std::ostringstream os;
             os << tree;
             return os.str();
         });
 
-    py::class_<FunctionTree<D>, MWTree<D>, RepresentableFunction<D>>(m, "FunctionTree")
+    py::class_<FunctionTree<D, double>, MWTree<D, double>, RepresentableFunction<D, double>>(m, "FunctionTree")
         .def(py::init<const MultiResolutionAnalysis<D> &, const std::string &>(), "mra"_a, "name"_a = "nn")
-        .def("nGenNodes", &FunctionTree<D>::getNGenNodes)
-        .def("deleteGenerated", &FunctionTree<D>::deleteGenerated)
-        .def("integrate", &FunctionTree<D>::integrate)
+        .def("nGenNodes", &FunctionTree<D, double>::getNGenNodes)
+        .def("deleteGenerated", &FunctionTree<D, double>::deleteGenerated)
+        .def("integrate", &FunctionTree<D, double>::integrate)
         .def("normalize",
-             [](FunctionTree<D> *out) {
+             [](FunctionTree<D, double> *out) {
                  out->normalize();
                  return out;
              })
         .def(
             "saveTree",
-            [](FunctionTree<D> &obj, const std::string &filename) {
+            [](FunctionTree<D, double> &obj, const std::string &filename) {
                 namespace fs = std::filesystem;
                 obj.saveTree(filename);
                 return fs::absolute(fs::path(filename + ".tree"));
             },
             "filename"_a)
-        .def("loadTree", &FunctionTree<D>::loadTree, "filename"_a)
+        .def("loadTree", &FunctionTree<D, double>::loadTree, "filename"_a)
         .def(
             "crop",
-            [](FunctionTree<D> *out, double prec, bool abs_prec) {
+            [](FunctionTree<D, double> *out, double prec, bool abs_prec) {
                 out->crop(prec, 1.0, abs_prec);
                 return out;
             },
             "prec"_a,
             "abs_prec"_a = false)
         .def("deepCopy",
-             [](FunctionTree<D> *inp) {
-                 auto out = std::make_unique<FunctionTree<D>>(inp->getMRA());
+             [](FunctionTree<D, double> *inp) {
+                 auto out = std::make_unique<FunctionTree<D, double>>(inp->getMRA());
                  copy_grid(*out, *inp);
                  copy_func(*out, *inp);
                  return out;
              })
-        .def("quadrature",
-             [](FunctionTree<D> *tree) {
-                 if constexpr (D != 1) { throw std::runtime_error("quadrature only implemented for 1D"); }
-
-                 // Current implementation only makes sense in 1D
-
-                 std::vector<double> vec_pts;
-                 // Iterate over all end nodes
-                 for (int i = 0; i < tree->getNEndNodes(); i++) {
-                     MWNode<D> &node = tree->getEndMWNode(i);
-
-                     Eigen::MatrixXd pts;
-                     node.getPrimitiveQuadPts(pts);
-
-                     // Flatten the MatrixXd and add the points from this node to the vector
-                     vec_pts.insert(vec_pts.end(), pts.data(), pts.data() + pts.size());
-                 }
-
-                 // Now we need to create an Eigen vector from our std::vector
-                 Eigen::VectorXd final_pts =
-                     Eigen::Map<Eigen::VectorXd, Eigen::Unaligned>(vec_pts.data(), vec_pts.size());
-
-                 // Now final_pts holds all the points from all nodes
-                 return final_pts;
-             })
-        .def("__call__", [](FunctionTree<D> &func, const Coord<D> &r) { return func.evalf_precise(r); })
+        .def("__call__", [](FunctionTree<D, double> &func, const Coord<D> &r) { return func.evalf_precise(r); })
         .def("__pos__", &impl__pos__<D>, py::is_operator())
         .def("__neg__", &impl__neg__<D>, py::is_operator())
         .def("__add__", &impl__add__<D>, py::is_operator())
         .def("__iadd__", &impl__add__<D>, py::is_operator())
         .def("__sub__", &impl__sub__<D>, py::is_operator())
         .def("__isub__", &impl__sub__<D>, py::is_operator())
-        .def("__mul__", py::overload_cast<FunctionTree<D> *, FunctionTree<D> *>(&impl__mul__<D>), py::is_operator())
-        .def("__mul__", py::overload_cast<FunctionTree<D> *, double>(&impl__mul__<D>), py::is_operator())
-        .def("__imul__", py::overload_cast<FunctionTree<D> *, FunctionTree<D> *>(&impl__mul__<D>), py::is_operator())
-        .def("__imul__", py::overload_cast<FunctionTree<D> *, double>(&impl__mul__<D>), py::is_operator())
-        .def("__rmul__", py::overload_cast<FunctionTree<D> *, double>(&impl__mul__<D>), py::is_operator())
+        .def("__mul__", py::overload_cast<FunctionTree<D, double> *, FunctionTree<D, double> *>(&impl__mul__<D>), py::is_operator())
+        .def("__mul__", py::overload_cast<FunctionTree<D, double> *, double>(&impl__mul__<D>), py::is_operator())
+        .def("__imul__", py::overload_cast<FunctionTree<D, double> *, FunctionTree<D, double> *>(&impl__mul__<D>), py::is_operator())
+        .def("__imul__", py::overload_cast<FunctionTree<D, double> *, double>(&impl__mul__<D>), py::is_operator())
+        .def("__rmul__", py::overload_cast<FunctionTree<D, double> *, double>(&impl__mul__<D>), py::is_operator())
         .def("__truediv__", &impl__truediv__<D>, py::is_operator())
         .def("__itruediv__", &impl__truediv__<D>, py::is_operator())
         .def("__pow__", &impl__pow__<D>, py::is_operator())
         .def("__ipow__", &impl__pow__<D>, py::is_operator());
 
-    py::class_<MWNode<D>>(m, "MWNode")
-        .def("depth", &MWNode<D>::getDepth)
-        .def("scale", &MWNode<D>::getScale)
-        .def("nCoefs", &MWNode<D>::getNCoefs)
-        .def("nChildren", &MWNode<D>::getNChildren)
+    py::class_<MWNode<D, double>>(m, "MWNode")
+        .def("depth", &MWNode<D, double>::getDepth)
+        .def("scale", &MWNode<D, double>::getScale)
+        .def("nCoefs", &MWNode<D, double>::getNCoefs)
+        .def("nChildren", &MWNode<D, double>::getNChildren)
         .def("index",
-             py::overload_cast<>(&MWNode<D>::getNodeIndex, py::const_),
+             [](MWNode<D, double>& node) -> const NodeIndex<D>& { return node.getNodeIndex(); },
              py::return_value_policy::reference_internal)
         .def("norm",
-             [](MWNode<D> &node) {
+             [](MWNode<D, double> &node) {
                  auto sqNorm = node.getSquareNorm();
                  return (sqNorm >= 0.0) ? std::sqrt(sqNorm) : -1.0;
              })
-        .def("squaredNorm", &MWNode<D>::getSquareNorm)
-        .def("scalingNorm", &MWNode<D>::getScalingNorm)
-        .def("waveletNorm", &MWNode<D>::getWaveletNorm)
-        .def("componentNorm", &MWNode<D>::getComponentNorm)
-        .def("isAllocated", &MWNode<D>::isAllocated)
-        .def("isRootNode", &MWNode<D>::isRootNode)
-        .def("isEndNode", &MWNode<D>::isEndNode)
-        .def("isLeafNode", &MWNode<D>::isLeafNode)
-        .def("isBranchNode", &MWNode<D>::isBranchNode)
-        .def("isGenNode", &MWNode<D>::isGenNode)
-        .def("hasParent", &MWNode<D>::hasParent)
-        .def("hasCoefs", &MWNode<D>::hasCoefs)
-        .def("quadrature",
-             [](MWNode<D> &node) {
-                 Eigen::MatrixXd pts;
-                 node.getPrimitiveQuadPts(pts);
-                 return pts;
-             })
-        .def("center", &MWNode<D>::getCenter)
-        .def("upperBounds", &MWNode<D>::getUpperBounds)
-        .def("lowerBounds", &MWNode<D>::getLowerBounds)
-        .def("__str__", [](MWNode<D> &node) {
+        .def("squaredNorm", &MWNode<D, double>::getSquareNorm)
+        .def("scalingNorm", &MWNode<D, double>::getScalingNorm)
+        .def("waveletNorm", &MWNode<D, double>::getWaveletNorm)
+        .def("componentNorm", &MWNode<D, double>::getComponentNorm)
+        .def("isAllocated", &MWNode<D, double>::isAllocated)
+        .def("isRootNode", &MWNode<D, double>::isRootNode)
+        .def("isEndNode", &MWNode<D, double>::isEndNode)
+        .def("isLeafNode", &MWNode<D, double>::isLeafNode)
+        .def("isBranchNode", &MWNode<D, double>::isBranchNode)
+        .def("isGenNode", &MWNode<D, double>::isGenNode)
+        .def("hasParent", &MWNode<D, double>::hasParent)
+        .def("hasCoefs", &MWNode<D, double>::hasCoefs)
+        .def("center", &MWNode<D, double>::getCenter)
+        .def("upperBounds", &MWNode<D, double>::getUpperBounds)
+        .def("lowerBounds", &MWNode<D, double>::getLowerBounds)
+        .def("__str__", [](MWNode<D, double> &node) {
             std::ostringstream os;
             os << node;
             return os.str();
         });
 
-    py::class_<FunctionNode<D>, MWNode<D>, std::unique_ptr<FunctionNode<D>, py::nodelete>>(m, "FunctionNode")
-        .def("integrate", &FunctionNode<D>::integrate);
+    py::class_<FunctionNode<D, double>, MWNode<D, double>, std::unique_ptr<FunctionNode<D, double>, py::nodelete>>(m, "FunctionNode")
+        .def("integrate", &FunctionNode<D, double>::integrate);
 
     py::class_<NodeIndex<D>>(m, "NodeIndex")
         .def(py::init<int, const std::array<int, D>>(), "scale"_a = 0, "translation"_a = std::array<int, D>{})
@@ -278,15 +248,15 @@ template <int D> void trees(pybind11::module &m) {
             return os.str();
         });
 
-    py::class_<TreeIterator<D>>(m, "TreeIterator")
+    py::class_<TreeIterator<D, double>>(m, "TreeIterator")
         .def(py::init<Traverse, Iterator>(), "traverse"_a = TopDown, "iterator"_a = Lebesgue)
-        .def(py::init<MWTree<D> &, Traverse, Iterator>(), "tree"_a, "traverse"_a = TopDown, "iterator"_a = Lebesgue)
-        .def("setReturnGenNodes", &TreeIterator<D>::setReturnGenNodes)
-        .def("setMaxDepth", &TreeIterator<D>::setMaxDepth)
-        .def("setTraverse", &TreeIterator<D>::setTraverse)
-        .def("setIterator", &TreeIterator<D>::setIterator)
-        .def("get", py::overload_cast<>(&TreeIterator<D>::getNode), py::return_value_policy::reference_internal)
-        .def("init", &TreeIterator<D>::init)
-        .def("next", &TreeIterator<D>::next);
+        .def(py::init<MWTree<D, double> &, Traverse, Iterator>(), "tree"_a, "traverse"_a = TopDown, "iterator"_a = Lebesgue)
+        .def("setReturnGenNodes", &TreeIterator<D, double>::setReturnGenNodes)
+        .def("setMaxDepth", &TreeIterator<D, double>::setMaxDepth)
+        .def("setTraverse", &TreeIterator<D, double>::setTraverse)
+        .def("setIterator", &TreeIterator<D, double>::setIterator)
+        .def("get", [](TreeIterator<D, double>& it) -> MWNode<D, double>& { return it.getNode(); }, py::return_value_policy::reference_internal)
+        .def("init", &TreeIterator<D, double>::init)
+        .def("next", &TreeIterator<D, double>::next);
 }
 } // namespace vampyr

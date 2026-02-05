@@ -24,8 +24,8 @@ template <int D> void derivatives(pybind11::module &m) {
         .def("getOrder", &DerivativeOperator<D>::getOrder)
         .def(
             "__call__",
-            [](DerivativeOperator<D> &oper, FunctionTree<D> *inp, int axis) {
-                auto out = std::make_unique<FunctionTree<D>>(inp->getMRA());
+            [](DerivativeOperator<D> &oper, FunctionTree<D, double> *inp, int axis) {
+                auto out = std::make_unique<FunctionTree<D, double>>(inp->getMRA());
                 apply(*out, oper, *inp, axis);
                 return out;
             },

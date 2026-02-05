@@ -12,7 +12,7 @@
 
 namespace vampyr {
 
-template <int D, typename FunctionBase = mrcpp::RepresentableFunction<D>>
+template <int D, typename FunctionBase = mrcpp::RepresentableFunction<D, double>>
 class PyRepresentableFunction : public FunctionBase {
 public:
     /* Inherit the constructors */

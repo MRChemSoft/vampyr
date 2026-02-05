@@ -28,9 +28,9 @@ template <int D> void convolutions(pybind11::module &m) {
         .def(py::init<const MultiResolutionAnalysis<D> &, GaussExp<1> &, double, int, int>())
         .def(
             "__call__",
-            [](ConvolutionOperator<D> &C, FunctionTree<D> *inp) {
-                auto out = std::make_unique<FunctionTree<D>>(inp->getMRA());
-                apply<D>(C.getBuildPrec(), *out, C, *inp);
+            [](ConvolutionOperator<D> &C, FunctionTree<D, double> *inp) {
+                auto out = std::make_unique<FunctionTree<D, double>>(inp->getMRA());
+                apply<D, double>(C.getBuildPrec(), *out, C, *inp);
                 return out;
             },
             "inp"_a);
@@ -44,9 +44,9 @@ template <int D> void convolutions(pybind11::module &m) {
              "reach"_a = 1)
         .def(
             "__call__",
-            [](IdentityConvolution<D> &I, FunctionTree<D> *inp) {
-                auto out = std::make_unique<FunctionTree<D>>(inp->getMRA());
-                apply<D>(I.getBuildPrec(), *out, I, *inp);
+            [](IdentityConvolution<D> &I, FunctionTree<D, double> *inp) {
+                auto out = std::make_unique<FunctionTree<D, double>>(inp->getMRA());
+                apply<D, double>(I.getBuildPrec(), *out, I, *inp);
                 return out;
             },
             "inp"_a);
@@ -67,9 +67,9 @@ void cartesian_convolution(pybind11::module &m) {
         .def(py::init<const MultiResolutionAnalysis<3> &, GaussExp<1> &, double>(), "mra"_a, "kernel"_a, "prec"_a)
         .def(
             "__call__",
-            [](CartesianConvolution &O, FunctionTree<3> *inp) {
-                auto out = std::make_unique<FunctionTree<3>>(inp->getMRA());
-                apply<3>(O.getBuildPrec(), *out, O, *inp);
+            [](CartesianConvolution &O, FunctionTree<3, double> *inp) {
+                auto out = std::make_unique<FunctionTree<3, double>>(inp->getMRA());
+                apply<3, double>(O.getBuildPrec(), *out, O, *inp);
                 return out;
             },
             "inp"_a)
@@ -90,9 +90,9 @@ void poisson_operator(pybind11::module &m) {
              "reach"_a = 1)
         .def(
             "__call__",
-            [](PoissonOperator &P, FunctionTree<3> *inp) {
-                auto out = std::make_unique<FunctionTree<3>>(inp->getMRA());
-                apply<3>(P.getBuildPrec(), *out, P, *inp);
+            [](PoissonOperator &P, FunctionTree<3, double> *inp) {
+                auto out = std::make_unique<FunctionTree<3, double>>(inp->getMRA());
+                apply<3, double>(P.getBuildPrec(), *out, P, *inp);
                 out->rescale(1.0 / (4.0 * mrcpp::pi));
                 return out;
             },
@@ -114,9 +114,9 @@ void helmholtz_operator(pybind11::module &m) {
              "reach"_a = 1)
         .def(
             "__call__",
-            [](HelmholtzOperator &H, FunctionTree<3> *inp) {
-                auto out = std::make_unique<FunctionTree<3>>(inp->getMRA());
-                apply<3>(H.getBuildPrec(), *out, H, *inp);
+            [](HelmholtzOperator &H, FunctionTree<3, double> *inp) {
+                auto out = std::make_unique<FunctionTree<3, double>>(inp->getMRA());
+                apply<3, double>(H.getBuildPrec(), *out, H, *inp);
                 out->rescale(1.0 / (4.0 * mrcpp::pi));
                 return out;
             },
@@ -146,9 +146,9 @@ void time_evolution_operator(pybind11::module &m)
              "max_Jpower"_a = 40)
         .def(
             "__call__",
-            [](TimeEvolutionOperator<1> &T, FunctionTree<1> *inp) {
-                auto out = std::make_unique<FunctionTree<1>>(inp->getMRA());
-                apply<1>(T.getBuildPrec(), *out, T, *inp);
+            [](TimeEvolutionOperator<1> &T, FunctionTree<1, double> *inp) {
+                auto out = std::make_unique<FunctionTree<1, double>>(inp->getMRA());
+                apply<1, double>(T.getBuildPrec(), *out, T, *inp);
                 return out;
             },
             "inp"_a);
@@ -168,9 +168,9 @@ void heat_operator(pybind11::module &m)
              "prec"_a)
         .def(
             "__call__",
-            [](HeatOperator<1> &T, FunctionTree<1> *inp) {
-                auto out = std::make_unique<FunctionTree<1>>(inp->getMRA());
-                apply<1>(T.getBuildPrec(), *out, T, *inp);
+            [](HeatOperator<1> &T, FunctionTree<1, double> *inp) {
+                auto out = std::make_unique<FunctionTree<1, double>>(inp->getMRA());
+                apply<1, double>(T.getBuildPrec(), *out, T, *inp);
                 return out;
             },
             "inp"_a);

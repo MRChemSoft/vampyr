@@ -56,16 +56,16 @@ template <int D> void bind_vampyr(py::module &mod) noexcept {
     std::string name = "vampyr" + std::to_string(D) + "d";
     py::module sub_mod = mod.def_submodule(name.c_str());
 
+    functions<D>(sub_mod);
+    trees<D>(sub_mod);
+    world<D>(sub_mod);
+    grids<D>(sub_mod);
     applys<D>(sub_mod);
     arithmetics<D>(sub_mod);
     project<D>(sub_mod);
     map<D>(sub_mod);
-
-    functions<D>(sub_mod);
     derivatives<D>(sub_mod);
     convolutions<D>(sub_mod);
-    trees<D>(sub_mod);
-    world<D>(sub_mod);
 
     bind_advanced<D>(sub_mod);
 }

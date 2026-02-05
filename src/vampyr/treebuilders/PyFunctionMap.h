@@ -12,10 +12,10 @@ public:
             : precision(prec)
             , func_map(fmap) {}
 
-    std::unique_ptr<FunctionTree<D>> operator()(FunctionTree<D> &inp) {
+    std::unique_ptr<FunctionTree<D, double>> operator()(FunctionTree<D, double> &inp) {
         // Negative precision will copy grid from input
-        auto out = std::make_unique<FunctionTree<D>>(inp.getMRA());
-        if (this->precision < 0.0) copy_grid<D>(*out, inp);
+        auto out = std::make_unique<FunctionTree<D, double>>(inp.getMRA());
+        if (this->precision < 0.0) copy_grid<D, double>(*out, inp);
         map<D>(this->precision, *out, inp, this->func_map);
         return out;
     }
