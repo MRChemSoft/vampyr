@@ -16,7 +16,7 @@ public:
         // Negative precision will copy grid from input
         auto out = std::make_unique<FunctionTree<D, double>>(inp.getMRA());
         if (this->precision < 0.0) copy_grid<D, double>(*out, inp);
-        treeMap<D, T>(this->precision, *out, inp, this->func_map);
+        treeMap<D>(this->precision, *out, inp, this->func_map);
         return out;
     }
 
