@@ -2,7 +2,7 @@
 
 #include <functional>
 
-#include <MRCPP/treebuilders/map.h>
+#include <MRCPP/treebuilders/treeMap.h>
 
 namespace mrcpp {
 
