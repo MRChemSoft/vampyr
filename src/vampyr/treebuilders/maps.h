@@ -40,7 +40,7 @@ template <int D> void advanced_map(pybind11::module &m) {
            bool abs_prec) {
             auto old_threads = mrcpp_get_num_threads();
             mrcpp::set_max_threads(1);
-            mrcpp::treeMap<D>(prec, out, inp, fmap, max_iter, abs_prec);
+            mrcpp::treeMap<D, T>(prec, out, inp, fmap, max_iter, abs_prec);
             mrcpp::set_max_threads(old_threads);
         },
         "prec"_a = -1.0,
