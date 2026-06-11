@@ -63,7 +63,7 @@ template <int D> void bind_vampyr(py::module &mod) noexcept {
     applys<D>(sub_mod);
     arithmetics<D>(sub_mod);
     project<D>(sub_mod);
-    map<D>(sub_mod);
+    treeMap<D>(sub_mod);
     derivatives<D>(sub_mod);
     convolutions<D>(sub_mod);
 

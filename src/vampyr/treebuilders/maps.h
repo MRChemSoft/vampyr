@@ -3,10 +3,10 @@
 #include <pybind11/functional.h>
 
 #include "PyFunctionMap.h"
-#include <MRCPP/treebuilders/map.h>
+#include <MRCPP/treebuilders/treeMap.h>
 
 namespace vampyr {
-template <int D> void map(pybind11::module &m) {
+template <int D> void treeMap(pybind11::module &m) {
     using namespace mrcpp;
     namespace py = pybind11;
     using namespace pybind11::literals;
@@ -40,7 +40,7 @@ template <int D> void advanced_map(pybind11::module &m) {
            bool abs_prec) {
             auto old_threads = mrcpp_get_num_threads();
             mrcpp::set_max_threads(1);
-            mrcpp::map<D>(prec, out, inp, fmap, max_iter, abs_prec);
+            mrcpp::treeMap<D>(prec, out, inp, fmap, max_iter, abs_prec);
             mrcpp::set_max_threads(old_threads);
         },
         "prec"_a = -1.0,
