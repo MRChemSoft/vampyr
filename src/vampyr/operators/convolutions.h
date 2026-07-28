@@ -1,5 +1,6 @@
 #pragma once
 
+#include <pybind11/complex.h>
 #include <pybind11/pybind11.h>
 
 #include <MRCPP/operators/CartesianConvolution.h>
@@ -33,6 +34,14 @@ template <int D> void convolutions(pybind11::module &m) {
                 apply<D, double>(C.getBuildPrec(), *out, C, *inp);
                 return out;
             },
+            "inp"_a)
+        .def(
+            "__call__",
+            [](ConvolutionOperator<D> &C, FunctionTree<D, ComplexDouble> *inp) {
+                auto out = std::make_unique<FunctionTree<D, ComplexDouble>>(inp->getMRA());
+                apply<D, ComplexDouble>(C.getBuildPrec(), *out, C, *inp);
+                return out;
+            },
             "inp"_a);
 
     py::class_<IdentityConvolution<D>, ConvolutionOperator<D>>(m, "IdentityConvolution")
@@ -47,6 +56,14 @@ template <int D> void convolutions(pybind11::module &m) {
             [](IdentityConvolution<D> &I, FunctionTree<D, double> *inp) {
                 auto out = std::make_unique<FunctionTree<D, double>>(inp->getMRA());
                 apply<D, double>(I.getBuildPrec(), *out, I, *inp);
+                return out;
+            },
+            "inp"_a)
+        .def(
+            "__call__",
+            [](IdentityConvolution<D> &I, FunctionTree<D, ComplexDouble> *inp) {
+                auto out = std::make_unique<FunctionTree<D, ComplexDouble>>(inp->getMRA());
+                apply<D, ComplexDouble>(I.getBuildPrec(), *out, I, *inp);
                 return out;
             },
             "inp"_a);
@@ -96,6 +113,15 @@ void poisson_operator(pybind11::module &m) {
                 out->rescale(1.0 / (4.0 * mrcpp::pi));
                 return out;
             },
+            "inp"_a)
+        .def(
+            "__call__",
+            [](PoissonOperator &P, FunctionTree<3, ComplexDouble> *inp) {
+                auto out = std::make_unique<FunctionTree<3, ComplexDouble>>(inp->getMRA());
+                apply<3, ComplexDouble>(P.getBuildPrec(), *out, P, *inp);
+                out->rescale(ComplexDouble(1.0 / (4.0 * mrcpp::pi), 0.0));
+                return out;
+            },
             "inp"_a);
 }
 
@@ -118,6 +144,15 @@ void helmholtz_operator(pybind11::module &m) {
                 auto out = std::make_unique<FunctionTree<3, double>>(inp->getMRA());
                 apply<3, double>(H.getBuildPrec(), *out, H, *inp);
                 out->rescale(1.0 / (4.0 * mrcpp::pi));
+                return out;
+            },
+            "inp"_a)
+        .def(
+            "__call__",
+            [](HelmholtzOperator &H, FunctionTree<3, ComplexDouble> *inp) {
+                auto out = std::make_unique<FunctionTree<3, ComplexDouble>>(inp->getMRA());
+                apply<3, ComplexDouble>(H.getBuildPrec(), *out, H, *inp);
+                out->rescale(ComplexDouble(1.0 / (4.0 * mrcpp::pi), 0.0));
                 return out;
             },
             "inp"_a);
@@ -151,6 +186,14 @@ void time_evolution_operator(pybind11::module &m)
                 apply<1, double>(T.getBuildPrec(), *out, T, *inp);
                 return out;
             },
+            "inp"_a)
+        .def(
+            "__call__",
+            [](TimeEvolutionOperator<1> &T, FunctionTree<1, ComplexDouble> *inp) {
+                auto out = std::make_unique<FunctionTree<1, ComplexDouble>>(inp->getMRA());
+                apply<1, ComplexDouble>(T.getBuildPrec(), *out, T, *inp);
+                return out;
+            },
             "inp"_a);
 }
 
@@ -171,6 +214,14 @@ void heat_operator(pybind11::module &m)
             [](HeatOperator<1> &T, FunctionTree<1, double> *inp) {
                 auto out = std::make_unique<FunctionTree<1, double>>(inp->getMRA());
                 apply<1, double>(T.getBuildPrec(), *out, T, *inp);
+                return out;
+            },
+            "inp"_a)
+        .def(
+            "__call__",
+            [](HeatOperator<1> &T, FunctionTree<1, ComplexDouble> *inp) {
+                auto out = std::make_unique<FunctionTree<1, ComplexDouble>>(inp->getMRA());
+                apply<1, ComplexDouble>(T.getBuildPrec(), *out, T, *inp);
                 return out;
             },
             "inp"_a);

@@ -5,7 +5,7 @@
 
 namespace mrcpp {
 
-template <int D> class PyScalingProjector final {
+template <int D, typename T = double> class PyScalingProjector final {
 public:
     PyScalingProjector(const MultiResolutionAnalysis<D> &mra, double prec)
             : min_scale(mra.getRootScale())
@@ -18,17 +18,17 @@ public:
         if (this->min_scale < this->MRA.getRootScale()) MSG_ERROR("Invalid scale");
     }
 
-    std::unique_ptr<FunctionTree<D, double>> operator()(RepresentableFunction<D, double> &func) {
-        auto out = std::make_unique<FunctionTree<D, double>>(this->MRA);
+    std::unique_ptr<FunctionTree<D, T>> operator()(RepresentableFunction<D, T> &func) {
+        auto out = std::make_unique<FunctionTree<D, T>>(this->MRA);
         if (this->precision > 0.0) {
             // With the adaptive projection we want s+w repr at finest scale
-            build_grid<D, double>(*out, func);
-            project<D, double>(this->precision, *out, func);
+            build_grid<D, T>(*out, func);
+            project<D, T>(this->precision, *out, func);
         } else {
             // With the fixed scale projection we want pure s repr at finest scale
             int depth = this->min_scale - this->MRA.getRootScale();
-            build_grid<D, double>(*out, depth);
-            project<D, double>(-1.0, *out, func);
+            build_grid<D, T>(*out, depth);
+            project<D, T>(-1.0, *out, func);
 
             // Need to explicitly clear w coefs after projection to get only s coefs
             for (int n = 0; n < out->getNEndNodes(); n++) {
@@ -42,16 +42,16 @@ public:
         return out;
     }
 
-    std::unique_ptr<FunctionTree<D, double>> operator()(std::function<double(const Coord<D> &r)> func) {
-        auto out = std::make_unique<FunctionTree<D, double>>(this->MRA);
+    std::unique_ptr<FunctionTree<D, T>> operator()(std::function<T(const Coord<D> &r)> func) {
+        auto out = std::make_unique<FunctionTree<D, T>>(this->MRA);
         if (this->precision > 0.0) {
             // With the adaptive projection we want s+w repr at finest scale
-            project<D>(this->precision, *out, func);
+            project<D, T>(this->precision, *out, func);
         } else {
             // With the fixed scale projection we want pure s repr at finest scale
             int depth = this->min_scale - this->MRA.getRootScale();
-            build_grid<D, double>(*out, depth);
-            project<D>(-1.0, *out, func);
+            build_grid<D, T>(*out, depth);
+            project<D, T>(-1.0, *out, func);
 
             // Need to explicitly clear w coefs after projection to get only s coefs
             for (int n = 0; n < out->getNEndNodes(); n++) {

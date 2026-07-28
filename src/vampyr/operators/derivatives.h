@@ -1,5 +1,6 @@
 #pragma once
 
+#include <pybind11/complex.h>
 #include <pybind11/pybind11.h>
 
 #include <MRCPP/operators/ABGVOperator.h>
@@ -27,6 +28,15 @@ template <int D> void derivatives(pybind11::module &m) {
             [](DerivativeOperator<D> &oper, FunctionTree<D, double> *inp, int axis) {
                 auto out = std::make_unique<FunctionTree<D, double>>(inp->getMRA());
                 apply(*out, oper, *inp, axis);
+                return out;
+            },
+            "inp"_a,
+            "axis"_a = 0)
+        .def(
+            "__call__",
+            [](DerivativeOperator<D> &oper, FunctionTree<D, ComplexDouble> *inp, int axis) {
+                auto out = std::make_unique<FunctionTree<D, ComplexDouble>>(inp->getMRA());
+                apply<D, ComplexDouble>(*out, oper, *inp, axis);
                 return out;
             },
             "inp"_a,
