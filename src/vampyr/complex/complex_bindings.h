@@ -12,7 +12,6 @@
  */
 
 #include <complex>
-#include <optional>
 #include <filesystem>
 #include <functional>
 #include <memory>
@@ -505,74 +504,52 @@ template <int D> void advanced_complex(pybind11::module &m) {
 /* Complex Schrodinger time evolution (1D)                            */
 /* ------------------------------------------------------------------ */
 
-/** Full complex semigroup exp(i*t*d^2/dx^2), composed from the real and
- *  imaginary MRCPP TimeEvolutionOperator kernels:
+/** exp(i*t*d^2/dx^2) as a single complex-valued operator.
  *
- *      U(t) psi = Re[U](psi) + 1j * Im[U](psi)
+ *  MRCPP builds one TimeEvolutionOperator<1, ComplexDouble> whose kernel
+ *  carries the full cos + i*sin coefficient, so the semigroup is applied in
+ *  one convolution rather than composed from two real operator trees. Only
+ *  the fixed finest_scale constructor is instantiated for ComplexDouble in
+ *  MRCPP, so the adaptive overload is deliberately not exposed here.
  *
- *  applied directly on complex trees, i.e. without a manual
- *  split-apply-reunite on the Python side. */
-class PyComplexTimeEvolutionOperator final {
-public:
-    PyComplexTimeEvolutionOperator(const mrcpp::MultiResolutionAnalysis<1> &mra,
-                                   double prec,
-                                   double time,
-                                   std::optional<int> finest_scale,
-                                   int max_Jpower)
-            : re_op(finest_scale ? std::make_unique<mrcpp::TimeEvolutionOperator<1>>(mra, prec, time, *finest_scale, false, max_Jpower)
-                                 : std::make_unique<mrcpp::TimeEvolutionOperator<1>>(mra, prec, time, false, max_Jpower))
-            , im_op(finest_scale ? std::make_unique<mrcpp::TimeEvolutionOperator<1>>(mra, prec, time, *finest_scale, true, max_Jpower)
-                                 : std::make_unique<mrcpp::TimeEvolutionOperator<1>>(mra, prec, time, true, max_Jpower)) {}
-
-    std::unique_ptr<mrcpp::FunctionTree<1, ComplexDouble>> operator()(mrcpp::FunctionTree<1, ComplexDouble> &inp) {
-        using namespace mrcpp;
-        auto &mra = inp.getMRA();
-        FunctionTree<1, ComplexDouble> re_part(mra);
-        FunctionTree<1, ComplexDouble> im_part(mra);
-        apply<1, ComplexDouble>(re_op->getBuildPrec(), re_part, *re_op, inp);
-        apply<1, ComplexDouble>(im_op->getBuildPrec(), im_part, *im_op, inp);
-        return cplx_linear_comb<1>({1.0, 0.0}, re_part, {0.0, 1.0}, im_part);
-    }
-
-    std::unique_ptr<mrcpp::FunctionTree<1, ComplexDouble>> operator()(mrcpp::FunctionTree<1, double> &inp) {
-        auto cinp = promote<1>(inp);
-        return (*this)(*cinp);
-    }
-
-    double getBuildPrec() const { return re_op->getBuildPrec(); }
-
-private:
-    std::unique_ptr<mrcpp::TimeEvolutionOperator<1>> re_op{nullptr};
-    std::unique_ptr<mrcpp::TimeEvolutionOperator<1>> im_op{nullptr};
-};
-
+ *  The `imaginary` flag of the real operator has no meaning for the complex
+ *  kernel (the if-constexpr branch in TimeEvolution_CrossCorrelationCalculator
+ *  emits both parts); it is pinned to false and kept off the Python API. */
 inline void complex_time_evolution(pybind11::module &m) {
     namespace py = pybind11;
     using namespace pybind11::literals;
+    using ComplexTimeEvolution = mrcpp::TimeEvolutionOperator<1, ComplexDouble>;
 
-    py::class_<PyComplexTimeEvolutionOperator>(m, "ComplexTimeEvolutionOperator")
-        .def(py::init([](const mrcpp::MultiResolutionAnalysis<1> &mra, double prec, double time, int finest_scale, int max_Jpower) {
-                 return std::make_unique<PyComplexTimeEvolutionOperator>(mra, prec, time, finest_scale, max_Jpower);
+    py::class_<ComplexTimeEvolution>(m, "ComplexTimeEvolutionOperator")
+        .def(py::init([](const mrcpp::MultiResolutionAnalysis<1> &mra,
+                         double prec,
+                         double time,
+                         int finest_scale,
+                         int max_Jpower) {
+                 return std::make_unique<ComplexTimeEvolution>(mra, prec, time, finest_scale, false, max_Jpower);
              }),
              "mra"_a,
              "prec"_a,
              "time"_a,
              "finest_scale"_a,
              "max_Jpower"_a = 20)
-        .def(py::init([](const mrcpp::MultiResolutionAnalysis<1> &mra, double prec, double time, int max_Jpower) {
-                 return std::make_unique<PyComplexTimeEvolutionOperator>(mra, prec, time, std::nullopt, max_Jpower);
-             }),
-             "mra"_a,
-             "prec"_a,
-             "time"_a,
-             "max_Jpower"_a = 40)
+        .def("buildPrec", &ComplexTimeEvolution::getBuildPrec)
         .def(
             "__call__",
-            [](PyComplexTimeEvolutionOperator &U, mrcpp::FunctionTree<1, ComplexDouble> *inp) { return U(*inp); },
+            [](ComplexTimeEvolution &U, mrcpp::FunctionTree<1, ComplexDouble> *inp) {
+                auto out = std::make_unique<mrcpp::FunctionTree<1, ComplexDouble>>(inp->getMRA());
+                mrcpp::apply<1, ComplexDouble, ComplexDouble>(U.getBuildPrec(), *out, U, *inp);
+                return out;
+            },
             "inp"_a)
         .def(
             "__call__",
-            [](PyComplexTimeEvolutionOperator &U, mrcpp::FunctionTree<1, double> *inp) { return U(*inp); },
+            [](ComplexTimeEvolution &U, mrcpp::FunctionTree<1, double> *inp) {
+                auto cinp = promote<1>(*inp);
+                auto out = std::make_unique<mrcpp::FunctionTree<1, ComplexDouble>>(cinp->getMRA());
+                mrcpp::apply<1, ComplexDouble, ComplexDouble>(U.getBuildPrec(), *out, U, *cinp);
+                return out;
+            },
             "inp"_a);
 }
 

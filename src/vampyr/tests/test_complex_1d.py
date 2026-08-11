@@ -149,8 +149,8 @@ def free_particle_analytical_solution(x, x0, t, sigma):
 
 
 def test_complex_time_evolution_single_operator():
-    """One operator object, applied directly to a (promoted) complex tree:
-    no manual real/imaginary split-apply-reunite."""
+    """A single native complex kernel applied to a (promoted) complex tree:
+    one operator, one convolution, no real/imaginary split anywhere."""
     f = P(lambda r: gauss(r[0]))
     U = vp1.ComplexTimeEvolutionOperator(mra, precision, time, finest_scale)
     out = U(f)
@@ -175,10 +175,29 @@ def test_real_kernel_on_complex_tree_matches_split():
     """Applying a single real/imag kernel to a complex tree equals the
     2x2 real block composition."""
     A = vp1.TimeEvolutionOperator(mra, precision, time, finest_scale, False)
-    B = vp1.TimeEvolutionOperator(mra, precision, time, finest_scale, True)
     Apsi = A(psi)
     ref = vp1.from_real_imag(A(u), A(v))
     assert (Apsi - ref).norm() == pytest.approx(0.0, abs=1e-6)
-    full = Apsi + 1j * B(psi)
+
+
+def test_native_complex_kernel_matches_two_real_kernels():
+    """The native TimeEvolutionOperator<1, ComplexDouble> is one operator with
+    a cos + 1j*sin kernel. It must reproduce what the previous binding did by
+    composing two real operators, Re[U](psi) + 1j*Im[U](psi) -- this is the
+    invariant that makes the switch to the native kernel a refactor rather
+    than a change of numerics."""
+    A = vp1.TimeEvolutionOperator(mra, precision, time, finest_scale, False)
+    B = vp1.TimeEvolutionOperator(mra, precision, time, finest_scale, True)
+    composed = A(psi) + 1j * B(psi)
+
     U = vp1.ComplexTimeEvolutionOperator(mra, precision, time, finest_scale)
-    assert (full - U(psi)).norm() == pytest.approx(0.0, abs=1e-6)
+    native = U(psi)
+
+    assert (native - composed).norm() / composed.norm() == pytest.approx(0.0, abs=1e-6)
+
+
+def test_complex_operator_has_no_adaptive_overload():
+    """MRCPP only instantiates the fixed-finest_scale constructor for
+    ComplexDouble, so the adaptive form must not be reachable from Python."""
+    with pytest.raises(TypeError):
+        vp1.ComplexTimeEvolutionOperator(mra, precision, time)
