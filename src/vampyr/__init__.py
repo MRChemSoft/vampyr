@@ -53,8 +53,39 @@ def _install_dtype_projector(sub):
     sub.ScalingProjector = ScalingProjector
 
 
+def _install_dtype_function_map(sub):
+    """Wrap the native function maps in a dtype-dispatching factory.
+
+    ``FunctionMap(fmap, prec, dtype=complex)`` returns a map that consumes and
+    produces ``ComplexFunctionTree``s, while the default ``dtype=float``
+    preserves the original real behaviour. Mirrors
+    ``_install_dtype_projector`` above; both the real and the complex class
+    take the same ``(fmap, prec)`` constructor, so no ``*args`` juggling is
+    needed here.
+    """
+    _real_cls = sub.FunctionMap
+    _complex_cls = sub.ComplexFunctionMap
+
+    def FunctionMap(fmap, prec, dtype=float, **kwargs):
+        if dtype in _REAL_DTYPES:
+            cls = _real_cls
+        elif dtype in _COMPLEX_DTYPES:
+            cls = _complex_cls
+        else:
+            raise TypeError(f"Unsupported dtype for FunctionMap: {dtype!r}")
+        return cls(fmap, prec, **kwargs)
+
+    FunctionMap.__doc__ = (
+        "Pointwise map applied through the MW representation. Takes the map "
+        "and a precision, and dtype=float (default) or dtype=complex."
+    )
+    sub._RealFunctionMap = _real_cls
+    sub.FunctionMap = FunctionMap
+
+
 for _sub in (vampyr1d, vampyr2d, vampyr3d):
     _install_dtype_projector(_sub)
+    _install_dtype_function_map(_sub)
 del _sub
 
 _set_mwfilters_path()

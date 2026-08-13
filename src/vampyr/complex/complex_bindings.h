@@ -107,7 +107,14 @@ template <int D> void trees_complex(pybind11::module &m) {
     namespace py = pybind11;
     using namespace pybind11::literals;
 
-    py::class_<MWTree<D, ComplexDouble>>(m, "ComplexMWTree")
+    py::class_<MWTree<D, ComplexDouble>>(m,
+                                        "ComplexMWTree",
+                                        // clang-format off
+    R"mydelimiter(
+        Base class for complex-valued multiwavelet trees. Same interface as
+        :class:`MWTree`, with complex scaling and wavelet coefficients.
+    )mydelimiter")
+        // clang-format on
         .def("MRA", &MWTree<D, ComplexDouble>::getMRA, py::return_value_policy::reference_internal)
         .def("nNodes", &MWTree<D, ComplexDouble>::getNNodes)
         .def("nEndNodes", &MWTree<D, ComplexDouble>::getNEndNodes)
@@ -128,7 +135,19 @@ template <int D> void trees_complex(pybind11::module &m) {
             return (sqNorm >= 0.0) ? std::sqrt(sqNorm) : -1.0;
         });
 
-    py::class_<FunctionTree<D, ComplexDouble>, MWTree<D, ComplexDouble>>(m, "ComplexFunctionTree")
+    py::class_<FunctionTree<D, ComplexDouble>, MWTree<D, ComplexDouble>>(m,
+                                                                        "ComplexFunctionTree",
+                                                                        // clang-format off
+    R"mydelimiter(
+        A complex-valued function in the multiwavelet basis.
+
+        Arithmetic works as for the real :class:`FunctionTree`, and mixes
+        freely with real trees and Python scalars: a real operand is promoted
+        on the spot. Use :meth:`real`, :meth:`imag` and :meth:`conj` to move
+        between the two, and ``from_real_imag`` to build one from a pair of
+        real trees.
+    )mydelimiter")
+        // clang-format on
         .def(py::init<const MultiResolutionAnalysis<D> &, const std::string &>(), "mra"_a, "name"_a = "nn")
         .def(py::init([](FunctionTree<D, double> &re, FunctionTree<D, double> &im) {
                  return std::make_unique<FunctionTree<D, ComplexDouble>>(re, im);
@@ -165,7 +184,7 @@ template <int D> void trees_complex(pybind11::module &m) {
              [](FunctionTree<D, ComplexDouble> &inp) { return std::unique_ptr<FunctionTree<D, double>>(inp.Imag()); },
              "Imaginary part as a new real FunctionTree")
         .def("conj", [](FunctionTree<D, ComplexDouble> &inp) { return cplx_conj<D>(inp); },
-             "Complex conjugate as a new ComplexFunctionTree")
+             "Complex conjugate as a new ComplexFunctionTree (exact, same grid)")
         .def(
             "saveTree",
             [](FunctionTree<D, ComplexDouble> &obj, const std::string &filename) {
@@ -289,7 +308,15 @@ template <int D> void project_complex(pybind11::module &m) {
     namespace py = pybind11;
     using namespace pybind11::literals;
 
-    py::class_<PyScalingProjector<D, ComplexDouble>>(m, "ComplexScalingProjector")
+    py::class_<PyScalingProjector<D, ComplexDouble>>(m,
+                                                     "ComplexScalingProjector",
+                                                     // clang-format off
+    R"mydelimiter(
+        Projects a complex-valued Python callable onto the scaling basis,
+        returning a :class:`ComplexFunctionTree`. Normally reached as
+        ``ScalingProjector(mra, prec, dtype=complex)``.
+    )mydelimiter")
+        // clang-format on
         .def(py::init<const MultiResolutionAnalysis<D> &, double>(), "mra"_a, "prec"_a)
         .def(py::init<const MultiResolutionAnalysis<D> &, int>(), "mra"_a, "scale"_a)
         .def(
@@ -330,7 +357,9 @@ template <int D> void arithmetics_complex(pybind11::module &m) {
             return mrcpp::dot<D, ComplexDouble, ComplexDouble>(bra, ket);
         },
         "bra"_a,
-        "ket"_a);
+        "ket"_a,
+        "L2 inner product <bra|ket>; the bra is conjugated. For the bilinear "
+        "integral of the product use dot(bra.conj(), ket)");
     m.def(
         "dot",
         [](FunctionTree<D, ComplexDouble> &bra, FunctionTree<D, double> &ket) {
@@ -346,7 +375,15 @@ template <int D> void arithmetics_complex(pybind11::module &m) {
         "bra"_a,
         "ket"_a);
 
-    py::class_<PyFunctionMap<D, ComplexDouble>>(m, "ComplexFunctionMap")
+    py::class_<PyFunctionMap<D, ComplexDouble>>(m,
+                                                "ComplexFunctionMap",
+                                                // clang-format off
+    R"mydelimiter(
+        Applies a pointwise complex map through the multiwavelet
+        representation. Normally reached as
+        ``FunctionMap(fmap, prec, dtype=complex)``.
+    )mydelimiter")
+        // clang-format on
         .def(py::init<std::function<ComplexDouble(ComplexDouble)>, double>(), "fmap"_a, "prec"_a)
         .def(
             "__call__",
@@ -520,7 +557,19 @@ inline void complex_time_evolution(pybind11::module &m) {
     using namespace pybind11::literals;
     using ComplexTimeEvolution = mrcpp::TimeEvolutionOperator<1, ComplexDouble>;
 
-    py::class_<ComplexTimeEvolution>(m, "ComplexTimeEvolutionOperator")
+    py::class_<ComplexTimeEvolution>(m,
+                                     "ComplexTimeEvolutionOperator",
+                                     // clang-format off
+    R"mydelimiter(
+        The free-particle Schrodinger semigroup exp(i t d^2/dx^2) as a single
+        complex-valued convolution.
+
+        The kernel carries the full cos + i*sin coefficient, so one
+        application does what previously required two real operators composed
+        as Re[U] psi + i Im[U] psi. Built at a fixed finest scale; there is no
+        adaptive constructor.
+    )mydelimiter")
+        // clang-format on
         .def(py::init([](const mrcpp::MultiResolutionAnalysis<1> &mra,
                          double prec,
                          double time,
