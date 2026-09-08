@@ -20,16 +20,13 @@ lbasis = LegendreBasis(order=order)
 box = vp1.BoundingBox(0)
 mra = vp1.MultiResolutionAnalysis(box, lbasis) 
 
-# Make the scaling projector
+# Make the scaling projectors
 P = vp1.ScalingProjector(mra, prec = precision)
+Pc = vp1.ScalingProjector(mra, prec = precision, dtype = complex)
 
-# Make the Schrodinger free-particle semigroup operator
-imaginary = False
-real_semigroup_operator = vp1.TimeEvolutionOperator(mra, precision, time, 
-finest_scale, imaginary)
-imaginary = True
-imag_semigroup_operator = vp1.TimeEvolutionOperator(mra, precision, time, 
-finest_scale, imaginary)
+# The kernel is complex and carries the whole cos + 1j*sin coefficient, so this
+# is one operator, not a real/imaginary pair.
+semigroup_operator = vp1.TimeEvolutionOperator(mra, precision, time, finest_scale)
 
 def free_particle_analytical_solution(x, x0, t, sigma):
     denominator = 4.0j * t + sigma
@@ -41,25 +38,31 @@ def f(x):
     return np.exp( - (x[0] - x0)**2 / sigma )
 f = P(f)
 
-def Re_g(x):
-    return free_particle_analytical_solution(x[0], x0, time, sigma).real
-Re_g = P(Re_g)
+def g(x):
+    return free_particle_analytical_solution(x[0], x0, time, sigma)
+g = Pc(g)
 
-def Im_g(x):
-    return free_particle_analytical_solution(x[0], x0, time, sigma).imag
-Im_g = P(Im_g)
+# The real input is promoted on the way in, so the result is complex.
+out = semigroup_operator(f)
 
-Re_out = real_semigroup_operator(f)
-Im_out = imag_semigroup_operator(f)
+difference = out - g                    #4.3e-14
 
-Re_difference = Re_out - Re_g           #2.1e-14
-Im_difference = Im_out - Im_g           #2.2e-14
+#print(difference.squaredNorm())
 
-#print(Re_difference.squaredNorm())
-#print(Im_difference.squaredNorm())
-
-epsilon = 2.5e-14
+epsilon = 5e-14
 
 def test_time_evolution():
-    assert Re_difference.squaredNorm() == pytest.approx(0.0, abs = epsilon)
-    assert Im_difference.squaredNorm() == pytest.approx(0.0, abs = epsilon)
+    assert semigroup_operator.iscomplex()
+    assert isinstance(out, vp1.ComplexFunctionTree)
+    assert difference.squaredNorm() == pytest.approx(0.0, abs = epsilon)
+
+def test_time_evolution_parts():
+    # What the two-operator API returned separately is now the real and
+    # imaginary part of one tree.
+    assert (out.real() - g.real()).squaredNorm() == pytest.approx(0.0, abs = epsilon)
+    assert (out.imag() - g.imag()).squaredNorm() == pytest.approx(0.0, abs = epsilon)
+
+def test_time_evolution_adaptive():
+    # Adaptive is the default build now.
+    adaptive = vp1.TimeEvolutionOperator(mra, precision, time)
+    assert (adaptive(f) - g).squaredNorm() == pytest.approx(0.0, abs = 1e-12)

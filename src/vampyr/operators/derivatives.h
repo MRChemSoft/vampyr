@@ -21,6 +21,14 @@ template <int D> void derivatives(pybind11::module &m) {
         An abstract base class for derivative operators
     )mydelimiter")
         // clang-format on
+        .def(
+            "isreal",
+            [](DerivativeOperator<D> &D_oper) { return static_cast<bool>(D_oper.isreal()); },
+            "Real coefficients")
+        .def(
+            "iscomplex",
+            [](DerivativeOperator<D> &D_oper) { return static_cast<bool>(D_oper.iscomplex()); },
+            "Complex coefficients")
         .def(py::init<const MultiResolutionAnalysis<D> &, int, int>(), "mra"_a, "root"_a, "reach"_a)
         .def("getOrder", &DerivativeOperator<D>::getOrder)
         .def(

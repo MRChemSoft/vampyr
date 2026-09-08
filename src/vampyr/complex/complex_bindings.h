@@ -3,15 +3,18 @@
 /*
  * Complex-valued bindings for VAMPyR.
  *
- * Exposes the T = ComplexDouble instantiations that MRCPP provides since the
- * v2 templatization of FunctionTree<D, T> and the treebuilders. Everything in
- * this header is additive: real-valued bindings are untouched, mixed
- * real/complex arithmetic is resolved through Python's reflected operator
- * protocol (__radd__ & co.), relying on py::is_operator() returning
- * NotImplemented on overload misses.
+ * Exposes the T = ComplexDouble instantiations of FunctionTree<D, T> and the
+ * treebuilders. Additive: the real bindings are untouched. Mixed real/complex
+ * arithmetic goes through Python's reflected operators (__radd__ and friends),
+ * which works because py::is_operator() returns NotImplemented on a miss.
+ *
+ * Operators are not bound here. MRCPP dispatches the operator scalar at
+ * runtime, so the complex overloads sit next to their real counterparts in
+ * operators/convolutions.h and operators/derivatives.h.
  */
 
 #include <complex>
+#include <sstream>
 #include <filesystem>
 #include <functional>
 #include <memory>
@@ -22,7 +25,6 @@
 #include <pybind11/stl.h>
 #include <pybind11/stl/filesystem.h>
 
-#include <MRCPP/operators/TimeEvolutionOperator.h>
 #include <MRCPP/trees/FunctionTree.h>
 #include <MRCPP/trees/MWTree.h>
 #include <MRCPP/treebuilders/add.h>
@@ -34,18 +36,13 @@
 
 #include "../treebuilders/PyFunctionMap.h"
 #include "../treebuilders/PyProjectors.h"
+#include "../trees/complex_utils.h"
 
 namespace vampyr {
 
 /* ------------------------------------------------------------------ */
 /* Helpers                                                            */
 /* ------------------------------------------------------------------ */
-
-/** Deep copy of a real tree into a complex tree (exact, same grid). */
-template <int D>
-auto promote(mrcpp::FunctionTree<D, double> &inp) -> std::unique_ptr<mrcpp::FunctionTree<D, ComplexDouble>> {
-    return std::unique_ptr<mrcpp::FunctionTree<D, ComplexDouble>>(inp.CopyTreeToComplex());
-}
 
 template <int D>
 auto cplx_linear_comb(ComplexDouble a,
@@ -102,6 +99,19 @@ auto cplx_conj(mrcpp::FunctionTree<D, ComplexDouble> &inp) -> std::unique_ptr<mr
 /* Trees                                                              */
 /* ------------------------------------------------------------------ */
 
+/** Mirrors impl__pow__ in trees/trees.h. */
+template <int D>
+auto impl__pow__complex(mrcpp::FunctionTree<D, ComplexDouble> *inp, double c)
+    -> std::unique_ptr<mrcpp::FunctionTree<D, ComplexDouble>> {
+    using namespace mrcpp;
+    auto out = std::make_unique<FunctionTree<D, ComplexDouble>>(inp->getMRA());
+    copy_grid(*out, *inp);
+    copy_func(*out, *inp);
+    refine_grid(*out, 1);
+    out->power(c);
+    return out;
+}
+
 template <int D> void trees_complex(pybind11::module &m) {
     using namespace mrcpp;
     namespace py = pybind11;
@@ -111,8 +121,7 @@ template <int D> void trees_complex(pybind11::module &m) {
                                         "ComplexMWTree",
                                         // clang-format off
     R"mydelimiter(
-        Base class for complex-valued multiwavelet trees. Same interface as
-        :class:`MWTree`, with complex scaling and wavelet coefficients.
+        MWTree with complex scaling and wavelet coefficients.
     )mydelimiter")
         // clang-format on
         .def("MRA", &MWTree<D, ComplexDouble>::getMRA, py::return_value_policy::reference_internal)
@@ -133,19 +142,22 @@ template <int D> void trees_complex(pybind11::module &m) {
         .def("norm", [](MWTree<D, ComplexDouble> &tree) {
             auto sqNorm = tree.getSquareNorm();
             return (sqNorm >= 0.0) ? std::sqrt(sqNorm) : -1.0;
-        });
+        })
+        .def("__str__",
+             [](MWTree<D, ComplexDouble> &tree) {
+                 std::ostringstream os;
+                 os << tree;
+                 return os.str();
+             });
 
     py::class_<FunctionTree<D, ComplexDouble>, MWTree<D, ComplexDouble>>(m,
                                                                         "ComplexFunctionTree",
                                                                         // clang-format off
     R"mydelimiter(
-        A complex-valued function in the multiwavelet basis.
+        FunctionTree with complex coefficients.
 
-        Arithmetic works as for the real :class:`FunctionTree`, and mixes
-        freely with real trees and Python scalars: a real operand is promoted
-        on the spot. Use :meth:`real`, :meth:`imag` and :meth:`conj` to move
-        between the two, and ``from_real_imag`` to build one from a pair of
-        real trees.
+        Arithmetic mixes with real trees and Python scalars, promoting the real
+        operand. real(), imag() and conj() go back the other way.
     )mydelimiter")
         // clang-format on
         .def(py::init<const MultiResolutionAnalysis<D> &, const std::string &>(), "mra"_a, "name"_a = "nn")
@@ -154,7 +166,7 @@ template <int D> void trees_complex(pybind11::module &m) {
              }),
              "real"_a,
              "imag"_a,
-             "Construct the complex function real + 1j*imag from two real trees")
+             "Builds real + 1j*imag from two real trees")
         .def("integrate", &FunctionTree<D, ComplexDouble>::integrate)
         .def("normalize",
              [](FunctionTree<D, ComplexDouble> *out) {
@@ -179,12 +191,14 @@ template <int D> void trees_complex(pybind11::module &m) {
              })
         .def("real",
              [](FunctionTree<D, ComplexDouble> &inp) { return std::unique_ptr<FunctionTree<D, double>>(inp.Real()); },
-             "Real part as a new real FunctionTree")
+             "Real part, as a new FunctionTree")
         .def("imag",
              [](FunctionTree<D, ComplexDouble> &inp) { return std::unique_ptr<FunctionTree<D, double>>(inp.Imag()); },
-             "Imaginary part as a new real FunctionTree")
+             "Imaginary part, as a new FunctionTree")
+        .def("__pow__", &impl__pow__complex<D>, py::is_operator())
+        .def("__ipow__", &impl__pow__complex<D>, py::is_operator())
         .def("conj", [](FunctionTree<D, ComplexDouble> &inp) { return cplx_conj<D>(inp); },
-             "Complex conjugate as a new ComplexFunctionTree (exact, same grid)")
+             "Complex conjugate, same grid")
         .def(
             "saveTree",
             [](FunctionTree<D, ComplexDouble> &obj, const std::string &filename) {
@@ -296,7 +310,7 @@ template <int D> void trees_complex(pybind11::module &m) {
         },
         "real"_a,
         "imag"_a,
-        "Build the complex function real + 1j*imag from two real FunctionTrees");
+        "Builds real + 1j*imag from two real trees");
 }
 
 /* ------------------------------------------------------------------ */
@@ -312,9 +326,8 @@ template <int D> void project_complex(pybind11::module &m) {
                                                      "ComplexScalingProjector",
                                                      // clang-format off
     R"mydelimiter(
-        Projects a complex-valued Python callable onto the scaling basis,
-        returning a :class:`ComplexFunctionTree`. Normally reached as
-        ``ScalingProjector(mra, prec, dtype=complex)``.
+        Projects a complex Python callable onto the scaling basis.
+        Usually reached as ScalingProjector(mra, prec, dtype=complex).
     )mydelimiter")
         // clang-format on
         .def(py::init<const MultiResolutionAnalysis<D> &, double>(), "mra"_a, "prec"_a)
@@ -358,8 +371,8 @@ template <int D> void arithmetics_complex(pybind11::module &m) {
         },
         "bra"_a,
         "ket"_a,
-        "L2 inner product <bra|ket>; the bra is conjugated. For the bilinear "
-        "integral of the product use dot(bra.conj(), ket)");
+        "<bra|ket>, conjugating the bra. For the plain integral of the product "
+        "use dot(bra.conj(), ket)");
     m.def(
         "dot",
         [](FunctionTree<D, ComplexDouble> &bra, FunctionTree<D, double> &ket) {
@@ -379,9 +392,8 @@ template <int D> void arithmetics_complex(pybind11::module &m) {
                                                 "ComplexFunctionMap",
                                                 // clang-format off
     R"mydelimiter(
-        Applies a pointwise complex map through the multiwavelet
-        representation. Normally reached as
-        ``FunctionMap(fmap, prec, dtype=complex)``.
+        Pointwise complex map through the multiwavelet representation.
+        Usually reached as FunctionMap(fmap, prec, dtype=complex).
     )mydelimiter")
         // clang-format on
         .def(py::init<std::function<ComplexDouble(ComplexDouble)>, double>(), "fmap"_a, "prec"_a)
@@ -535,71 +547,113 @@ template <int D> void advanced_complex(pybind11::module &m) {
         },
         "out"_a,
         "inp"_a);
-}
 
-/* ------------------------------------------------------------------ */
-/* Complex Schrodinger time evolution (1D)                            */
-/* ------------------------------------------------------------------ */
+    m.def(
+        "build_grid",
+        [](FunctionTree<D, ComplexDouble> &out, int scales) { mrcpp::build_grid<D, ComplexDouble>(out, scales); },
+        "out"_a,
+        "scales"_a);
 
-/** exp(i*t*d^2/dx^2) as a single complex-valued operator.
- *
- *  MRCPP builds one TimeEvolutionOperator<1, ComplexDouble> whose kernel
- *  carries the full cos + i*sin coefficient, so the semigroup is applied in
- *  one convolution rather than composed from two real operator trees. Only
- *  the fixed finest_scale constructor is instantiated for ComplexDouble in
- *  MRCPP, so the adaptive overload is deliberately not exposed here.
- *
- *  The `imaginary` flag of the real operator has no meaning for the complex
- *  kernel (the if-constexpr branch in TimeEvolution_CrossCorrelationCalculator
- *  emits both parts); it is pinned to false and kept off the Python API. */
-inline void complex_time_evolution(pybind11::module &m) {
-    namespace py = pybind11;
-    using namespace pybind11::literals;
-    using ComplexTimeEvolution = mrcpp::TimeEvolutionOperator<1, ComplexDouble>;
+    m.def(
+        "build_grid",
+        [](FunctionTree<D, ComplexDouble> &out, std::vector<FunctionTree<D, ComplexDouble> *> &inp, int max_iter) {
+            FunctionTreeVector<D, ComplexDouble> vec;
+            for (auto *tree : inp) vec.push_back({ComplexDouble(1.0, 0.0), tree});
+            mrcpp::build_grid<D, ComplexDouble>(out, vec, max_iter);
+        },
+        "out"_a,
+        "inp"_a,
+        "max_iter"_a = -1);
 
-    py::class_<ComplexTimeEvolution>(m,
-                                     "ComplexTimeEvolutionOperator",
-                                     // clang-format off
-    R"mydelimiter(
-        The free-particle Schrodinger semigroup exp(i t d^2/dx^2) as a single
-        complex-valued convolution.
+    m.def(
+        "build_grid",
+        [](FunctionTree<D, ComplexDouble> &out,
+           std::vector<std::tuple<ComplexDouble, FunctionTree<D, ComplexDouble> *>> &inp,
+           int max_iter) {
+            FunctionTreeVector<D, ComplexDouble> vec;
+            for (auto &t : inp) vec.push_back({std::get<0>(t), std::get<1>(t)});
+            mrcpp::build_grid<D, ComplexDouble>(out, vec, max_iter);
+        },
+        "out"_a,
+        "inp"_a,
+        "max_iter"_a = -1);
 
-        The kernel carries the full cos + i*sin coefficient, so one
-        application does what previously required two real operators composed
-        as Re[U] psi + i Im[U] psi. Built at a fixed finest scale; there is no
-        adaptive constructor.
-    )mydelimiter")
-        // clang-format on
-        .def(py::init([](const mrcpp::MultiResolutionAnalysis<1> &mra,
-                         double prec,
-                         double time,
-                         int finest_scale,
-                         int max_Jpower) {
-                 return std::make_unique<ComplexTimeEvolution>(mra, prec, time, finest_scale, false, max_Jpower);
-             }),
-             "mra"_a,
-             "prec"_a,
-             "time"_a,
-             "finest_scale"_a,
-             "max_Jpower"_a = 20)
-        .def("buildPrec", &ComplexTimeEvolution::getBuildPrec)
-        .def(
-            "__call__",
-            [](ComplexTimeEvolution &U, mrcpp::FunctionTree<1, ComplexDouble> *inp) {
-                auto out = std::make_unique<mrcpp::FunctionTree<1, ComplexDouble>>(inp->getMRA());
-                mrcpp::apply<1, ComplexDouble, ComplexDouble>(U.getBuildPrec(), *out, U, *inp);
-                return out;
-            },
-            "inp"_a)
-        .def(
-            "__call__",
-            [](ComplexTimeEvolution &U, mrcpp::FunctionTree<1, double> *inp) {
-                auto cinp = promote<1>(*inp);
-                auto out = std::make_unique<mrcpp::FunctionTree<1, ComplexDouble>>(cinp->getMRA());
-                mrcpp::apply<1, ComplexDouble, ComplexDouble>(U.getBuildPrec(), *out, U, *cinp);
-                return out;
-            },
-            "inp"_a);
+    m.def(
+        "clear_grid",
+        [](FunctionTree<D, ComplexDouble> &out) { mrcpp::clear_grid<D, ComplexDouble>(out); },
+        "out"_a);
+
+    m.def(
+        "refine_grid",
+        [](FunctionTree<D, ComplexDouble> &out, int scales) {
+            return mrcpp::refine_grid<D, ComplexDouble>(out, scales);
+        },
+        "out"_a,
+        "scales"_a);
+
+    m.def(
+        "refine_grid",
+        [](FunctionTree<D, ComplexDouble> &out, double prec, bool abs_prec) {
+            return mrcpp::refine_grid<D, ComplexDouble>(out, prec, abs_prec);
+        },
+        "out"_a,
+        "prec"_a,
+        "abs_prec"_a = false);
+
+    m.def(
+        "refine_grid",
+        [](FunctionTree<D, ComplexDouble> &out, FunctionTree<D, ComplexDouble> &inp) {
+            return mrcpp::refine_grid<D, ComplexDouble>(out, inp);
+        },
+        "out"_a,
+        "inp"_a);
+
+    m.def(
+        "power",
+        [](double prec,
+           FunctionTree<D, ComplexDouble> &out,
+           FunctionTree<D, ComplexDouble> &inp,
+           double pow,
+           int max_iter,
+           bool abs_prec) { mrcpp::power<D, ComplexDouble>(prec, out, inp, pow, max_iter, abs_prec); },
+        "prec"_a = -1.0,
+        "out"_a,
+        "inp"_a,
+        "pow"_a,
+        "max_iter"_a = -1,
+        "abs_prec"_a = false,
+        "Real exponent, principal branch");
+
+    m.def(
+        "square",
+        [](double prec,
+           FunctionTree<D, ComplexDouble> &out,
+           FunctionTree<D, ComplexDouble> &inp,
+           int max_iter,
+           bool abs_prec,
+           bool conjugate) { mrcpp::square<D, ComplexDouble>(prec, out, inp, max_iter, abs_prec, conjugate); },
+        "prec"_a = -1.0,
+        "out"_a,
+        "inp"_a,
+        "max_iter"_a = -1,
+        "abs_prec"_a = false,
+        "conjugate"_a = false,
+        "conjugate=True gives f * conj(f). The result is real but still a "
+        "complex tree, so take .real() to drop the round-off");
+
+    m.def(
+        "divergence",
+        [](DerivativeOperator<D> &oper, std::vector<FunctionTree<D, ComplexDouble> *> &inp) {
+            std::unique_ptr<FunctionTree<D, ComplexDouble>> out{nullptr};
+            if (inp.size() == (size_t)D) {
+                out = std::make_unique<FunctionTree<D, ComplexDouble>>(inp[0]->getMRA());
+                mrcpp::divergence<D, ComplexDouble>(*out, oper, inp);
+            }
+            return out;
+        },
+        "oper"_a,
+        "inp"_a,
+        "No complex gradient in MRCPP; build the components with apply()");
 }
 
 /* ------------------------------------------------------------------ */
@@ -615,8 +669,6 @@ template <int D> void bind_complex(pybind11::module &m) {
 
     auto advanced = m.attr("advanced").cast<py::module>();
     advanced_complex<D>(advanced);
-
-    if constexpr (D == 1) complex_time_evolution(m);
 }
 
 } // namespace vampyr

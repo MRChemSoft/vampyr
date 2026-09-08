@@ -215,7 +215,7 @@ template <int D> void trees(pybind11::module &m) {
              [](FunctionTree<D, double> *inp) {
                  return std::unique_ptr<FunctionTree<D, ComplexDouble>>(inp->CopyTreeToComplex());
              },
-             "Deep copy into a ComplexFunctionTree");
+             "Deep copy as a ComplexFunctionTree");
 
     py::class_<MWNode<D, double>>(m, "MWNode")
         .def("depth", &MWNode<D, double>::getDepth)

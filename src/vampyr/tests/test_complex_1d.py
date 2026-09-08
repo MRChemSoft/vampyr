@@ -148,21 +148,20 @@ def free_particle_analytical_solution(x, x0, t, sigma):
     return np.sqrt(sigma) / np.sqrt(denominator) * np.exp(-((x - x0) ** 2) / denominator)
 
 
-def test_complex_time_evolution_single_operator():
-    """A single native complex kernel applied to a (promoted) complex tree:
-    one operator, one convolution, no real/imaginary split anywhere."""
+def test_time_evolution_single_operator():
+    """One complex kernel, one convolution, no real/imaginary split."""
     f = P(lambda r: gauss(r[0]))
-    U = vp1.ComplexTimeEvolutionOperator(mra, precision, time, finest_scale)
+    U = vp1.TimeEvolutionOperator(mra, precision, time, finest_scale)
+    assert U.iscomplex()
+
     out = U(f)
     assert isinstance(out, vp1.ComplexFunctionTree)
 
     g = Pc(lambda r: free_particle_analytical_solution(r[0], x0, time, sigma))
     assert (out - g).squaredNorm() == pytest.approx(0.0, abs=5e-14)
 
-    # second application on the complex tree itself: t -> 2t. The evolved
-    # input is chirped, and the fixed-Jpower kernel is less accurate on
-    # oscillatory functions, so this bound is intrinsically looser than the
-    # first step (same behaviour as composing the real-block operators).
+    # t -> 2t. The evolved input is chirped and the fixed-Jpower kernel is
+    # less accurate on oscillatory functions, hence the looser bound.
     out2 = U(out)
     g2 = Pc(lambda r: free_particle_analytical_solution(r[0], x0, 2 * time, sigma))
     assert (out2 - g2).squaredNorm() == pytest.approx(0.0, abs=1e-6)
@@ -171,33 +170,114 @@ def test_complex_time_evolution_single_operator():
     assert out.norm() == pytest.approx(f.norm(), rel=1e-4)
 
 
-def test_real_kernel_on_complex_tree_matches_split():
-    """Applying a single real/imag kernel to a complex tree equals the
-    2x2 real block composition."""
-    A = vp1.TimeEvolutionOperator(mra, precision, time, finest_scale, False)
-    Apsi = A(psi)
-    ref = vp1.from_real_imag(A(u), A(v))
-    assert (Apsi - ref).norm() == pytest.approx(0.0, abs=1e-6)
+def test_real_input_is_promoted():
+    """MRCPP aborts on a real tree, so the binding promotes first. The result
+    must match promoting by hand."""
+    f_real = P(lambda r: gauss(r[0]))
+    f_cplx = Pc(lambda r: complex(gauss(r[0]), 0.0))
+
+    U = vp1.TimeEvolutionOperator(mra, precision, time, finest_scale)
+    from_real = U(f_real)
+    from_cplx = U(f_cplx)
+
+    assert isinstance(from_real, vp1.ComplexFunctionTree)
+    assert (from_real - from_cplx).norm() / from_cplx.norm() == pytest.approx(0.0, abs=1e-10)
+
+    # a real state picks up an imaginary part
+    assert from_real.imag().squaredNorm() > 1e-12
 
 
-def test_native_complex_kernel_matches_two_real_kernels():
-    """The native TimeEvolutionOperator<1, ComplexDouble> is one operator with
-    a cos + 1j*sin kernel. It must reproduce what the previous binding did by
-    composing two real operators, Re[U](psi) + 1j*Im[U](psi) -- this is the
-    invariant that makes the switch to the native kernel a refactor rather
-    than a change of numerics."""
-    A = vp1.TimeEvolutionOperator(mra, precision, time, finest_scale, False)
-    B = vp1.TimeEvolutionOperator(mra, precision, time, finest_scale, True)
-    composed = A(psi) + 1j * B(psi)
+def test_adaptive_and_uniform_agree():
+    """The adaptive build is the default now, and must land on the same
+    semigroup as the fixed-scale one."""
+    adaptive = vp1.TimeEvolutionOperator(mra, precision, time)
+    uniform = vp1.TimeEvolutionOperator(mra, precision, time, finest_scale)
+    assert adaptive.iscomplex()
+    assert vp1.TimeEvolutionOperator.Adaptive == -1
 
-    U = vp1.ComplexTimeEvolutionOperator(mra, precision, time, finest_scale)
-    native = U(psi)
-
-    assert (native - composed).norm() / composed.norm() == pytest.approx(0.0, abs=1e-6)
+    a = adaptive(psi)
+    b = uniform(psi)
+    assert (a - b).norm() / b.norm() == pytest.approx(0.0, abs=1e-6)
 
 
-def test_complex_operator_has_no_adaptive_overload():
-    """MRCPP only instantiates the fixed-finest_scale constructor for
-    ComplexDouble, so the adaptive form must not be reachable from Python."""
+def test_max_Jpower_reaches_the_adaptive_path():
+    """max_Jpower is honoured with or without a finest_scale, so a truncated
+    expansion must move the answer."""
+    full = vp1.TimeEvolutionOperator(mra, precision, time, max_Jpower=30)
+    short = vp1.TimeEvolutionOperator(mra, precision, time, max_Jpower=2)
+    assert (full(psi) - short(psi)).norm() > 1e-10
+
+
+def test_legacy_imaginary_flag_is_rejected():
+    """Both old signatures must raise rather than binding the flag to
+    max_Jpower, which the integer caster would otherwise accept."""
     with pytest.raises(TypeError):
-        vp1.ComplexTimeEvolutionOperator(mra, precision, time)
+        vp1.TimeEvolutionOperator(mra, precision, time, True)
+    with pytest.raises(TypeError):
+        vp1.TimeEvolutionOperator(mra, precision, time, finest_scale, False)
+
+
+def test_real_convolutions_still_real():
+    """Only the time evolution kernel went complex. The rest keep a real
+    expansion, and a real tree in still gives a real tree out."""
+    I = vp1.IdentityConvolution(mra, prec=precision)
+    assert I.isreal()
+    f = P(lambda r: gauss(r[0]))
+    assert isinstance(I(f), vp1.FunctionTree)
+    assert isinstance(I(psi), vp1.ComplexFunctionTree)
+
+
+def test_grid_helpers():
+    """build_grid, refine_grid and clear_grid on complex trees."""
+    out = vp1.ComplexFunctionTree(mra)
+    vp1.advanced.build_grid(out=out, inp=psi)
+    assert out.nNodes() == psi.nNodes()
+
+    vp1.advanced.copy_func(out=out, inp=psi)
+    assert (out - psi).norm() == pytest.approx(0.0, abs=1e-14)
+
+    before = out.nNodes()
+    vp1.advanced.refine_grid(out=out, scales=1)
+    assert out.nNodes() > before
+
+    # clear_grid drops the coefficients but keeps the grid
+    after = out.nNodes()
+    vp1.advanced.clear_grid(out=out)
+    assert out.nNodes() == after
+
+
+def test_square_and_power():
+    """square(conjugate=True) is the density, imaginary part is round-off."""
+    rho = vp1.ComplexFunctionTree(mra)
+    vp1.advanced.square(prec=precision, out=rho, inp=psi, conjugate=True)
+
+    assert rho.imag().norm() == pytest.approx(0.0, abs=1e-10)
+    # the integral of |psi|^2 is the squared L2 norm
+    assert rho.real().integrate() == pytest.approx(psi.squaredNorm(), rel=1e-6)
+
+    # without the flag it is the algebraic square
+    sq = vp1.ComplexFunctionTree(mra)
+    vp1.advanced.square(prec=precision, out=sq, inp=psi)
+    assert (sq - psi * psi).norm() / sq.norm() == pytest.approx(0.0, abs=1e-6)
+
+    # and __pow__ agrees with square on exponent 2
+    assert ((psi**2.0) - sq).norm() / sq.norm() == pytest.approx(0.0, abs=1e-6)
+
+
+def test_divergence():
+    """1D divergence of a one-component field is just the derivative."""
+    D = vp1.ABGVDerivative(mra, 0.0, 0.0)
+    div = vp1.advanced.divergence(oper=D, inp=[psi])
+
+    d_psi = vp1.ComplexFunctionTree(mra)
+    vp1.advanced.apply(out=d_psi, oper=D, inp=psi, dir=0)
+
+    assert (div - d_psi).norm() / d_psi.norm() == pytest.approx(0.0, abs=1e-10)
+
+
+def test_time_evolution_rejects_unsupported_mra():
+    """A negative root scale would index past the power integrals and
+    dereference a null pointer in MRCPP."""
+    shifted = vp1.MultiResolutionAnalysis(vp1.BoundingBox(-2), lbasis)
+    with pytest.raises(ValueError):
+        vp1.TimeEvolutionOperator(shifted, precision, time)
