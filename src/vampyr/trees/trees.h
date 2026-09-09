@@ -2,6 +2,7 @@
 
 #include <filesystem>
 
+#include <pybind11/complex.h>
 #include <pybind11/eigen.h>
 #include <pybind11/stl/filesystem.h>
 
@@ -12,6 +13,7 @@
 #include <MRCPP/trees/TreeIterator.h>
 
 namespace vampyr {
+
 template <int D>
 auto impl__add__(mrcpp::FunctionTree<D, double> *inp_a, mrcpp::FunctionTree<D, double> *inp_b)
     -> std::unique_ptr<mrcpp::FunctionTree<D, double>> {
@@ -192,7 +194,28 @@ template <int D> void trees(pybind11::module &m) {
         .def("__truediv__", &impl__truediv__<D>, py::is_operator())
         .def("__itruediv__", &impl__truediv__<D>, py::is_operator())
         .def("__pow__", &impl__pow__<D>, py::is_operator())
-        .def("__ipow__", &impl__pow__<D>, py::is_operator());
+        .def("__ipow__", &impl__pow__<D>, py::is_operator())
+        // complex-scalar products promote to a complex tree; registered after
+        // the double overloads so real scalars keep hitting the real path
+        .def("__mul__",
+             [](FunctionTree<D, double> *inp, ComplexDouble c) {
+                 auto out = std::unique_ptr<FunctionTree<D, ComplexDouble>>(inp->CopyTreeToComplex());
+                 out->rescale(c);
+                 return out;
+             },
+             py::is_operator())
+        .def("__rmul__",
+             [](FunctionTree<D, double> *inp, ComplexDouble c) {
+                 auto out = std::unique_ptr<FunctionTree<D, ComplexDouble>>(inp->CopyTreeToComplex());
+                 out->rescale(c);
+                 return out;
+             },
+             py::is_operator())
+        .def("to_complex",
+             [](FunctionTree<D, double> *inp) {
+                 return std::unique_ptr<FunctionTree<D, ComplexDouble>>(inp->CopyTreeToComplex());
+             },
+             "Deep copy as a ComplexFunctionTree");
 
     py::class_<MWNode<D, double>>(m, "MWNode")
         .def("depth", &MWNode<D, double>::getDepth)

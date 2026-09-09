@@ -21,6 +21,7 @@ Check out the :doc:`usage` section for further information, including how to :re
    usage
    notebooks/introduction
    notebooks/function_representations
+   notebooks/complex_functions
    notebooks/multiwavelets
    notebooks/poisson_equation
    notebooks/helmholtz_equation

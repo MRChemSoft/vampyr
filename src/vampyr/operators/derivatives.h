@@ -1,5 +1,6 @@
 #pragma once
 
+#include <pybind11/complex.h>
 #include <pybind11/pybind11.h>
 
 #include <MRCPP/operators/ABGVOperator.h>
@@ -20,6 +21,14 @@ template <int D> void derivatives(pybind11::module &m) {
         An abstract base class for derivative operators
     )mydelimiter")
         // clang-format on
+        .def(
+            "isreal",
+            [](DerivativeOperator<D> &D_oper) { return static_cast<bool>(D_oper.isreal()); },
+            "Real coefficients")
+        .def(
+            "iscomplex",
+            [](DerivativeOperator<D> &D_oper) { return static_cast<bool>(D_oper.iscomplex()); },
+            "Complex coefficients")
         .def(py::init<const MultiResolutionAnalysis<D> &, int, int>(), "mra"_a, "root"_a, "reach"_a)
         .def("getOrder", &DerivativeOperator<D>::getOrder)
         .def(
@@ -27,6 +36,15 @@ template <int D> void derivatives(pybind11::module &m) {
             [](DerivativeOperator<D> &oper, FunctionTree<D, double> *inp, int axis) {
                 auto out = std::make_unique<FunctionTree<D, double>>(inp->getMRA());
                 apply(*out, oper, *inp, axis);
+                return out;
+            },
+            "inp"_a,
+            "axis"_a = 0)
+        .def(
+            "__call__",
+            [](DerivativeOperator<D> &oper, FunctionTree<D, ComplexDouble> *inp, int axis) {
+                auto out = std::make_unique<FunctionTree<D, ComplexDouble>>(inp->getMRA());
+                apply<D, ComplexDouble>(*out, oper, *inp, axis);
                 return out;
             },
             "inp"_a,
