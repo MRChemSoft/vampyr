@@ -13,15 +13,12 @@ if(TARGET MRCPP::mrcpp)
 else()
   message(STATUS "Suitable MRCPP could not be located. Fetching and building!")
   include(FetchContent)
-  # TEMPORARY: pinned at the head of mrcpp PR #295 (native complex
-  # TimeEvolutionOperator), which these bindings require. Revert to
-  # MRChemSoft/mrcpp at the #295 merge commit before this PR is merged.
   FetchContent_Declare(mrcpp
     QUIET
     GIT_REPOSITORY
-      https://github.com/Valentyn113/Complex-map.git
+      https://github.com/MRChemSoft/mrcpp.git
     GIT_TAG
-      68b69f2eab85ea4a1ef2cb0c153c31e68632bf96
+      f73b863d3af98b9bae45d62378a7618285b1dfb1
     )
 
   set(CMAKE_CXX_COMPILER ${CMAKE_CXX_COMPILER})
