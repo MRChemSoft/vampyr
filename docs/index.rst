@@ -30,6 +30,7 @@ Check out the :doc:`usage` section for further information, including how to :re
    notebooks/beryllium_atom
    notebooks/PCMSolvent
    notebooks/harmonic_oscillator_evolution
+   notebooks/time_evolution_animations
 
 .. toctree::
    :maxdepth: 2
