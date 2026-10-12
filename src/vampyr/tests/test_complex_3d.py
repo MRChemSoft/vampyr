@@ -6,8 +6,8 @@ from vampyr import vampyr3d as vp3
 
 # The tree, arithmetic and projection layers are dimension-generic templates,
 # so this file is deliberately a transcription of the dimension-generic half
-# of test_complex_1d.py rather than a new set of physics checks. Anything
-# genuinely 1D (time evolution, the Schrodinger semigroup) stays there.
+# of test_complex_1d.py rather than a new set of physics checks. The 3D time
+# evolution is tested in test_time_evolution_3d.py.
 
 r0 = [0.5, 0.5, 0.5]
 sigma = 0.01

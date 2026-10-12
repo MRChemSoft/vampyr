@@ -23,6 +23,17 @@ def test_BoundingBox():
     assert world.scalingFactor(dim=0) == pytest.approx(np.pi)
 
 
+def test_BoundingBox_from_bounds():
+    world = vp.BoundingBox([-30, 30])
+    assert world.scale() == -4
+    assert world.size() == 2
+    assert world.scalingFactor(dim=0) == pytest.approx(1.875)
+    assert world.lowerBound(dim=0) == pytest.approx(-30.0)
+    assert world.upperBound(dim=0) == pytest.approx(30.0)
+    assert vp.BoundingBox(box=[0, 30]).lowerBound(dim=0) == pytest.approx(0.0)
+    assert vp.BoundingBox([-1, 1]) == vp.BoundingBox(corner=[-1], nboxes=[2])
+
+
 def test_PeriodicBox():
     world = vp.BoundingBox(scaling=[np.pi], pbc=True)
     assert world.size() == 1

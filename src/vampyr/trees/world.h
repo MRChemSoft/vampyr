@@ -25,6 +25,7 @@ template <int D> void world(pybind11::module &m) {
              "nboxes"_a = std::array<int, D>{},
              "scaling"_a = std::array<double, D>{},
              "pbc"_a = false)
+        .def(py::init<std::array<int, 2>>(), "box"_a)
         .def("boxLengths", &BoundingBox<D>::getBoxLengths)
         .def("boxLength", &BoundingBox<D>::getBoxLength, "dim"_a)
         .def("upperBounds", &BoundingBox<D>::getUpperBounds)

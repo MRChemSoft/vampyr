@@ -274,10 +274,3 @@ def test_divergence():
 
     assert (div - d_psi).norm() / d_psi.norm() == pytest.approx(0.0, abs=1e-10)
 
-
-def test_time_evolution_rejects_unsupported_mra():
-    """A negative root scale would index past the power integrals and
-    dereference a null pointer in MRCPP."""
-    shifted = vp1.MultiResolutionAnalysis(vp1.BoundingBox(-2), lbasis)
-    with pytest.raises(ValueError):
-        vp1.TimeEvolutionOperator(shifted, precision, time)

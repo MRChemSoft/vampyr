@@ -66,3 +66,17 @@ def test_time_evolution_adaptive():
     # Adaptive is the default build now.
     adaptive = vp1.TimeEvolutionOperator(mra, precision, time)
     assert (adaptive(f) - g).squaredNorm() == pytest.approx(0.0, abs = 1e-12)
+
+def test_time_evolution_on_box():
+    """[-30, 30]: root scale -4, two root boxes, scaling factor 1.875."""
+    mra_box = vp1.MultiResolutionAnalysis(vp1.BoundingBox([-30, 30]), lbasis)
+    Pc_box = vp1.ScalingProjector(mra_box, prec = precision, dtype = complex)
+
+    def relative_error(sigma, t, finest_scale):
+        U = vp1.TimeEvolutionOperator(mra_box, precision, t, finest_scale)
+        f = Pc_box(lambda x: complex(np.exp(-(x[0] - x0)**2 / sigma)))
+        g = Pc_box(lambda x: free_particle_analytical_solution(x[0], x0, t, sigma))
+        return (U(f) - g).norm() / g.norm()
+
+    assert relative_error(5.0, 10.0, vp1.TimeEvolutionOperator.Adaptive) < precision   #1.9e-7
+    assert relative_error(50.0, 0.1, 2) < precision                                     #4.4e-8
