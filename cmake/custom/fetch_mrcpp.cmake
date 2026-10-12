@@ -13,15 +13,22 @@ if(TARGET MRCPP::mrcpp)
 else()
   message(STATUS "Suitable MRCPP could not be located. Fetching and building!")
   include(FetchContent)
+  # TEMPORARY: pinned at the head of mrcpp PR #296 (time evolution in 2D and 3D
+  # on general bounding boxes), which these bindings require. Revert to
+  # MRChemSoft/mrcpp at the #296 merge commit before this PR is merged.
   FetchContent_Declare(mrcpp
     QUIET
     GIT_REPOSITORY
-      https://github.com/MRChemSoft/mrcpp.git
+      https://github.com/Valentyn113/Complex-map.git
     GIT_TAG
-      77187f0e2a070741032997c777b7f47a39abdac5
+      bccfbeebdbfc4f048f48693bad2040082068f500
     )
 
   set(CMAKE_CXX_COMPILER ${CMAKE_CXX_COMPILER})
+  # MRCPP's setup script supplies these; nothing does when it is pulled in
+  # with FetchContent, and the CPM macro requires an argument.
+  set(EIGEN3_FIND_BEHAVIOUR "default" CACHE STRING "")
+  set(CATCH2_FIND_BEHAVIOUR "default" CACHE STRING "")
   # Always build with OpenMP and without MPI
   set(ENABLE_OPENMP TRUE CACHE BOOL "")
   set(ENABLE_MPI FALSE CACHE BOOL "")

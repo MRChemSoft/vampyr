@@ -6,23 +6,23 @@
 
 namespace mrcpp {
 
-template <int D> class PyFunctionMap final {
+template <int D, typename T = double> class PyFunctionMap final {
 public:
-    explicit PyFunctionMap(std::function<double(double)> fmap, double prec = -1.0)
+    explicit PyFunctionMap(std::function<T(T)> fmap, double prec = -1.0)
             : precision(prec)
             , func_map(fmap) {}
 
-    std::unique_ptr<FunctionTree<D, double>> operator()(FunctionTree<D, double> &inp) {
+    std::unique_ptr<FunctionTree<D, T>> operator()(FunctionTree<D, T> &inp) {
         // Negative precision will copy grid from input
-        auto out = std::make_unique<FunctionTree<D, double>>(inp.getMRA());
-        if (this->precision < 0.0) copy_grid<D, double>(*out, inp);
-        treeMap<D>(this->precision, *out, inp, this->func_map);
+        auto out = std::make_unique<FunctionTree<D, T>>(inp.getMRA());
+        if (this->precision < 0.0) copy_grid<D, T>(*out, inp);
+        treeMap<D, T>(this->precision, *out, inp, this->func_map);
         return out;
     }
 
 private:
     double precision;
-    std::function<double(double)> func_map;
+    std::function<T(T)> func_map;
 };
 
 } // namespace mrcpp

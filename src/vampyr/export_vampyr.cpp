@@ -22,6 +22,7 @@
 #include "treebuilders/grids.h"
 #include "treebuilders/maps.h"
 #include "treebuilders/project.h"
+#include "complex/complex_bindings.h"
 #include "trees/trees.h"
 #include "trees/world.h"
 
@@ -68,6 +69,7 @@ template <int D> void bind_vampyr(py::module &mod) noexcept {
     convolutions<D>(sub_mod);
 
     bind_advanced<D>(sub_mod);
+    bind_complex<D>(sub_mod);
 }
 
 PYBIND11_MODULE(_vampyr, m) {
