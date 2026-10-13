@@ -26,15 +26,19 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest] #, macos-latest]
+        # "build (ubuntu-latest, 3.8)" and "build (ubuntu-latest, 3.11)" are
+        # required status checks on master: update branch protection before
+        # dropping either of these versions, or PRs wait for them forever.
         python-version:
           - "3.8"
           - "3.11"
+          - "3.15"  # conda-forge 3.15 ships no libpython; guards the RTD/binder setup
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v7
 
     - name: Cache conda
-      uses: actions/cache@v3
+      uses: actions/cache@v6
       env:
         CACHE_NUMBER: 0  # Increase this value to reset cache if environment.yml has not changed
       with:
@@ -42,10 +46,11 @@ jobs:
         key:
           ${{ matrix.os }}-${{ matrix.python-version }}-conda-${{ env.CACHE_NUMBER }}-${{ hashFiles('environment.yml') }}
 
-    - uses: conda-incubator/setup-miniconda@v2
+    - uses: conda-incubator/setup-miniconda@v4
       with:
+          miniforge-version: latest  # Ubuntu 26.04 runners no longer ship a bundled conda
           auto-update-conda: true
-          auto-activate-base: false
+          auto-activate: false
           activate-environment: vampyr-gha
           environment-file: environment.yml
           channel-priority: true
