@@ -1,4 +1,4 @@
-# create python module for test
+# create python module
 pybind11_add_module(_vampyr MODULE THIN_LTO
     export_vampyr.cpp
   )
