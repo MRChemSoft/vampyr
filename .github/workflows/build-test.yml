@@ -26,8 +26,12 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest] #, macos-latest]
+        # "build (ubuntu-latest, 3.8)" and "build (ubuntu-latest, 3.11)" are
+        # required status checks on master: update branch protection before
+        # dropping either of these versions, or PRs wait for them forever.
         python-version:
-          - "3.10"
+          - "3.8"
+          - "3.11"
           - "3.15"  # conda-forge 3.15 ships no libpython; guards the RTD/binder setup
 
     steps:
