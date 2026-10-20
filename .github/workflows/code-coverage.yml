@@ -48,7 +48,7 @@ jobs:
     - name: Test VAMPyR and generate coverage report
       shell: bash -l {0}
       run: |
-        cd build/lib/python3.9/site-packages
+        cd build/lib/python3.14/site-packages
         python -m pytest --cov=vampyr --cov-report=xml --doctest-modules
 
     - name: Upload coverage to Codecov
