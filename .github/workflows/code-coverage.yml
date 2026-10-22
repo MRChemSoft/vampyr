@@ -20,17 +20,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v7
 
     - name: Set up environment
-      uses: conda-incubator/setup-miniconda@v2
+      uses: conda-incubator/setup-miniconda@v4
       with:
+          miniforge-version: latest
           auto-update-conda: true
-          auto-activate-base: false
+          auto-activate: false
           activate-environment: vampyr-gha
           environment-file: environment.yml
           channel-priority: true
-          python-version: 3.9
+          python-version: 3.15
 
     - name: Configure
       shell: bash -l {0}
@@ -47,7 +48,7 @@ jobs:
     - name: Test VAMPyR and generate coverage report
       shell: bash -l {0}
       run: |
-        cd build/lib/python3.9/site-packages
+        cd build/lib/python3.15/site-packages
         python -m pytest --cov=vampyr --cov-report=xml --doctest-modules
 
     - name: Upload coverage to Codecov
