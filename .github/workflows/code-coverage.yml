@@ -25,7 +25,6 @@ jobs:
     - name: Set up environment
       uses: conda-incubator/setup-miniconda@v4
       with:
-          miniforge-version: latest
           auto-update-conda: true
           auto-activate: false
           activate-environment: vampyr-gha
