@@ -1,5 +1,5 @@
 # set minimum cmake version
-cmake_minimum_required(VERSION 3.17...3.21)
+cmake_minimum_required(VERSION 3.18...3.21)
 
 # project name
 project(VAMPyR LANGUAGES CXX)
@@ -53,7 +53,7 @@ include(${PROJECT_SOURCE_DIR}/cmake/downloaded/autocmake_default_build_paths.cma
 include(${PROJECT_SOURCE_DIR}/cmake/downloaded/autocmake_safeguards.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/downloaded/autocmake_code_coverage.cmake)
 
-find_package(Python 3.7 REQUIRED COMPONENTS Interpreter Development)
+find_package(Python 3.7 REQUIRED COMPONENTS Interpreter Development.Module)
 # download pybind11 if not available on the system
 include(${PROJECT_SOURCE_DIR}/cmake/custom/fetch_pybind11.cmake)
 # download MRCPP if not available on the system
