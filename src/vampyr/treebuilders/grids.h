@@ -1,5 +1,6 @@
 #pragma once
 
+#include <pybind11/complex.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
@@ -22,6 +23,21 @@ template <int D> void grids(pybind11::module &m) {
         "build_grid",
         [](FunctionTree<D, double> &out, FunctionTree<D, double> &inp, int max_iter) {
             build_grid<D, double>(out, inp, max_iter);
+        },
+        "out"_a,
+        "inp"_a,
+        "max_iter"_a = -1);
+
+    m.def(
+        "build_grid",
+        [](FunctionTree<D, ComplexDouble> &out, int scales) { build_grid<D, ComplexDouble>(out, scales); },
+        "out"_a,
+        "scales"_a);
+
+    m.def(
+        "build_grid",
+        [](FunctionTree<D, ComplexDouble> &out, FunctionTree<D, ComplexDouble> &inp, int max_iter) {
+            build_grid<D, ComplexDouble>(out, inp, max_iter);
         },
         "out"_a,
         "inp"_a,
@@ -110,6 +126,87 @@ template <int D> void advanced_grids(pybind11::module &m) {
     m.def(
         "refine_grid",
         [](FunctionTree<D, double> &out, FunctionTree<D, double> &inp) { return refine_grid<D, double>(out, inp); },
+        "out"_a,
+        "inp"_a);
+
+    m.def(
+        "build_grid",
+        [](FunctionTree<D, ComplexDouble> &out, int scales) { build_grid<D, ComplexDouble>(out, scales); },
+        "out"_a,
+        "scales"_a);
+
+    m.def(
+        "build_grid",
+        [](FunctionTree<D, ComplexDouble> &out, FunctionTree<D, ComplexDouble> &inp, int max_iter) {
+            build_grid<D, ComplexDouble>(out, inp, max_iter);
+        },
+        "out"_a,
+        "inp"_a,
+        "max_iter"_a = -1);
+
+    m.def(
+        "build_grid",
+        [](FunctionTree<D, ComplexDouble> &out, std::vector<FunctionTree<D, ComplexDouble> *> &inp, int max_iter) {
+            FunctionTreeVector<D, ComplexDouble> vec;
+            for (auto *tree : inp) vec.push_back({1.0, tree});
+            build_grid<D, ComplexDouble>(out, vec, max_iter);
+        },
+        "out"_a,
+        "inp"_a,
+        "max_iter"_a = -1);
+
+    m.def(
+        "build_grid",
+        [](FunctionTree<D, ComplexDouble> &out,
+           std::vector<std::tuple<ComplexDouble, FunctionTree<D, ComplexDouble> *>> &inp,
+           int max_iter) {
+            FunctionTreeVector<D, ComplexDouble> vec;
+            for (auto &t : inp) vec.push_back({std::get<0>(t), std::get<1>(t)});
+            build_grid<D, ComplexDouble>(out, vec, max_iter);
+        },
+        "out"_a,
+        "inp"_a,
+        "max_iter"_a = -1);
+
+    m.def(
+        "copy_grid",
+        [](FunctionTree<D, ComplexDouble> &out, FunctionTree<D, ComplexDouble> &inp) {
+            copy_grid<D, ComplexDouble>(out, inp);
+        },
+        "out"_a,
+        "inp"_a);
+
+    m.def(
+        "copy_func",
+        [](FunctionTree<D, ComplexDouble> &out, FunctionTree<D, ComplexDouble> &inp) {
+            copy_func<D, ComplexDouble>(out, inp);
+        },
+        "out"_a,
+        "inp"_a);
+
+    m.def(
+        "clear_grid", [](FunctionTree<D, ComplexDouble> &out) { clear_grid<D, ComplexDouble>(out); }, "out"_a);
+
+    m.def(
+        "refine_grid",
+        [](FunctionTree<D, ComplexDouble> &out, int scales) { return refine_grid<D, ComplexDouble>(out, scales); },
+        "out"_a,
+        "scales"_a);
+
+    m.def(
+        "refine_grid",
+        [](FunctionTree<D, ComplexDouble> &out, double prec, bool abs_prec) {
+            return refine_grid<D, ComplexDouble>(out, prec, abs_prec);
+        },
+        "out"_a,
+        "prec"_a,
+        "abs_prec"_a = false);
+
+    m.def(
+        "refine_grid",
+        [](FunctionTree<D, ComplexDouble> &out, FunctionTree<D, ComplexDouble> &inp) {
+            return refine_grid<D, ComplexDouble>(out, inp);
+        },
         "out"_a,
         "inp"_a);
 }

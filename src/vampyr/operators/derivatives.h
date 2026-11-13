@@ -1,5 +1,6 @@
 #pragma once
 
+#include <pybind11/complex.h>
 #include <pybind11/pybind11.h>
 
 #include <MRCPP/operators/ABGVOperator.h>
@@ -23,10 +24,27 @@ template <int D> void derivatives(pybind11::module &m) {
         .def(py::init<const MultiResolutionAnalysis<D> &, int, int>(), "mra"_a, "root"_a, "reach"_a)
         .def("getOrder", &DerivativeOperator<D>::getOrder)
         .def(
+            "isreal",
+            [](DerivativeOperator<D> &oper) { return static_cast<bool>(oper.isreal()); },
+            "True if the operator has real coefficients")
+        .def(
+            "iscomplex",
+            [](DerivativeOperator<D> &oper) { return static_cast<bool>(oper.iscomplex()); },
+            "True if the operator has complex coefficients")
+        .def(
             "__call__",
             [](DerivativeOperator<D> &oper, FunctionTree<D, double> *inp, int axis) {
                 auto out = std::make_unique<FunctionTree<D, double>>(inp->getMRA());
                 apply(*out, oper, *inp, axis);
+                return out;
+            },
+            "inp"_a,
+            "axis"_a = 0)
+        .def(
+            "__call__",
+            [](DerivativeOperator<D> &oper, FunctionTree<D, ComplexDouble> *inp, int axis) {
+                auto out = std::make_unique<FunctionTree<D, ComplexDouble>>(inp->getMRA());
+                apply<D, ComplexDouble>(*out, oper, *inp, axis);
                 return out;
             },
             "inp"_a,

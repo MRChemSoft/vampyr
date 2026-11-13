@@ -1,5 +1,6 @@
 #pragma once
 
+#include <pybind11/complex.h>
 #include <pybind11/functional.h>
 
 #include "PyProjectors.h"
@@ -70,6 +71,39 @@ template <int D> void project(pybind11::module &m) {
                 return out;
             },
             "func"_a);
+
+    py::class_<PyScalingProjector<D, ComplexDouble>>(m,
+                                                     "ComplexScalingProjector",
+                                                     // clang-format off
+    R"mydelimiter(
+        ScalingProjector for complex functions. Takes a ComplexFunctionTree or
+        a Python function returning complex, and returns a ComplexFunctionTree.
+    )mydelimiter")
+        // clang-format on
+        .def(py::init<const MultiResolutionAnalysis<D> &, double>(), "mra"_a, "prec"_a)
+        .def(py::init<const MultiResolutionAnalysis<D> &, int>(), "mra"_a, "scale"_a)
+        .def(
+            "__call__",
+            [](PyScalingProjector<D, ComplexDouble> &P, FunctionTree<D, ComplexDouble> &func) { return P(func); },
+            "func"_a)
+        .def(
+            "__call__",
+            [](PyScalingProjector<D, ComplexDouble> &P, std::function<ComplexDouble(const Coord<D> &r)> func) {
+                try {
+                    auto arr = std::array<double, D>();
+                    arr.fill(111111.111); // A number which hopefully does not divide by zero
+                    func(arr);
+                } catch (py::cast_error &e) {
+                    py::print("Error: Invalid definition of analytic function");
+                    throw;
+                }
+                auto old_threads = mrcpp_get_num_threads();
+                set_max_threads(1);
+                auto out = P(func);
+                set_max_threads(old_threads);
+                return out;
+            },
+            "func"_a);
 }
 
 template <int D> void advanced_project(pybind11::module &m) {
@@ -97,6 +131,37 @@ template <int D> void advanced_project(pybind11::module &m) {
             auto old_threads = mrcpp_get_num_threads();
             mrcpp::set_max_threads(1);
             mrcpp::project<D>(prec, out, inp, max_iter, abs_prec);
+            mrcpp::set_max_threads(old_threads);
+        },
+        "prec"_a = -1.0,
+        "out"_a,
+        "inp"_a,
+        "max_iter"_a = -1,
+        "abs_prec"_a = false);
+
+    m.def(
+        "project",
+        [](double prec,
+           FunctionTree<D, ComplexDouble> &out,
+           FunctionTree<D, ComplexDouble> &inp,
+           int max_iter,
+           bool abs_prec) { mrcpp::project<D, ComplexDouble>(prec, out, inp, max_iter, abs_prec); },
+        "prec"_a = -1.0,
+        "out"_a,
+        "inp"_a,
+        "max_iter"_a = -1,
+        "abs_prec"_a = false);
+
+    m.def(
+        "project",
+        [](double prec,
+           FunctionTree<D, ComplexDouble> &out,
+           std::function<ComplexDouble(const Coord<D> &r)> inp,
+           int max_iter,
+           bool abs_prec) {
+            auto old_threads = mrcpp_get_num_threads();
+            mrcpp::set_max_threads(1);
+            mrcpp::project<D, ComplexDouble>(prec, out, inp, max_iter, abs_prec);
             mrcpp::set_max_threads(old_threads);
         },
         "prec"_a = -1.0,
