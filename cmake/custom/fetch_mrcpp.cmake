@@ -18,10 +18,14 @@ else()
     GIT_REPOSITORY
       https://github.com/MRChemSoft/mrcpp.git
     GIT_TAG
-      77187f0e2a070741032997c777b7f47a39abdac5
+      8ea7876d458d67a45dbc84c95bdfc9ed062ce677
     )
 
   set(CMAKE_CXX_COMPILER ${CMAKE_CXX_COMPILER})
+  # MRCPP's CMake passes these to its cpm_set_find_behaviour macro, which needs
+  # a value. MRCPP's setup script sets them; FetchContent does not.
+  set(EIGEN3_FIND_BEHAVIOUR "default" CACHE STRING "")
+  set(CATCH2_FIND_BEHAVIOUR "default" CACHE STRING "")
   # Always build with OpenMP and without MPI
   set(ENABLE_OPENMP TRUE CACHE BOOL "")
   set(ENABLE_MPI FALSE CACHE BOOL "")

@@ -3,6 +3,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
+#include <MRCPP/operators/ConvolutionOperator.h>
 #include <MRCPP/treebuilders/apply.h>
 
 namespace vampyr {
@@ -18,6 +19,20 @@ template <int D> void applys(pybind11::module &m) {
             if (inp.size() == (size_t)D) {
                 out = std::make_unique<FunctionTree<D, double>>(inp[0]->getMRA());
                 divergence<D, double>(*out, oper, inp);
+            }
+            return out;
+        },
+        "oper"_a,
+        "inp"_a);
+
+    // No gradient for complex trees: mrcpp::gradient is only instantiated for real ones.
+    m.def(
+        "divergence",
+        [](DerivativeOperator<D> &oper, std::vector<FunctionTree<D, ComplexDouble> *> &inp) {
+            std::unique_ptr<FunctionTree<D, ComplexDouble>> out{nullptr};
+            if (inp.size() == (size_t)D) {
+                out = std::make_unique<FunctionTree<D, ComplexDouble>>(inp[0]->getMRA());
+                divergence<D, ComplexDouble>(*out, oper, inp);
             }
             return out;
         },
@@ -49,6 +64,7 @@ template <int D> void advanced_applys(pybind11::module &m) {
     m.def(
         "apply",
         [](double prec, FunctionTree<D, double> &out, ConvolutionOperator<D> &oper, FunctionTree<D, double> &inp, int max_iter, bool abs_prec) {
+            if (oper.iscomplex()) throw py::type_error("A complex operator applies to ComplexFunctionTrees only.");
             mrcpp::apply<D, double>(prec, out, oper, inp, max_iter, abs_prec);
         },
         "prec"_a,
@@ -66,6 +82,32 @@ template <int D> void advanced_applys(pybind11::module &m) {
           "oper"_a,
           "inp"_a,
           "dir"_a = -1);
+
+    m.def(
+        "apply",
+        [](double prec,
+           FunctionTree<D, ComplexDouble> &out,
+           ConvolutionOperator<D> &oper,
+           FunctionTree<D, ComplexDouble> &inp,
+           int max_iter,
+           bool abs_prec) { mrcpp::apply<D, ComplexDouble>(prec, out, oper, inp, max_iter, abs_prec); },
+        "prec"_a,
+        "out"_a,
+        "oper"_a,
+        "inp"_a,
+        "max_iter"_a = -1,
+        "abs_prec"_a = false);
+
+    m.def(
+        "apply",
+        [](FunctionTree<D, ComplexDouble> &out,
+           DerivativeOperator<D> &oper,
+           FunctionTree<D, ComplexDouble> &inp,
+           int dir) { mrcpp::apply<D, ComplexDouble>(out, oper, inp, dir); },
+        "out"_a,
+        "oper"_a,
+        "inp"_a,
+        "dir"_a = -1);
 }
 
 } // namespace vampyr

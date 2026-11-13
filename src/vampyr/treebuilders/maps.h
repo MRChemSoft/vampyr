@@ -1,5 +1,6 @@
 #pragma once
 
+#include <pybind11/complex.h>
 #include <pybind11/functional.h>
 
 #include "PyFunctionMap.h"
@@ -16,6 +17,26 @@ template <int D> void treeMap(pybind11::module &m) {
         .def(
             "__call__",
             [](PyFunctionMap<D> &F, FunctionTree<D, double> &inp) {
+                auto old_threads = mrcpp_get_num_threads();
+                set_max_threads(1);
+                auto out = F(inp);
+                set_max_threads(old_threads);
+                return out;
+            },
+            "inp"_a);
+
+    py::class_<PyFunctionMap<D, ComplexDouble>>(m,
+                                                "ComplexFunctionMap",
+                                                // clang-format off
+    R"mydelimiter(
+        FunctionMap for complex functions. Applies a Python function from
+        complex to complex pointwise to a ComplexFunctionTree.
+    )mydelimiter")
+        // clang-format on
+        .def(py::init<std::function<ComplexDouble(ComplexDouble)>, double>(), "fmap"_a, "prec"_a)
+        .def(
+            "__call__",
+            [](PyFunctionMap<D, ComplexDouble> &F, FunctionTree<D, ComplexDouble> &inp) {
                 auto old_threads = mrcpp_get_num_threads();
                 set_max_threads(1);
                 auto out = F(inp);
@@ -41,6 +62,26 @@ template <int D> void advanced_map(pybind11::module &m) {
             auto old_threads = mrcpp_get_num_threads();
             mrcpp::set_max_threads(1);
             mrcpp::treeMap<D>(prec, out, inp, fmap, max_iter, abs_prec);
+            mrcpp::set_max_threads(old_threads);
+        },
+        "prec"_a = -1.0,
+        "out"_a,
+        "inp"_a,
+        "fmap"_a,
+        "max_iter"_a = -1,
+        "abs_prec"_a = false);
+
+    m.def(
+        "map",
+        [](double prec,
+           FunctionTree<D, ComplexDouble> &out,
+           FunctionTree<D, ComplexDouble> &inp,
+           std::function<ComplexDouble(ComplexDouble)> fmap,
+           int max_iter,
+           bool abs_prec) {
+            auto old_threads = mrcpp_get_num_threads();
+            mrcpp::set_max_threads(1);
+            mrcpp::treeMap<D, ComplexDouble>(prec, out, inp, fmap, max_iter, abs_prec);
             mrcpp::set_max_threads(old_threads);
         },
         "prec"_a = -1.0,
